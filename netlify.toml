@@ -13,9 +13,10 @@
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains"
     # script-src: self + jsdelivr (GSAP). style-src: self + Google Fonts CSS.
-    # font-src: Google's font files. img-src data: covers inline SVG masks.
+    # font-src: Google's font files. img-src: data: for inline SVG masks,
+    # tile.openstreetmap.org for the Leaflet basemap tiles. style-src jsdelivr for leaflet.css.
     # form-action self keeps Netlify Forms posting to this origin only.
-    Content-Security-Policy = "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src https://fonts.gstatic.com; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests"
 
 # Long cache for fingerprint-free assets we control; HTML stays fresh.
 [[headers]]

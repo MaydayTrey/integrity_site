@@ -395,6 +395,70 @@ function reviewCarousel() {
     });
 }
 
+/* ---------- AREAS SERVED: live map (Leaflet + OpenStreetMap tiles) ----------
+   Free and keyless: Leaflet is open source and OpenStreetMap serves
+   its tiles without a key (CARTO's tiles started demanding one). The map draws the 50-mile ring around Trenton, the six county
+   outlines from assets/service-counties.geojson (Census boundaries),
+   and a marker per municipality. The inline SVG map in the HTML is the
+   fallback: it shows until this runs, and stays if JS or tiles fail. */
+const SERVICE_HOME  = [39.4809, -84.4577];   /* Trenton, OH */
+const SERVICE_MILES = 50;
+const SERVICE_CITIES = [
+    ["Hamilton", 39.3995, -84.5613], ["Fairfield", 39.3454, -84.5603], ["Monroe", 39.4403, -84.3622],
+    ["Trenton", 39.4809, -84.4577], ["Middletown", 39.5151, -84.3983], ["Oxford", 39.5070, -84.7452],
+    ["Mason", 39.3600, -84.3099], ["Lebanon", 39.4354, -84.2030], ["Springboro", 39.5523, -84.2333],
+    ["Franklin", 39.5589, -84.3041], ["Kettering", 39.6895, -84.1688], ["Centerville", 39.6284, -84.1594],
+    ["Miamisburg", 39.6428, -84.2866], ["West Carrollton", 39.6723, -84.2522], ["Dayton", 39.7589, -84.1916],
+    ["Trotwood", 39.7973, -84.3113], ["Blue Ash", 39.2320, -84.3783], ["Sharonville", 39.2681, -84.4133],
+    ["Reading", 39.2237, -84.4422], ["Norwood", 39.1556, -84.4597], ["St. Bernard", 39.1670, -84.4986],
+    ["Forest Park", 39.2903, -84.5041], ["Loveland", 39.2689, -84.2638], ["Milford", 39.1753, -84.2944],
+    ["Eaton", 39.7439, -84.6366]
+];
+
+function serviceMap() {
+    const el = document.getElementById("service-map");
+    if (!el || typeof L === "undefined") return;         /* Leaflet did not load: the SVG stays */
+
+    const map = L.map(el, {
+        scrollWheelZoom: false,                            /* the page scroll must not get trapped */
+        zoomControl: true, attributionControl: true
+    }).setView(SERVICE_HOME, 9);                           /* layers need a view to project into before fitBounds runs */
+    /* OpenStreetMap's own tiles: free, no key. Their usage policy is
+       fine with a small site like this (no bulk loading, attribution
+       kept). The tile pane gets a CSS grayscale so the basemap sits in
+       the brand greys and the red overlays own the colour. */
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    const ring = L.circle(SERVICE_HOME, {
+        radius: SERVICE_MILES * 1609.344,
+        color: "#ED1C24", weight: 2, dashArray: "10 8", fillColor: "#ED1C24", fillOpacity: 0.06
+    }).addTo(map);
+
+    fetch("assets/service-counties.geojson")
+        .then((r) => r.json())
+        .then((gj) => L.geoJSON(gj, {
+            style: { color: "#BA1E23", weight: 1.5, fillColor: "#ED1C24", fillOpacity: 0.12 },
+            onEachFeature: (f, layer) => layer.bindTooltip(`${f.properties.name} County`, { sticky: true, className: "map-tip" })
+        }).addTo(map))
+        .catch(() => {});                                  /* no outlines is not fatal */
+
+    SERVICE_CITIES.forEach(([name, lat, lng]) => L.circleMarker([lat, lng], {
+        radius: 5, color: "#FFFFFF", weight: 1.5, fillColor: "#231F20", fillOpacity: 1
+    }).bindTooltip(name, { direction: "top", offset: [0, -6], className: "map-tip" }).addTo(map));
+
+    L.marker(SERVICE_HOME, {
+        icon: L.divIcon({ className: "map-home", html: '<img src="assets/logo-shield.svg" alt="" width="30" height="32">', iconSize: [30, 32], iconAnchor: [15, 16] }),
+        title: "Integrity Restorations and Remodeling, Trenton", zIndexOffset: 1000
+    }).bindTooltip("Trenton, home base", { direction: "top", offset: [0, -14], className: "map-tip map-tip--home" }).addTo(map);
+
+    map.fitBounds(ring.getBounds(), { padding: [8, 8] });
+    el.classList.add("is-live");
+    ScrollTrigger.addEventListener("refresh", () => map.invalidateSize());
+}
+
 /* ---------- SECTION FADE-INS (ScrollTrigger) ----------
    Empty shells for now; batch handles however many we add later. */
 function sectionReveals() {
@@ -404,7 +468,7 @@ function sectionReveals() {
     /* the reviews section is excluded: its cards live inside the pinned,
        transformed column and its head must be visible the moment the
        pin engages */
-    const targets = ".section__head:not(.reviews-head), .placeholder .section__inner, .service, .segments, .panel:not([hidden]), .beat__media, .beat__body, .about__facts, .about__cta-row";
+    const targets = ".section__head:not(.reviews-head), .placeholder .section__inner, .service, .segments, .panel:not([hidden]), .beat__media, .beat__body, .about__facts, .about__cta-row, .areas__map, .areas__body";
     gsap.set(targets, { autoAlpha: 0, y: 24 });
     ScrollTrigger.batch(targets, {
         start: "top 85%",
@@ -420,5 +484,6 @@ document.fonts.ready.then(() => {
     ourWork();
     jobDialog();
     reviewCarousel();
+    serviceMap();
     sectionReveals();
 });
