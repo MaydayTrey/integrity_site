@@ -300,8 +300,10 @@ function reviewCarousel() {
     }
 
     /* TIMELINE, measured in pixels of scroll: the column glides 1:1 with
-       the wheel, no holds and no snapping. Column padding lets the first
-       and last cards reach the middle. */
+       the wheel, and pauses for a moment (W px of wheel travel) each
+       time a card reaches the middle, so the wipe has a beat to play
+       before the column moves on. No snapping. Column padding lets the
+       first and last cards reach the middle. */
     let tl, trigger;
     function build() {
         if (trigger) trigger.kill();
@@ -312,34 +314,50 @@ function reviewCarousel() {
         revealed = -1;
 
         const H = win.clientHeight;
+        const W = Math.round(H * 0.28);                /* the dwell, in px of scrolling */
         const first = cards[0], last = cards[cards.length - 1];
         column.style.paddingTop    = `${Math.max(H / 2 - first.offsetHeight / 2, 0)}px`;
         column.style.paddingBottom = `${Math.max(H / 2 - last.offsetHeight / 2, 0)}px`;
 
         const centres = cards.map((c) => c.offsetTop + c.offsetHeight / 2 - H / 2);   /* column y = -centre puts card i in the middle */
-        const D = Math.max(centres[centres.length - 1], 1);                           /* total travel: first centred -> last centred */
-
         tl = gsap.timeline({ defaults: { ease: "none" }, onUpdate: depth });
-        tl.to(column, { y: -D, duration: D }, 0);
+        const arrive = [];                             /* timeline time at which card i is centred */
+        let t = 0;
+        cards.forEach((card, i) => {
+            if (i > 0) {
+                const d = centres[i] - centres[i - 1];
+                tl.to(column, { y: -centres[i], duration: d }, t);
+                t += d;
+            }
+            arrive.push(t);
+            t += W;                                    /* the dwell: nothing moves for W px */
+        });
+        const total = t;
 
         trigger = ScrollTrigger.create({
             trigger: section,
             start: "top top",
-            end: () => "+=" + D,
+            end: () => "+=" + total,
             pin: true,
             scrub: 0.5,
             animation: tl,
             onUpdate(self) {
-                const now = self.progress * D;
-                let idx = 0, best = Infinity;                 /* the card whose centre is nearest the midline */
-                centres.forEach((c, i) => { const gap = Math.abs(c - now); if (gap < best) { best = gap; idx = i; } });
+                const now = self.progress * total;
+                let idx = 0, best = Infinity;                 /* the card nearest the midline, in scroll terms */
+                arrive.forEach((a, i) => {
+                    const gap = now < a ? a - now : now > a + W ? now - (a + W) : 0;   /* 0 during the dwell */
+                    if (gap < best) { best = gap; idx = i; }
+                });
                 showText(idx);
                 count.textContent = String(idx + 1).padStart(2, "0");
                 fill.style.transform = `scaleX(${self.progress})`;
                 /* the centre band: within 30% of a card-height of the midline */
                 setCentred(best <= cards[idx].offsetHeight * 0.3 ? idx : -1);
             },
-            onEnter: () => setCentred(0),                 /* the pin engages with card 1 already centred */
+            /* the pin engages with card 1 already centred. onEnter fires
+               AFTER onUpdate, so only act when we really are at the start
+               (a jump straight into the middle must not re-reveal card 1) */
+            onEnter: (self) => { if (self.progress < 0.01) setCentred(0); },
             onLeaveBack: () => setCentred(-1)             /* scrolled back above the section: reset so it replays */
         });
         depth();                                       /* resting state before any scroll */
