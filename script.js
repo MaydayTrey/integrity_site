@@ -672,7 +672,7 @@ function addressCheck(map, fit) {
                the shield stays Phil's */
             if (pin) pin.remove();
             pin = L.marker([hit.lat, hit.lng], {
-                icon: L.divIcon({ className: "map-pin", html: '<img src="assets/icon-pin.svg" alt="" width="40" height="40">', iconSize: [40, 40], iconAnchor: [20, 33] }),
+                icon: L.divIcon({ className: "map-pin", html: '<img src="assets/icon-pin.svg" alt="" width="48" height="48">', iconSize: [48, 48], iconAnchor: [24, 39] }),
                 interactive: false, zIndexOffset: 2000
             }).addTo(map);
             fit([hit.lat, hit.lng]);
