@@ -713,7 +713,8 @@
             The address goes to the US Census Bureau geocoder (free, no
             key, JSONP because it sends no CORS header), Photon as a
             fallback; the point is then tested against the six county
-            polygons in the browser. Nothing is stored.-->
+            polygons in the browser. Nothing is stored. Street suggestions
+            are optional and need a Geoapify key (see data-suggest-key).-->
         <section class="section section--check" id="service-check" aria-labelledby="check-title">
             <div class="check">
                 <div class="check__map" id="service-map" role="img" aria-label="Map of southwest Ohio with Butler, Warren, Montgomery, Hamilton, Clermont, and Preble counties outlined in red, a dot for each municipality served, and Trenton marked as home base">
@@ -729,7 +730,10 @@
 </svg>
                 </div>
 
-                <form class="check__panel" id="check-form" novalidate autocomplete="on">
+                <!--data-suggest-key: paste a Geoapify API key (free tier, domain-restricted)
+                    to turn on address-level suggestions under the street field.
+                    Empty = no suggestions; the check itself needs no key.-->
+                <form class="check__panel" id="check-form" novalidate autocomplete="on" data-suggest-key="">
                     <p class="section__eyebrow">Am I in range?</p>
                     <h2 class="check__title" id="check-title">Check your address</h2>
 
@@ -758,7 +762,7 @@
                     <button class="btn btn--primary check__btn" type="submit">Check my address</button>
 
                     <p class="check__result" id="check-result" role="status" aria-live="polite"></p>
-                    <p class="check__note">Checked against the six counties using the US Census Bureau geocoder. Suggestions come from OpenStreetMap. Your address is not stored.</p>
+                    <p class="check__note">Checked against the six counties using the US Census Bureau geocoder. Your address is not stored.</p>
                 </form>
             </div>
         </section>

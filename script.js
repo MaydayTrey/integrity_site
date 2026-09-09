@@ -475,13 +475,18 @@ function serviceMap() {
 }
 
 /* ---------- ADDRESS CHECK ----------
-   Suggestions while typing come from Photon (OpenStreetMap data, free,
-   CORS, biased to the Trenton area). The final check geocodes the
-   structured address with the US Census Bureau (free, no key, most
-   accurate for US street addresses; JSONP because it sends no CORS
-   header), Photon as a fallback. Either way the answer is decided HERE
-   by a point-in-polygon test against the six county shapes, so a
-   geocoder that guesses the county wrong cannot mislead anyone. */
+   The check geocodes the structured address with the US Census Bureau
+   (free, no key, most accurate for US street addresses because it
+   interpolates house numbers from address ranges; JSONP because it
+   sends no CORS header), Photon (OpenStreetMap) as a fallback. Either
+   way the answer is decided HERE by a point-in-polygon test against
+   the six county shapes, so a geocoder that guesses the county wrong
+   cannot mislead anyone.
+   SUGGESTIONS while typing are optional: OpenStreetMap has no house
+   number points for most of this area, so a keyless suggester can only
+   offer street names, which reads as broken. With a Geoapify key in
+   data-suggest-key on the form (free tier, restrict it to the domain),
+   the street field becomes a real address autocomplete. */
 const STATE_CODES = { ohio: "OH", indiana: "IN", kentucky: "KY", michigan: "MI", "west virginia": "WV", pennsylvania: "PA", illinois: "IL" };
 
 function inRing(ring, lng, lat) {                        /* ray casting */
@@ -527,15 +532,23 @@ function photonToParts(f) {
     const state = STATE_CODES[(p.state || "").toLowerCase()] || p.state || "";
     return { street, city, state, zip: p.postcode || "", lat: f.geometry.coordinates[1], lng: f.geometry.coordinates[0] };
 }
-/* bbox keeps suggestions inside southwest Ohio and its neighbours (a
-   generous box around the six counties); the bias pulls Trenton-area
-   matches to the top within it */
-const PHOTON_BBOX = "-85.3,38.7,-83.6,40.3";
+/* a generous box around the six counties, used to keep both geocoders
+   from wandering to another state's Main Street */
+const AREA_BBOX = { west: -85.3, south: 38.7, east: -83.6, north: 40.3 };
+const nearHome = (x) => (x.lat - SERVICE_HOME[0]) ** 2 + (x.lng - SERVICE_HOME[1]) ** 2;
 function photon(q, limit) {
-    const dist = (x) => (x.lat - SERVICE_HOME[0]) ** 2 + (x.lng - SERVICE_HOME[1]) ** 2;   /* nearest to Trenton first */
-    return fetch(`https://photon.komoot.io/api/?limit=${limit}&lang=en&bbox=${PHOTON_BBOX}&lat=${SERVICE_HOME[0]}&lon=${SERVICE_HOME[1]}&zoom=10&location_bias_scale=0.8&q=${encodeURIComponent(q)}`)
+    const bbox = `${AREA_BBOX.west},${AREA_BBOX.south},${AREA_BBOX.east},${AREA_BBOX.north}`;
+    return fetch(`https://photon.komoot.io/api/?limit=${limit}&lang=en&bbox=${bbox}&lat=${SERVICE_HOME[0]}&lon=${SERVICE_HOME[1]}&zoom=10&location_bias_scale=0.8&q=${encodeURIComponent(q)}`)
         .then((r) => r.json())
-        .then((d) => (d.features || []).map(photonToParts).filter((x) => x.street).sort((a, b) => dist(a) - dist(b)));
+        .then((d) => (d.features || []).map(photonToParts).filter((x) => x.street).sort((a, b) => nearHome(a) - nearHome(b)));
+}
+/* Geoapify autocomplete: real house-number addresses. Only used when a key is set. */
+function geoapify(q, key) {
+    const rect = `rect:${AREA_BBOX.west},${AREA_BBOX.south},${AREA_BBOX.east},${AREA_BBOX.north}`;
+    const url = `https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(q)}&filter=${rect}&bias=proximity:${SERVICE_HOME[1]},${SERVICE_HOME[0]}&limit=6&lang=en&format=json&apiKey=${encodeURIComponent(key)}`;
+    return fetch(url).then((r) => r.json()).then((d) => (d.results || [])
+        .filter((x) => x.housenumber && x.street)
+        .map((x) => ({ street: `${x.housenumber} ${x.street}`, city: x.city || x.town || x.village || "", state: x.state_code || x.state || "", zip: x.postcode || "", lat: x.lat, lng: x.lon })));
 }
 
 function addressCheck(map, fit) {
@@ -579,15 +592,21 @@ function addressCheck(map, fit) {
         closeList();
         (it.city ? zip : city).focus();
     }
+    const suggestKey = (form.dataset.suggestKey || "").trim();
+    if (!suggestKey) {                                   /* no key: a plain text field, no listbox */
+        street.removeAttribute("role"); street.removeAttribute("aria-autocomplete");
+        street.removeAttribute("aria-expanded"); street.removeAttribute("aria-controls"); street.removeAttribute("aria-haspopup");
+    }
     street.addEventListener("input", () => {
         clearTimeout(debounce);
+        if (!suggestKey) return;
         const q = street.value.trim();
-        if (q.length < 3) { closeList(); return; }
+        if (q.length < 4) { closeList(); return; }
         debounce = setTimeout(async () => {
-            const query = q + (city.value ? " " + city.value : "");
+            const query = q + (city.value ? ", " + city.value : "") + (zip.value ? " " + zip.value : "");
             lastQuery = query;
             try {
-                const found = await photon(query, 5);
+                const found = await geoapify(query, suggestKey);
                 if (lastQuery === query) openList(found);
             } catch (_) { closeList(); }
         }, 300);
