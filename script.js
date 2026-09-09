@@ -545,10 +545,18 @@ function photon(q, limit) {
 /* Geoapify autocomplete: real house-number addresses. Only used when a key is set. */
 function geoapify(q, key) {
     const rect = `rect:${AREA_BBOX.west},${AREA_BBOX.south},${AREA_BBOX.east},${AREA_BBOX.north}`;
-    const url = `https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(q)}&filter=${rect}&bias=proximity:${SERVICE_HOME[1]},${SERVICE_HOME[0]}&limit=6&lang=en&format=json&apiKey=${encodeURIComponent(key)}`;
-    return fetch(url).then((r) => r.json()).then((d) => (d.results || [])
-        .filter((x) => x.housenumber && x.street)
-        .map((x) => ({ street: `${x.housenumber} ${x.street}`, city: x.city || x.town || x.village || "", state: x.state_code || x.state || "", zip: x.postcode || "", lat: x.lat, lng: x.lon })));
+    /* limit 10, not 6: a house number on a common street name (South
+       Main) exists in six or seven towns here, and the visitor's town
+       can sit past the sixth. Typing the town or ZIP narrows it to one. */
+    const url = `https://api.geoapify.com/v1/geocode/autocomplete?text=${encodeURIComponent(q)}&filter=${rect}&bias=proximity:${SERVICE_HOME[1]},${SERVICE_HOME[0]}&limit=10&lang=en&format=json&apiKey=${encodeURIComponent(key)}`;
+    return fetch(url).then((r) => r.json()).then((d) => {
+        const seen = new Set();
+        return (d.results || [])
+            .filter((x) => x.housenumber && x.street)
+            .map((x) => ({ street: `${x.housenumber} ${x.street}`, city: x.city || x.town || x.village || "", state: x.state_code || x.state || "", zip: x.postcode || "", lat: x.lat, lng: x.lon }))
+            .filter((x) => { const k = `${x.street}|${x.city}|${x.zip}`.toLowerCase(); if (seen.has(k)) return false; seen.add(k); return true; })
+            .slice(0, 7);
+    });
 }
 
 function addressCheck(map, fit) {
