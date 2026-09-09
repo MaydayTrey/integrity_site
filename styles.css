@@ -555,21 +555,25 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .areas--list .areas__body { max-width: 900px; margin-inline: auto; }
 
 /* ---------- SERVICE CHECK (screen 2: full-bleed map + address panel) ---------- */
-.section--check { padding: 0; height: 100svh; min-height: 560px; position: relative; scroll-margin-top: 0; }
-.check { position: relative; height: 100%; }
+.section--check { padding: 0; height: 100svh; min-height: 640px; position: relative; scroll-margin-top: 0; }
+/* isolation: Leaflet's panes carry z-index 400+; this keeps them inside
+   the section's own stacking context so they can never sit over the
+   fixed nav (z-index 50 in the root context) */
+.check { position: relative; height: 100%; isolation: isolate; }
 .check__map { position: absolute; inset: 0; background: var(--grey-100); }
 .check__map .areas__svg { width: 100%; height: 100%; }
 .check__panel {
     position: absolute; left: 14px; right: 14px; bottom: 14px; z-index: 500;   /* above Leaflet's panes (400) */
-    padding: 18px 18px 14px;
-    background: rgba(255, 255, 255, .92);
+    max-height: calc(100% - 28px); overflow-y: auto;          /* never taller than the map it sits on */
+    padding: 16px 18px 12px;
+    background: rgba(255, 255, 255, .94);
     -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
     border: 1px solid var(--grey-300); border-top: 4px solid; border-image: var(--grad-brand) 1;
     box-shadow: 0 12px 40px rgba(35, 31, 32, .22);
 }
 .check__title {
-    font-family: var(--font-display); font-weight: 400; font-size: clamp(30px, 6vw, 40px);
-    line-height: 1; letter-spacing: .01em; text-transform: uppercase; margin: 0 0 12px;
+    font-family: var(--font-display); font-weight: 400; font-size: clamp(28px, 5vw, 34px);
+    line-height: 1; letter-spacing: .01em; text-transform: uppercase; margin: 0 0 10px;
 }
 .check__label { display: block; font-family: var(--font-ui); font-weight: 500; font-size: 12px; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 4px; }
 .check__field { position: relative; margin-bottom: 10px; }
@@ -592,12 +596,13 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .check__option strong { display: block; font-weight: 500; }
 .check__option span { color: var(--grey-700); font-size: 13px; }
 .check__option:hover, .check__option[aria-selected="true"] { background: #FBE4E5; }
-.check__result { min-height: 1.5em; margin-top: 12px; font-size: 15px; line-height: 1.5; }
+.check__result { margin-top: 10px; font-size: 15px; line-height: 1.5; }
+.check__result:empty { display: none; }
 .check__result.is-yes { color: #1D7A3A; font-weight: 500; }
 .check__result.is-no  { color: var(--red-dark); font-weight: 500; }
 .check__result.is-err { color: var(--grey-700); }
 .check__result a { color: var(--red-dark); text-decoration: underline; text-underline-offset: 3px; }
-.check__note { margin-top: 10px; font-size: 12px; color: var(--grey-700); }
+.check__note { margin-top: 8px; font-size: 12px; line-height: 1.4; color: var(--grey-700); }
 /* the checked address on the map */
 .map-pin img { display: block; filter: drop-shadow(0 2px 4px rgba(35, 31, 32, .4)); }
 .areas__svg { width: 100%; height: 100%; display: block; background: var(--grey-100); }
@@ -817,9 +822,14 @@ body.has-dialog { overflow: hidden; }
     /* areas served: two-column county list; the checker panel docks top-left */
     .counties { grid-template-columns: 1fr 1fr; }
     .areas__copy { font-size: 17px; text-align: center; }
-    .check__panel { left: var(--gutter); right: auto; top: calc(var(--nav-h) + 24px); bottom: auto; width: min(440px, 44vw); padding: 24px 24px 18px; }
+    /* desktop: docked top-left over the map, never taller than the room under the nav */
+    .section--check { min-height: 720px; }
+    .check__panel {
+        left: var(--gutter); right: auto; top: calc(var(--nav-h) + 20px); bottom: auto;
+        width: min(440px, 40vw); max-height: calc(100% - var(--nav-h) - 40px);
+        padding: 20px 22px 16px;
+    }
     .check__grid { grid-template-columns: minmax(0, 1fr) 72px 104px; }
-    .check__note { font-size: 13px; }
 }
 @media (min-width: 1024px) {
     .about__facts { grid-template-columns: repeat(3, 1fr); }   /* three-up only once each card has ~180px */
