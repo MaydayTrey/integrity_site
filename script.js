@@ -115,11 +115,14 @@ function heroIntro() {
    Empty shells for now; batch handles however many we add later. */
 function sectionReveals() {
     if (reduceMotion) return;
-    gsap.set(".section__inner", { autoAlpha: 0, y: 24 });
-    ScrollTrigger.batch(".section__inner", {
-        start: "top 80%",
+    /* section heads and the service blocks reveal separately so the
+       four blocks can cascade instead of arriving as one slab */
+    const targets = ".section__head, .placeholder .section__inner, .service";
+    gsap.set(targets, { autoAlpha: 0, y: 24 });
+    ScrollTrigger.batch(targets, {
+        start: "top 85%",
         once: true,
-        onEnter: (els) => gsap.to(els, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power2.out", stagger: 0.1 })
+        onEnter: (els) => gsap.to(els, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power2.out", stagger: 0.12 })
     });
 }
 

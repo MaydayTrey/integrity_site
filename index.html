@@ -262,11 +262,49 @@
             </ul>
         </section>
 
-        <!--2. SERVICES: four blocks with inline SVG icons, one sentence each-->
-        <section class="section section--services placeholder" id="services" aria-labelledby="services-title">
+        <!--2. SERVICES: four blocks, icon + name + one sentence.
+            Icons are standalone SVGs in /assets, painted through a CSS
+            mask so they take the brand gradient like the trust strip.
+            Copy below is PLACEHOLDER written in Phil's voice; swap for
+            his own sentences when they arrive (due 9/13).-->
+        <section class="section section--services" id="services" aria-labelledby="services-title">
             <div class="section__inner">
-                <h2 class="section__title" id="services-title">Services</h2>
-                <p class="placeholder__note">Kitchens, Bathrooms, Basements, Other. Four icon blocks, one sentence each. Copy due 9/13.</p>
+                <header class="section__head">
+                    <p class="section__eyebrow">What we do</p>
+                    <h2 class="section__title" id="services-title">Remodeling services</h2>
+                    <p class="section__lede" data-placeholder>Kitchens, bathrooms, basements, and the jobs in between, done right the first time for homeowners across the Miami Valley.</p>
+                </header>
+
+                <ul class="services">
+                    <li class="service">
+                        <span class="service__icon service__icon--kitchen" aria-hidden="true"></span>
+                        <div class="service__body">
+                            <h3 class="service__title">Kitchen Remodeling</h3>
+                            <p class="service__text" data-placeholder>Cabinets, countertops, tile backsplashes, and new flooring, planned around how your family actually uses the room.</p>
+                        </div>
+                    </li>
+                    <li class="service">
+                        <span class="service__icon service__icon--bathroom" aria-hidden="true"></span>
+                        <div class="service__body">
+                            <h3 class="service__title">Bathroom Remodeling</h3>
+                            <p class="service__text" data-placeholder>From a worn-out shower to a finished tile surround with new fixtures, with any water damage or mold handled properly before the pretty part goes in.</p>
+                        </div>
+                    </li>
+                    <li class="service">
+                        <span class="service__icon service__icon--basement" aria-hidden="true"></span>
+                        <div class="service__body">
+                            <h3 class="service__title">Basement Finishing</h3>
+                            <p class="service__text" data-placeholder>Framing, drywall, flooring, and finish work that turns unused square footage into living space your family will use every day.</p>
+                        </div>
+                    </li>
+                    <li class="service">
+                        <span class="service__icon service__icon--other" aria-hidden="true"></span>
+                        <div class="service__body">
+                            <h3 class="service__title">Flooring, Painting &amp; More</h3>
+                            <p class="service__text" data-placeholder>Flooring, painting, drywall, windows and doors, fencing, and the odd jobs in between. If it makes your home better, Phil is not afraid to take it on.</p>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </section>
 

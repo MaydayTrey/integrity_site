@@ -224,23 +224,64 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .trust__item:nth-child(3) { flex-basis: 100%; justify-content: center; }
 .trust__icon { display: none; width: 20px; height: 20px; flex: none; }
 
-/* ---------- SECTION SHELLS (100vw x 100vh while empty) ---------- */
+/* ---------- SECTION SHELLS ---------- */
 .section {
-    width: 100vw; min-height: 100vh;
-    display: grid; place-items: center;
-    padding: 64px var(--gutter);
+    width: 100%;
+    padding: 72px var(--gutter);
     scroll-margin-top: var(--nav-h);
 }
+/* empty sections stay 100vw x 100vh so we can see them while building;
+   a built section sizes to its content */
+.section.placeholder {
+    width: 100%; min-height: 100vh;   /* 100% = viewport width without the scrollbar sliver 100vw adds */
+    display: grid; place-items: center;
+}
 .section__inner { width: min(100%, 1200px); margin-inline: auto; }
+.section__head { text-align: center; max-width: 62ch; margin: 0 auto 40px; }
+.section__eyebrow {
+    font-family: var(--font-ui); font-weight: 500; font-size: 13px;
+    letter-spacing: .18em; text-transform: uppercase; color: var(--red);
+    margin-bottom: 10px;
+}
 .section__title {
     font-family: var(--font-display); font-weight: 400;
     font-size: clamp(40px, 8vw, 72px); line-height: 1; letter-spacing: .01em;
     text-transform: uppercase;
 }
+.section__lede {
+    margin-top: 14px; font-size: 16px; line-height: 1.6; color: var(--ink);
+}
 .placeholder__note {
     margin-top: 12px; max-width: 60ch;
     font-size: 15px; color: var(--grey-700);
 }
+
+/* ---------- SERVICES ---------- */
+.services { display: grid; gap: 32px; }
+.service {
+    display: grid; grid-template-columns: 64px 1fr; gap: 18px;
+    align-items: start;
+}
+/* MASK, NOT IMG: an <img> can't be recoloured by CSS. Using the SVG as
+   a mask means the box paints its background (the brand gradient) only
+   where the icon has ink. Same trick as the trust icons, one asset each,
+   and the files stay plain black SVGs that work anywhere else. */
+.service__icon {
+    width: 64px; aspect-ratio: 1;
+    background: var(--grad-brand);
+    -webkit-mask: var(--icon) center / contain no-repeat;
+            mask: var(--icon) center / contain no-repeat;
+}
+.service__icon--kitchen  { --icon: url("assets/icon-kitchen.svg"); }
+.service__icon--bathroom { --icon: url("assets/icon-bathroom.svg"); }
+.service__icon--basement { --icon: url("assets/icon-basement.svg"); }
+.service__icon--other    { --icon: url("assets/icon-other.svg"); }
+.service__title {
+    font-family: var(--font-ui); font-weight: 600; font-size: 17px;
+    letter-spacing: .1em; text-transform: uppercase; line-height: 1.2;
+    margin-bottom: 8px;
+}
+.service__text { font-size: 16px; line-height: 1.6; max-width: 46ch; }
 /* alternating surfaces so the empty sections are visible while we build */
 .section--services  { background: var(--white); }
 .section--work      { background: var(--grey-100); }
@@ -312,6 +353,24 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
         content: ""; width: 5px; height: 5px; border-radius: 50%;
         background: var(--grad-brand); margin: 0;
     }
+}
+
+/* services: one wider column on tablets (two columns at 768 leave only
+   ~190px for text), two columns with bigger icons from 1024 */
+@media (min-width: 768px) {
+    .section { padding: 96px var(--gutter); }
+    .section__head { margin-bottom: 56px; }
+    .section__lede { font-size: 18px; }
+    .services { gap: 44px; max-width: 640px; margin-inline: auto; }
+    .service { grid-template-columns: 80px 1fr; gap: 28px; }
+    .service__icon { width: 80px; }
+    .service__title { font-size: 18px; }
+    .service__text { font-size: 17px; max-width: none; }
+}
+@media (min-width: 1024px) {
+    .services { grid-template-columns: 1fr 1fr; gap: 56px 64px; max-width: none; }
+    .service { grid-template-columns: 96px 1fr; }
+    .service__icon { width: 96px; }
 }
 
 /* landscape phones and short laptops: the hero can't afford 176px of
