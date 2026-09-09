@@ -502,13 +502,23 @@
             review markup on a LocalBusiness page, so the schema would
             add bytes and no rich result.-->
         <section class="section section--reviews" id="reviews" aria-labelledby="reviews-title">
-            <div class="section__inner">
-                <header class="section__head">
+            <div class="section__inner reviews-layout">
+                <header class="section__head reviews-head">
                     <p class="section__eyebrow">Reviews</p>
                     <h2 class="section__title" id="reviews-title">What customers say</h2>
                     <p class="section__lede">Straight from Phil's Facebook page, in their own words.</p>
+                    <!--progress readout for the scroll carousel; JS updates it-->
+                    <div class="reviews-progress" aria-hidden="true">
+                        <span class="reviews-progress__count">01</span>
+                        <span class="reviews-progress__track"><span class="reviews-progress__fill"></span></span>
+                        <span class="reviews-progress__total">08</span>
+                    </div>
+                    <p class="reviews-hint" aria-hidden="true">Scroll to travel through the jobs</p>
                 </header>
 
+                <!--the window clips the travelling column; the column is
+                    moved with a transform by the scrubbed timeline-->
+                <div class="reviews-window">
                 <ul class="reviews">
                     <li class="review review--featured"><!--CONFIRM-->
                         <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/bathroom-1-before.webp" loading="lazy" decoding="async" alt=""><img class="review__after" src="assets/work/bathroom-1-after.webp" loading="lazy" decoding="async" alt=""></div>
@@ -602,6 +612,7 @@
                         </div>
                     </li>
                 </ul>
+                </div>
             </div>
         </section>
 

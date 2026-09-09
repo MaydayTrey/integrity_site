@@ -211,20 +211,92 @@ function jobDialog() {
     dialog.addEventListener("close", () => document.body.classList.remove("has-dialog"));
 }
 
-/* ---------- REVIEWS: after photo fades in as the card reaches mid-viewport ----------
-   One ScrollTrigger per card. Active while the card's top is above the
-   62% line and its bottom is below the 38% line, i.e. while the card
-   straddles the centre band. toggleClass adds and removes .is-after
-   in both scroll directions, so the CSS owns the actual transition. */
-function reviewReveals() {
-    const cards = gsap.utils.toArray(".review");
-    if (reduceMotion) { cards.forEach((c) => c.classList.add("is-after")); return; }
-    cards.forEach((card) => ScrollTrigger.create({
-        trigger: card,
-        start: "top 62%",
-        end: "bottom 38%",
-        toggleClass: { targets: card, className: "is-after" }
-    }));
+/* ---------- REVIEWS: pinned scroll carousel ----------
+   One scrubbed timeline measured in PIXELS OF SCROLL: the section pins,
+   the column travels up by D px over D px of scrolling (so it moves 1:1
+   with the wheel), and each card's after photo wipes in bottom-to-top
+   across the stretch of scroll where that card's middle crosses the
+   window's middle. Padding on the column lets the first and last
+   cards reach the middle too. Snap points sit on each card's centre,
+   which is what makes it feel like a carousel rather than a list. */
+function reviewCarousel() {
+    const section = document.querySelector(".section--reviews");
+    const win     = section.querySelector(".reviews-window");
+    const column  = section.querySelector(".reviews");
+    const cards   = gsap.utils.toArray(".review");
+    const afters  = cards.map((c) => c.querySelector(".review__before + .review__after"));
+    const count   = section.querySelector(".reviews-progress__count");
+    const fill    = section.querySelector(".reviews-progress__fill");
+
+    if (reduceMotion) {
+        gsap.set(afters.filter(Boolean), { clipPath: "inset(0% 0 0 0)" });   /* everything in its finished state */
+        return;
+    }
+    section.classList.add("is-carousel");
+
+    let tl, trigger;
+    function build() {
+        if (trigger) trigger.kill();
+        if (tl) tl.kill();
+        gsap.set(column, { y: 0, paddingTop: 0, paddingBottom: 0 });
+
+        const H = win.clientHeight;
+        const first = cards[0], last = cards[cards.length - 1];
+        column.style.paddingTop    = `${Math.max(H / 2 - first.offsetHeight / 2, 0)}px`;
+        column.style.paddingBottom = `${Math.max(H / 2 - last.offsetHeight / 2, 0)}px`;
+        const D = Math.max(column.scrollHeight - H, 1);
+
+        tl = gsap.timeline({ defaults: { ease: "none" } });
+        tl.to(column, { y: -D, duration: D }, 0);
+
+        const centres = [];                       /* timeline time (= scroll px) when each card is centred */
+        cards.forEach((card, i) => {
+            const centre = card.offsetTop + card.offsetHeight / 2 - H / 2;
+            centres.push(centre);
+            if (!afters[i]) return;
+            /* the wipe runs over most of a card-height of scrolling and
+               COMPLETES as the card reaches the middle, so a card resting
+               on its snap point shows the finished job, and the next one
+               reveals on its way up */
+            const span = card.offsetHeight * 0.9;
+            if (centre <= 0) {                        /* the first card starts centred: show it finished */
+                tl.set(afters[i], { clipPath: "inset(0% 0 0 0)" }, 0);
+                return;
+            }
+            tl.fromTo(afters[i],
+                { clipPath: "inset(100% 0 0 0)" },
+                { clipPath: "inset(0% 0 0 0)", duration: span },
+                Math.max(centre - span, 0));
+        });
+
+        trigger = ScrollTrigger.create({
+            trigger: section,
+            start: "top top",
+            end: () => "+=" + D,
+            pin: true,
+            scrub: 0.5,
+            animation: tl,
+            /* inertia:false snaps to the NEAREST card centre when scrolling
+               stops, instead of projecting where a flick would have landed;
+               a fast flick otherwise skips to the last card */
+            snap: { snapTo: centres.map((c) => c / D), duration: { min: 0.2, max: 0.6 }, delay: 0.05, ease: "power1.inOut", inertia: false },
+            onUpdate(self) {
+                const t = self.progress * D;
+                let idx = 0;
+                centres.forEach((c, i) => { if (t >= c - cards[i].offsetHeight / 2) idx = i; });
+                count.textContent = String(idx + 1).padStart(2, "0");
+                fill.style.transform = `scaleX(${self.progress})`;
+            }
+        });
+    }
+    build();
+
+    /* card heights change with the viewport, so rebuild on resize */
+    let timer;
+    window.addEventListener("resize", () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => { build(); ScrollTrigger.refresh(); }, 200);
+    });
 }
 
 /* ---------- SECTION FADE-INS (ScrollTrigger) ----------
@@ -233,7 +305,8 @@ function sectionReveals() {
     if (reduceMotion) return;
     /* section heads and the service blocks reveal separately so the
        four blocks can cascade instead of arriving as one slab */
-    const targets = ".section__head, .placeholder .section__inner, .service, .segments, .panel:not([hidden]), .review";
+    /* review cards are excluded: they live inside the pinned, transformed column */
+    const targets = ".section__head, .placeholder .section__inner, .service, .segments, .panel:not([hidden])";
     gsap.set(targets, { autoAlpha: 0, y: 24 });
     ScrollTrigger.batch(targets, {
         start: "top 85%",
@@ -248,6 +321,6 @@ document.fonts.ready.then(() => {
     heroIntro();
     ourWork();
     jobDialog();
-    reviewReveals();
+    reviewCarousel();
     sectionReveals();
 });
