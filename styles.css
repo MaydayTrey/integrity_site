@@ -555,7 +555,9 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .areas--list .areas__body { max-width: 900px; margin-inline: auto; }
 
 /* ---------- SERVICE CHECK (screen 2: full-bleed map + address panel) ---------- */
-.section--check { padding: 0; height: 100svh; min-height: 640px; position: relative; scroll-margin-top: 0; }
+/* .section.section--check: two classes so this beats the desktop
+   .section { padding: 96px } rule that comes later in the file */
+.section.section--check { padding: 0; height: 100svh; min-height: 640px; position: relative; scroll-margin-top: 0; }
 /* isolation: Leaflet's panes carry z-index 400+; this keeps them inside
    the section's own stacking context so they can never sit over the
    fixed nav (z-index 50 in the root context) */
