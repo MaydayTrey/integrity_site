@@ -429,12 +429,28 @@ function serviceMap() {
             ? { paddingTopLeft: [r.width + 40, 110], paddingBottomRight: [24, 24] }
             : { paddingTopLeft: [12, 72], paddingBottomRight: [12, r.height + 12] };
     }
+    /* The counties are the focal point: fit them tightly, zoom in a notch,
+       then shift the view so they sit beside the panel (desktop) or above
+       it (phones). Only when a checked address has to be shown does the
+       view widen to keep both the counties and the pin clear of the panel. */
     function fit(extra) {
         if (!counties) return;
         map.invalidateSize();
-        const bounds = counties.getBounds();
-        if (extra) bounds.extend(extra);
-        map.fitBounds(bounds, framePadding());
+        if (extra) {
+            map.fitBounds(counties.getBounds().extend(extra), framePadding());
+            return;
+        }
+        const panel = el.parentElement.querySelector(".check__panel");
+        const r = panel ? panel.getBoundingClientRect() : { width: 0, height: 0 };
+        const navH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--nav-h")) || 0;
+        if (wide.matches) {
+            /* as tall as the room under the header allows, then slid right of the panel */
+            map.fitBounds(counties.getBounds(), { paddingTopLeft: [16, navH + 12], paddingBottomRight: [16, 16], animate: false });
+            map.panBy([-(r.width / 2 + 24), 0], { animate: false });
+        } else {
+            /* phones: fill the width; the bottom edge may tuck under the panel */
+            map.fitBounds(counties.getBounds(), { paddingTopLeft: [10, navH + 10], paddingBottomRight: [10, r.height * 0.45], animate: false });
+        }
     }
 
     fetch("assets/service-counties.geojson")
