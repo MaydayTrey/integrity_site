@@ -596,6 +596,13 @@ function addressCheck(map, fit) {
     if (!suggestKey) {                                   /* no key: a plain text field, no listbox */
         street.removeAttribute("role"); street.removeAttribute("aria-autocomplete");
         street.removeAttribute("aria-expanded"); street.removeAttribute("aria-controls"); street.removeAttribute("aria-haspopup");
+    } else {                                             /* free plan terms: credit the suggestion source */
+        const note = form.querySelector(".check__note");
+        if (note) {
+            note.append(" Suggestions ");
+            const a = document.createElement("a"); a.href = "https://www.geoapify.com/"; a.rel = "noopener"; a.textContent = "powered by Geoapify"; a.className = "areas__link";
+            note.append(a, ".");
+        }
     }
     /* budget: at most this many suggestion requests per visitor per
        session, so one runaway tab or a bot cannot drain the daily
