@@ -552,29 +552,37 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 /* ---------- AREAS SERVED ---------- */
 .areas { display: grid; gap: 28px; }
 .areas__map {
-    position: relative; aspect-ratio: 1; overflow: hidden;    /* square on phones: the ring needs the height */
-    background: var(--grey-100); border: 1px solid var(--grey-300);
+    position: relative; aspect-ratio: 1; overflow: hidden;
+    background: var(--white); border: 1px solid var(--grey-300);
 }
-@media (min-width: 768px) { .areas__map { aspect-ratio: 900 / 760; min-height: 360px; } }
 .areas__svg { width: 100%; height: 100%; display: block; }
-.areas__map.is-live .areas__svg { display: none; }     /* the live Leaflet map took over */
-/* Leaflet chrome in brand clothes */
-.areas__map.is-live { border-color: var(--grey-500); }
-.leaflet-container { font-family: var(--font-body); background: var(--grey-100); }
-/* the basemap in brand greys; overlays live in another pane and stay red */
+.areas__map.is-live .areas__svg { display: none; }     /* the live cutout map took over */
+/* Leaflet as a static cutout: blank outside the counties, basemap in
+   brand greys inside (the grayscale filter hits the tile pane only, so
+   the red outlines and ink markers in the other panes keep their colour) */
+.leaflet-container { font-family: var(--font-body); background: var(--white); cursor: default; }
 .leaflet-tile-pane { filter: grayscale(1) contrast(.9) brightness(1.06); }
+.map-clip { position: absolute; width: 0; height: 0; }
 .leaflet-control-attribution { font-size: 10px; background: rgba(255, 255, 255, .85); color: var(--grey-700); }
 .leaflet-control-attribution a { color: var(--grey-700); }
-.leaflet-bar a { color: var(--ink); }
 .map-tip {
-    font-family: var(--font-ui); font-weight: 500; font-size: 13px; letter-spacing: .08em; text-transform: uppercase;
-    color: var(--ink); background: var(--white); border: 1px solid var(--grey-300); border-radius: 0; box-shadow: 0 4px 14px rgba(35, 31, 32, .18);
+    font-family: var(--font-ui); font-weight: 500; font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--ink); background: var(--white); border: 1px solid var(--grey-300); border-radius: 0;
+    box-shadow: 0 4px 14px rgba(35, 31, 32, .18); padding: 3px 7px;
 }
-.map-tip--home { color: var(--red-dark); font-weight: 600; }
+.map-tip--pin { background: rgba(255, 255, 255, .9); border-color: transparent; box-shadow: none; padding: 1px 5px; }
+.map-tip--pin::before { display: none; }
+.map-tip--home { color: var(--red-dark); font-weight: 600; border-color: var(--red); }
+@media (max-width: 767px) { .map-tip--pin { display: none; } }   /* phones: dots and the home label only; hover/tap still names a town */
 .map-home img { display: block; filter: drop-shadow(0 2px 4px rgba(35, 31, 32, .4)); }
-/* the map's own styling: brand greys, red ring, ink cities */
+/* the map's own styling (SVG fallback): red service counties, ink cities */
+.map__neighbor { fill: var(--grey-100); stroke: var(--grey-500); stroke-width: 1.2; stroke-linejoin: round; }
+.map__neighbor-label {
+    font-family: var(--font-ui); font-weight: 500; font-size: 17px; letter-spacing: .12em; text-transform: uppercase;
+    fill: var(--grey-500); text-anchor: middle; pointer-events: none;
+}
 .map__ring { fill: url(#map-ring-fill); stroke: var(--red); stroke-width: 2.5; stroke-dasharray: 10 8; }
-.map__county { fill: var(--white); stroke: var(--grey-700); stroke-width: 1.5; stroke-linejoin: round; transition: fill .25s; }
+.map__county { fill: var(--white); stroke: var(--red-dark); stroke-width: 2; stroke-linejoin: round; transition: fill .25s; }
 .map__county:hover { fill: #FBE4E5; }
 .map__county-label {
     font-family: var(--font-display); font-size: 30px; letter-spacing: .06em; text-transform: uppercase;
@@ -590,6 +598,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
     .map__city text { font-size: 17px; }
     .map__county-label { font-size: 36px; }
     .map__home-label { font-size: 18px; }
+    .map__neighbor-label { font-size: 22px; }
 }
 .areas__copy { font-size: 16px; line-height: 1.65; margin-bottom: 20px; }
 .counties { display: grid; gap: 10px; }
