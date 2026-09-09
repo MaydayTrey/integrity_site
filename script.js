@@ -398,23 +398,11 @@ function reviewCarousel() {
 /* ---------- AREAS SERVED: static map (Leaflet + OpenStreetMap) ----------
    Free and keyless: Leaflet is open source and OpenStreetMap serves
    its tiles without a key. The map is STATIC (no drag, no zoom) so the
-   page scroll never gets trapped: it is framed on the six service
-   counties, which are outlined in red over the full street map so the
-   surrounding towns give people their bearings. County shapes come from
-   assets/service-counties.geojson (Census boundaries). The inline SVG
-   in the HTML is the fallback until this runs. */
-const SERVICE_HOME  = [39.4809, -84.4577];   /* Trenton, OH */
-const SERVICE_CITIES = [
-    ["Hamilton", 39.3995, -84.5613, true], ["Fairfield", 39.3454, -84.5603], ["Monroe", 39.4403, -84.3622],
-    ["Middletown", 39.5151, -84.3983, true], ["Oxford", 39.5070, -84.7452, true],
-    ["Mason", 39.3600, -84.3099, true], ["Lebanon", 39.4354, -84.2030, true], ["Springboro", 39.5523, -84.2333],
-    ["Franklin", 39.5589, -84.3041], ["Kettering", 39.6895, -84.1688], ["Centerville", 39.6284, -84.1594],
-    ["Miamisburg", 39.6428, -84.2866], ["West Carrollton", 39.6723, -84.2522], ["Dayton", 39.7589, -84.1916, true],
-    ["Trotwood", 39.7973, -84.3113], ["Blue Ash", 39.2320, -84.3783], ["Sharonville", 39.2681, -84.4133],
-    ["Reading", 39.2237, -84.4422], ["Norwood", 39.1556, -84.4597, true], ["St. Bernard", 39.1670, -84.4986],
-    ["Forest Park", 39.2903, -84.5041], ["Loveland", 39.2689, -84.2638], ["Milford", 39.1753, -84.2944, true],
-    ["Eaton", 39.7439, -84.6366, true]
-];
+   page scroll never gets trapped. It is framed tightly on the six
+   service counties, which are outlined in red; the basemap's own town
+   names do the labelling, so the only marker is the shield at home.
+   County shapes come from assets/service-counties.geojson (Census). */
+const SERVICE_HOME = [39.4809, -84.4577];   /* Trenton, OH */
 
 function serviceMap() {
     const el = document.getElementById("service-map");
@@ -431,48 +419,54 @@ function serviceMap() {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
+    const wide = window.matchMedia("(min-width: 768px)");
     let counties = null;
-    function fit() {
+    /* keep the counties clear of the docked panel: left/top on desktop, bottom on phones */
+    function framePadding() {
+        const panel = el.parentElement.querySelector(".check__panel");
+        const r = panel ? panel.getBoundingClientRect() : { width: 0, height: 0 };
+        return wide.matches
+            ? { paddingTopLeft: [r.width + 40, 110], paddingBottomRight: [24, 24] }
+            : { paddingTopLeft: [12, 72], paddingBottomRight: [12, r.height + 12] };
+    }
+    function fit(extra) {
         if (!counties) return;
         map.invalidateSize();
-        map.fitBounds(counties.getBounds(), { padding: [18, 18] });
+        const bounds = counties.getBounds();
+        if (extra) bounds.extend(extra);
+        map.fitBounds(bounds, framePadding());
     }
 
     fetch("assets/service-counties.geojson")
         .then((r) => r.json())
         .then((gj) => {
-            counties = L.geoJSON(gj, {
-                style: { color: "#BA1E23", weight: 2, fillColor: "#ED1C24", fillOpacity: 0.07 },
-                onEachFeature: (f, layer) => layer.bindTooltip(`${f.properties.name} County`, { sticky: true, className: "map-tip" })
-            }).addTo(map);
+            counties = L.geoJSON(gj, { style: { color: "#BA1E23", weight: 2, fillColor: "#ED1C24", fillOpacity: 0.07 }, interactive: false }).addTo(map);
             fit();
             el.classList.add("is-live");
         })
         .catch(() => {});                                  /* the SVG fallback stays */
 
-    SERVICE_CITIES.forEach(([name, lat, lng, label]) => L.circleMarker([lat, lng], {
-        radius: 4.5, color: "#FFFFFF", weight: 1.5, fillColor: "#231F20", fillOpacity: 1
-    }).bindTooltip(name, { permanent: !!label, direction: "right", offset: [6, 0], className: "map-tip" + (label ? " map-tip--pin" : "") }).addTo(map));
-
     L.marker(SERVICE_HOME, {
-        icon: L.divIcon({ className: "map-home", html: '<img src="assets/logo-shield.svg" alt="" width="30" height="32">', iconSize: [30, 32], iconAnchor: [15, 16] }),
+        icon: L.divIcon({ className: "map-home", html: '<img src="assets/logo-shield.svg" alt="" width="34" height="36" title="Integrity Restorations and Remodeling, Trenton">', iconSize: [34, 36], iconAnchor: [17, 18] }),
         title: "Integrity Restorations and Remodeling, Trenton", zIndexOffset: 1000, interactive: false
-    }).bindTooltip("Home base", { permanent: true, direction: "top", offset: [0, -16], className: "map-tip map-tip--home" }).addTo(map);
+    }).addTo(map);
 
     let timer;
-    window.addEventListener("resize", () => { clearTimeout(timer); timer = setTimeout(fit, 200); });
+    window.addEventListener("resize", () => { clearTimeout(timer); timer = setTimeout(() => fit(), 200); });
     ScrollTrigger.addEventListener("refresh", () => map.invalidateSize());
 
-    addressCheck(map, () => counties);
+    addressCheck(map, fit);
 }
 
 /* ---------- ADDRESS CHECK ----------
-   Geocode with the US Census Bureau (free, no key, most accurate for US
-   street addresses; JSONP because it sends no CORS header), fall back
-   to Photon (komoot, CORS). Either way the answer is decided HERE by a
-   point-in-polygon test against the six county shapes, so a geocoder
-   that guesses the county wrong cannot mislead anyone. */
-const SERVICE_FIPS = ["39017", "39165", "39113", "39061", "39025", "39135"];
+   Suggestions while typing come from Photon (OpenStreetMap data, free,
+   CORS, biased to the Trenton area). The final check geocodes the
+   structured address with the US Census Bureau (free, no key, most
+   accurate for US street addresses; JSONP because it sends no CORS
+   header), Photon as a fallback. Either way the answer is decided HERE
+   by a point-in-polygon test against the six county shapes, so a
+   geocoder that guesses the county wrong cannot mislead anyone. */
+const STATE_CODES = { ohio: "OH", indiana: "IN", kentucky: "KY", michigan: "MI", "west virginia": "WV", pennsylvania: "PA", illinois: "IL" };
 
 function inRing(ring, lng, lat) {                        /* ray casting */
     let inside = false;
@@ -492,7 +486,7 @@ function countyAt(gj, lng, lat) {
     return null;
 }
 
-function geocodeCensus(address) {
+function geocodeCensus(parts) {
     return new Promise((resolve, reject) => {
         const cb = "censusCb" + Date.now();
         const s = document.createElement("script");
@@ -505,65 +499,129 @@ function geocodeCensus(address) {
             resolve({ label: m.matchedAddress, lat: m.coordinates.y, lng: m.coordinates.x });
         };
         s.onerror = () => { cleanup(); reject(new Error("census")); };
-        s.src = "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?benchmark=Public_AR_Current&format=jsonp"
-              + "&callback=" + cb + "&address=" + encodeURIComponent(address);
+        const q = new URLSearchParams({ street: parts.street, city: parts.city, state: parts.state, zip: parts.zip, benchmark: "Public_AR_Current", format: "jsonp", callback: cb });
+        s.src = "https://geocoding.geo.census.gov/geocoder/locations/address?" + q.toString();
         document.head.appendChild(s);
     });
 }
-function geocodePhoton(address) {
-    return fetch("https://photon.komoot.io/api/?limit=1&lang=en&q=" + encodeURIComponent(address))
+function photonToParts(f) {
+    const p = f.properties;
+    const street = [p.housenumber, p.street || (p.type === "street" ? p.name : "")].filter(Boolean).join(" ");
+    const city = p.city || p.town || p.village || p.county || "";
+    const state = STATE_CODES[(p.state || "").toLowerCase()] || p.state || "";
+    return { street, city, state, zip: p.postcode || "", lat: f.geometry.coordinates[1], lng: f.geometry.coordinates[0] };
+}
+/* bbox keeps suggestions inside southwest Ohio and its neighbours (a
+   generous box around the six counties); the bias pulls Trenton-area
+   matches to the top within it */
+const PHOTON_BBOX = "-85.3,38.7,-83.6,40.3";
+function photon(q, limit) {
+    const dist = (x) => (x.lat - SERVICE_HOME[0]) ** 2 + (x.lng - SERVICE_HOME[1]) ** 2;   /* nearest to Trenton first */
+    return fetch(`https://photon.komoot.io/api/?limit=${limit}&lang=en&bbox=${PHOTON_BBOX}&lat=${SERVICE_HOME[0]}&lon=${SERVICE_HOME[1]}&zoom=10&location_bias_scale=0.8&q=${encodeURIComponent(q)}`)
         .then((r) => r.json())
-        .then((d) => {
-            const f = d.features && d.features[0];
-            if (!f) return null;
-            const p = f.properties;
-            const label = [p.housenumber && p.street ? `${p.housenumber} ${p.street}` : p.name || p.street, p.city || p.town || p.village, p.state].filter(Boolean).join(", ");
-            return { label, lat: f.geometry.coordinates[1], lng: f.geometry.coordinates[0] };
-        });
+        .then((d) => (d.features || []).map(photonToParts).filter((x) => x.street).sort((a, b) => dist(a) - dist(b)));
 }
 
-function addressCheck(map, getCounties) {
+function addressCheck(map, fit) {
     const form   = document.getElementById("check-form");
-    const input  = document.getElementById("check-address");
-    const result = document.getElementById("check-result");
     if (!form) return;
-    let pin = null, geo = null;
+    const street = document.getElementById("check-street");
+    const city   = document.getElementById("check-city");
+    const state  = document.getElementById("check-state");
+    const zip    = document.getElementById("check-zip");
+    const list   = document.getElementById("check-suggest");
+    const result = document.getElementById("check-result");
+    const btn    = form.querySelector(".check__btn");
+    let pin = null, geo = null, items = [], active = -1, debounce, lastQuery = "";
     fetch("assets/service-counties.geojson").then((r) => r.json()).then((gj) => { geo = gj; });
 
-    function say(cls, html) { result.className = "check__result " + cls; result.innerHTML = html; }
+    /* --- suggestions: an ARIA combobox over the street field --- */
+    function closeList() { list.hidden = true; list.replaceChildren(); street.setAttribute("aria-expanded", "false"); active = -1; }
+    function openList(found) {
+        items = found;
+        list.replaceChildren(...found.map((it, i) => {
+            const li = document.createElement("li");
+            li.className = "check__option"; li.setAttribute("role", "option"); li.id = `check-opt-${i}`; li.setAttribute("aria-selected", "false");
+            const strong = document.createElement("strong"); strong.textContent = it.street;
+            const span = document.createElement("span"); span.textContent = [it.city, it.state, it.zip].filter(Boolean).join(", ");
+            li.append(strong, span);
+            li.addEventListener("mousedown", (e) => { e.preventDefault(); choose(i); });   /* mousedown: before the input blurs */
+            return li;
+        }));
+        list.hidden = found.length === 0;
+        street.setAttribute("aria-expanded", String(found.length > 0));
+        active = -1;
+    }
+    function highlight(i) {
+        active = i;
+        [...list.children].forEach((li, k) => li.setAttribute("aria-selected", String(k === i)));
+        street.setAttribute("aria-activedescendant", i >= 0 ? `check-opt-${i}` : "");
+    }
+    function choose(i) {
+        const it = items[i]; if (!it) return;
+        street.value = it.street; city.value = it.city || city.value; state.value = it.state || state.value; zip.value = it.zip || zip.value;
+        closeList();
+        (it.city ? zip : city).focus();
+    }
+    street.addEventListener("input", () => {
+        clearTimeout(debounce);
+        const q = street.value.trim();
+        if (q.length < 3) { closeList(); return; }
+        debounce = setTimeout(async () => {
+            const query = q + (city.value ? " " + city.value : "");
+            lastQuery = query;
+            try {
+                const found = await photon(query, 5);
+                if (lastQuery === query) openList(found);
+            } catch (_) { closeList(); }
+        }, 300);
+    });
+    street.addEventListener("keydown", (e) => {
+        if (list.hidden) return;
+        if (e.key === "ArrowDown") { e.preventDefault(); highlight(Math.min(active + 1, items.length - 1)); }
+        else if (e.key === "ArrowUp") { e.preventDefault(); highlight(Math.max(active - 1, 0)); }
+        else if (e.key === "Enter" && active >= 0) { e.preventDefault(); choose(active); }
+        else if (e.key === "Escape") { closeList(); }
+    });
+    street.addEventListener("blur", () => setTimeout(closeList, 120));
 
+    /* --- the check --- */
+    function say(cls, html) { result.className = "check__result " + cls; result.innerHTML = html; }
+    [city, state, zip].forEach((f) => f.addEventListener("focus", closeList));
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const q = input.value.trim();
-        if (q.length < 5) { say("is-err", "Type a street address with the city, like 123 Main St, Middletown, OH."); input.focus(); return; }
-        say("", "Checking&hellip;");
-        form.querySelector(".check__btn").disabled = true;
+        clearTimeout(debounce); lastQuery = "";            /* a late suggestion response must not reopen the list */
+        closeList();
+        const parts = { street: street.value.trim(), city: city.value.trim(), state: state.value.trim(), zip: zip.value.trim() };
+        if (!parts.street || !parts.city || !parts.state) {
+            say("is-err", "Fill in the street address, city, and state.");
+            (!parts.street ? street : !parts.city ? city : state).focus();
+            return;
+        }
+        parts.state = STATE_CODES[parts.state.toLowerCase()] || parts.state.toUpperCase();
+        say("", "Checking&hellip;"); btn.disabled = true;
         try {
             let hit = null;
-            try { hit = await geocodeCensus(q + (/\bOH\b|Ohio/i.test(q) ? "" : ", OH")); } catch (_) { /* fall through */ }
-            if (!hit) hit = await geocodePhoton(q);
-            if (!hit) { say("is-err", "We couldn't find that address. Try adding the city and state, or <a href=\"#contact\">ask Phil</a>."); return; }
+            try { hit = await geocodeCensus(parts); } catch (_) { /* fall through to Photon */ }
+            if (!hit) {
+                const alt = await photon(`${parts.street}, ${parts.city}, ${parts.state} ${parts.zip}`.trim(), 1);
+                if (alt[0]) hit = { label: `${alt[0].street}, ${alt[0].city}, ${alt[0].state} ${alt[0].zip}`.trim(), lat: alt[0].lat, lng: alt[0].lng };
+            }
+            if (!hit) { say("is-err", "We couldn't find that address. Check the spelling and city, or <a href=\"#contact\">ask Phil</a>."); return; }
             if (!geo) geo = await fetch("assets/service-counties.geojson").then((r) => r.json());
             const county = countyAt(geo, hit.lng, hit.lat);
 
+            /* the checked address: a plain red dot, so the shield stays Phil's */
             if (pin) pin.remove();
-            pin = L.marker([hit.lat, hit.lng], {
-                icon: L.divIcon({ className: "map-pin", html: '<img src="assets/logo-shield.svg" alt="" width="26" height="28">', iconSize: [26, 28], iconAnchor: [13, 28] }),
-                interactive: false, zIndexOffset: 2000
-            }).addTo(map);
-            const counties = getCounties();
-            const bounds = counties ? counties.getBounds().extend([hit.lat, hit.lng]) : L.latLngBounds([[hit.lat, hit.lng]]);
-            map.flyToBounds(bounds, { padding: [24, 24], duration: reduceMotion ? 0 : 0.9 });
+            pin = L.circleMarker([hit.lat, hit.lng], { radius: 8, color: "#FFFFFF", weight: 2.5, fillColor: "#ED1C24", fillOpacity: 1, interactive: false }).addTo(map);
+            fit([hit.lat, hit.lng]);
 
-            if (county) {
-                say("is-yes", `Yes. ${hit.label} is in ${county} County, and Phil serves it. <a href="#contact">Get a free estimate</a>.`);
-            } else {
-                say("is-no", `${hit.label} is outside the six counties. If you're close to the line, <a href="#contact">ask Phil anyway</a>.`);
-            }
+            if (county) say("is-yes", `Yes. ${hit.label} is in ${county} County, and Phil serves it. <a href="#contact">Get a free estimate</a>.`);
+            else say("is-no", `${hit.label} is outside the six counties. If you're close to the line, <a href="#contact">ask Phil anyway</a>.`);
         } catch (_) {
             say("is-err", "The address lookup didn't respond. Try again in a moment, or <a href=\"#contact\">ask Phil</a>.");
         } finally {
-            form.querySelector(".check__btn").disabled = false;
+            btn.disabled = false;
         }
     });
 }
