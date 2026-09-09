@@ -514,6 +514,9 @@
                         <span class="reviews-progress__total">08</span>
                     </div>
                     <p class="reviews-hint" aria-hidden="true">Scroll to travel through the jobs</p>
+                    <!--carousel mode: script.js moves each card's review text
+                        here and shows the one whose photo is centred-->
+                    <div class="reviews-current"></div>
                 </header>
 
                 <!--the window clips the travelling column; the column is
@@ -521,7 +524,7 @@
                 <div class="reviews-window">
                 <ul class="reviews">
                     <li class="review review--featured"><!--CONFIRM-->
-                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/bathroom-1-before.webp" loading="lazy" decoding="async" alt=""><img class="review__after" src="assets/work/bathroom-1-after.webp" loading="lazy" decoding="async" alt=""></div>
+                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/bathroom-1-before.webp" loading="lazy" decoding="async" alt=""><span class="review__chip review__chip--before">Before</span><div class="review__after-layer"><img class="review__after" src="assets/work/bathroom-1-after.webp" loading="lazy" decoding="async" alt=""><span class="review__chip review__chip--after">After</span></div></div>
                         <div class="review__glass">
                             <span class="review__stars" role="img" aria-label="Rated 5 out of 5 stars"><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg></span>
                             <blockquote class="review__quote"><p>Phil and his brother did a great job on our shower. It started out a mess, demo revealed a wet moldy ant filled mess, they cleaned it all, replaced wood and turned it into what you see in the picture. Really happy with it and would highly recommend Integrity Restoration!</p></blockquote>
@@ -533,7 +536,7 @@
                         </div>
                     </li>
                     <li class="review"><!--CONFIRM-->
-                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/bathroom-2-before.webp" loading="lazy" decoding="async" alt=""><img class="review__after" src="assets/work/bathroom-2-after.webp" loading="lazy" decoding="async" alt=""></div>
+                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/bathroom-2-before.webp" loading="lazy" decoding="async" alt=""><span class="review__chip review__chip--before">Before</span><div class="review__after-layer"><img class="review__after" src="assets/work/bathroom-2-after.webp" loading="lazy" decoding="async" alt=""><span class="review__chip review__chip--after">After</span></div></div>
                         <div class="review__glass">
                             <span class="review__stars" role="img" aria-label="Rated 5 out of 5 stars"><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg></span>
                             <blockquote class="review__quote"><p>Very impressive work!!</p></blockquote>
@@ -545,7 +548,7 @@
                         </div>
                     </li>
                     <li class="review"><!--CONFIRM photos; TODO job link when this pair joins the gallery-->
-                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/bathroom-3-before.webp" loading="lazy" decoding="async" alt=""><img class="review__after" src="assets/work/bathroom-3-after.webp" loading="lazy" decoding="async" alt=""></div>
+                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/bathroom-3-before.webp" loading="lazy" decoding="async" alt=""><span class="review__chip review__chip--before">Before</span><div class="review__after-layer"><img class="review__after" src="assets/work/bathroom-3-after.webp" loading="lazy" decoding="async" alt=""><span class="review__chip review__chip--after">After</span></div></div>
                         <div class="review__glass">
                             <span class="review__stars" role="img" aria-label="Rated 5 out of 5 stars"><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg></span>
                             <blockquote class="review__quote"><p>Awesome job! Would highly recommend if anyone is looking for a contractor.</p></blockquote>
@@ -556,7 +559,7 @@
                         </div>
                     </li>
                     <li class="review"><!--stand-in tile photo; job link opens placeholder pair-->
-                        <div class="review__bg" aria-hidden="true"><img class="review__after" src="assets/work/tile-1-after.webp" loading="lazy" decoding="async" alt=""></div>
+                        <div class="review__bg" aria-hidden="true"><div class="review__after-layer"><img class="review__after" src="assets/work/tile-1-after.webp" loading="lazy" decoding="async" alt=""><span class="review__chip review__chip--after">Finished</span></div></div>
                         <div class="review__glass">
                             <span class="review__stars" role="img" aria-label="Rated 5 out of 5 stars"><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg></span>
                             <blockquote class="review__quote"><p>Thanks to Integrity Restorations and Remodeling for the fantastic installation of the slate tile on the entry of our Wayne Avenue location.</p></blockquote>
@@ -568,7 +571,7 @@
                         </div>
                     </li>
                     <li class="review"><!--fence job, no photos: kitchen pair as stand-in background-->
-                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/kitchen-1-before.webp" loading="lazy" decoding="async" alt=""><img class="review__after" src="assets/work/kitchen-1-after.webp" loading="lazy" decoding="async" alt=""></div>
+                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/kitchen-1-before.webp" loading="lazy" decoding="async" alt=""><span class="review__chip review__chip--before">Before</span><div class="review__after-layer"><img class="review__after" src="assets/work/kitchen-1-after.webp" loading="lazy" decoding="async" alt=""><span class="review__chip review__chip--after">After</span></div></div>
                         <div class="review__glass">
                             <span class="review__stars" role="img" aria-label="Rated 5 out of 5 stars"><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg></span>
                             <blockquote class="review__quote"><p>Phil just finished our fence and the work was excellent. Timely finish even with the bad weather we've had. Couldn't be happier.</p></blockquote>
@@ -579,7 +582,7 @@
                         </div>
                     </li>
                     <li class="review"><!--CONFIRM photos-->
-                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/bathroom-4-before.webp" loading="lazy" decoding="async" alt=""><img class="review__after" src="assets/work/bathroom-4-after.webp" loading="lazy" decoding="async" alt=""></div>
+                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/bathroom-4-before.webp" loading="lazy" decoding="async" alt=""><span class="review__chip review__chip--before">Before</span><div class="review__after-layer"><img class="review__after" src="assets/work/bathroom-4-after.webp" loading="lazy" decoding="async" alt=""><span class="review__chip review__chip--after">After</span></div></div>
                         <div class="review__glass">
                             <span class="review__stars" role="img" aria-label="Rated 5 out of 5 stars"><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg></span>
                             <blockquote class="review__quote"><p>They were here late last night and all day today to get it finished! They have done a phenomenal job!</p></blockquote>
@@ -590,7 +593,7 @@
                         </div>
                     </li>
                     <li class="review"><!--CONFIRM photos; TODO job link-->
-                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/bathroom-5-before.webp" loading="lazy" decoding="async" alt=""><img class="review__after" src="assets/work/bathroom-5-after.webp" loading="lazy" decoding="async" alt=""></div>
+                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/bathroom-5-before.webp" loading="lazy" decoding="async" alt=""><span class="review__chip review__chip--before">Before</span><div class="review__after-layer"><img class="review__after" src="assets/work/bathroom-5-after.webp" loading="lazy" decoding="async" alt=""><span class="review__chip review__chip--after">After</span></div></div>
                         <div class="review__glass">
                             <span class="review__stars" role="img" aria-label="Rated 5 out of 5 stars"><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg></span>
                             <blockquote class="review__quote"><p>You do fantastic work.</p></blockquote>
@@ -601,7 +604,7 @@
                         </div>
                     </li>
                     <li class="review"><!--stand-in background-->
-                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/basement-1-before.webp" loading="lazy" decoding="async" alt=""><img class="review__after" src="assets/work/basement-1-after.webp" loading="lazy" decoding="async" alt=""></div>
+                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/basement-1-before.webp" loading="lazy" decoding="async" alt=""><span class="review__chip review__chip--before">Before</span><div class="review__after-layer"><img class="review__after" src="assets/work/basement-1-after.webp" loading="lazy" decoding="async" alt=""><span class="review__chip review__chip--after">After</span></div></div>
                         <div class="review__glass">
                             <span class="review__stars" role="img" aria-label="Rated 5 out of 5 stars"><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg></span>
                             <blockquote class="review__quote"><p>Amazing work from an amazing company!!!</p></blockquote>

@@ -224,70 +224,120 @@ function reviewCarousel() {
     const win     = section.querySelector(".reviews-window");
     const column  = section.querySelector(".reviews");
     const cards   = gsap.utils.toArray(".review");
-    const afters  = cards.map((c) => c.querySelector(".review__before + .review__after"));
+    const layers  = cards.map((c) => c.querySelector(".review__before ~ .review__after-layer"));   /* null when there is no before */
+    const texts   = cards.map((c) => c.querySelector(".review__glass"));
+    const slot    = section.querySelector(".reviews-current");
     const count   = section.querySelector(".reviews-progress__count");
     const fill    = section.querySelector(".reviews-progress__fill");
 
     if (reduceMotion) {
-        gsap.set(afters.filter(Boolean), { clipPath: "inset(0% 0 0 0)" });   /* everything in its finished state */
+        gsap.set(layers.filter(Boolean), { clipPath: "inset(0% 0 0 0)" });   /* everything in its finished state */
         return;
     }
     section.classList.add("is-carousel");
 
+    /* From 768px the review text leaves its photo and lives in the left
+       column, only the active one shown (moving nodes keeps the
+       See-the-job wiring). Phones keep the glass on the photo: the head
+       would otherwise grow with each quote and squeeze the window. */
+    const wide = window.matchMedia("(min-width: 768px)");
+    let active = 0;
+    function placeTexts() {
+        if (wide.matches) {
+            texts.forEach((t, i) => { t.hidden = i !== active; slot.appendChild(t); });
+        } else {
+            texts.forEach((t, i) => { t.hidden = false; cards[i].appendChild(t); });
+        }
+    }
+    function showText(i) {
+        if (i === active) return;
+        if (wide.matches) {
+            texts[active].hidden = true;
+            texts[i].hidden = false;
+            gsap.fromTo(texts[i], { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out", clearProps: "transform" });
+        }
+        active = i;
+    }
+
+    /* DEPTH: every tick of the scrubbed timeline, size and offset each
+       card by how far its middle is from the window's middle. The
+       centred card is full size and flush left; cards above and below
+       shrink and slide right, so the column reads as a stack receding
+       away from the centre line, and the next card grows into place as
+       it travels in. Reads from the timeline's onUpdate (not the
+       ScrollTrigger's) so it tracks the smoothed scrub, not raw scroll. */
+    function depth() {
+        const box = win.getBoundingClientRect();
+        const mid = box.top + box.height / 2;
+        cards.forEach((card) => {
+            const r = card.getBoundingClientRect();
+            /* 0 when centred, 1 a full window-height away: the neighbours
+               sit around 0.6, so they read as a step back rather than
+               already at the floor, and the gradient shows during travel */
+            const d = Math.min(Math.abs(r.top + r.height / 2 - mid) / box.height, 1);
+            gsap.set(card, { scale: 1 - d * 0.22, x: d * 56, transformOrigin: "50% 50%" });
+        });
+    }
+
+    /* TIMELINE, measured in pixels of scroll. For each card:
+         travel: the column moves 1:1 until this card is centred (it
+                 arrives showing its BEFORE photo)
+         hold:   the column stays put for W px of scrolling while the
+                 after photo wipes in bottom-to-top
+       Snap points sit at the start and end of every hold, so you can
+       rest on the before or the after, never halfway through a wipe. */
     let tl, trigger;
     function build() {
         if (trigger) trigger.kill();
         if (tl) tl.kill();
+        placeTexts();
         gsap.set(column, { y: 0, paddingTop: 0, paddingBottom: 0 });
 
         const H = win.clientHeight;
+        const W = Math.round(H * 0.7);                /* scroll spent on each wipe */
         const first = cards[0], last = cards[cards.length - 1];
         column.style.paddingTop    = `${Math.max(H / 2 - first.offsetHeight / 2, 0)}px`;
         column.style.paddingBottom = `${Math.max(H / 2 - last.offsetHeight / 2, 0)}px`;
-        const D = Math.max(column.scrollHeight - H, 1);
 
-        tl = gsap.timeline({ defaults: { ease: "none" } });
-        tl.to(column, { y: -D, duration: D }, 0);
-
-        const centres = [];                       /* timeline time (= scroll px) when each card is centred */
+        const centres = cards.map((c) => c.offsetTop + c.offsetHeight / 2 - H / 2);   /* column y = -centre puts card i in the middle */
+        tl = gsap.timeline({ defaults: { ease: "none" }, onUpdate: depth });
+        const marks = [];                              /* {arrive, done, lead} per card, in scroll px */
+        let t = 0;
         cards.forEach((card, i) => {
-            const centre = card.offsetTop + card.offsetHeight / 2 - H / 2;
-            centres.push(centre);
-            if (!afters[i]) return;
-            /* the wipe runs over most of a card-height of scrolling and
-               COMPLETES as the card reaches the middle, so a card resting
-               on its snap point shows the finished job, and the next one
-               reveals on its way up */
-            const span = card.offsetHeight * 0.9;
-            if (centre <= 0) {                        /* the first card starts centred: show it finished */
-                tl.set(afters[i], { clipPath: "inset(0% 0 0 0)" }, 0);
-                return;
+            let lead = 0;
+            if (i > 0) {
+                const d = centres[i] - centres[i - 1];
+                tl.to(column, { y: -centres[i], duration: d }, t);
+                t += d; lead = d / 2;
             }
-            tl.fromTo(afters[i],
-                { clipPath: "inset(100% 0 0 0)" },
-                { clipPath: "inset(0% 0 0 0)", duration: span },
-                Math.max(centre - span, 0));
+            const arrive = t;
+            if (layers[i]) tl.fromTo(layers[i], { clipPath: "inset(100% 0 0 0)" }, { clipPath: "inset(0% 0 0 0)", duration: W }, t);
+            t += W;
+            marks.push({ arrive, done: t, lead });
         });
+        const total = t;
+        const snaps = marks.flatMap((m) => [m.arrive / total, m.done / total]);
 
         trigger = ScrollTrigger.create({
             trigger: section,
             start: "top top",
-            end: () => "+=" + D,
+            end: () => "+=" + total,
             pin: true,
             scrub: 0.5,
             animation: tl,
-            /* inertia:false snaps to the NEAREST card centre when scrolling
-               stops, instead of projecting where a flick would have landed;
-               a fast flick otherwise skips to the last card */
-            snap: { snapTo: centres.map((c) => c / D), duration: { min: 0.2, max: 0.6 }, delay: 0.05, ease: "power1.inOut", inertia: false },
+            /* inertia:false snaps to the NEAREST point when scrolling stops
+               instead of projecting where a flick would have landed */
+            snap: { snapTo: snaps, duration: { min: 0.2, max: 0.6 }, delay: 0.05, ease: "power1.inOut", inertia: false },
             onUpdate(self) {
-                const t = self.progress * D;
+                const now = self.progress * total;
                 let idx = 0;
-                centres.forEach((c, i) => { if (t >= c - cards[i].offsetHeight / 2) idx = i; });
+                marks.forEach((m, i) => { if (now >= m.arrive - m.lead) idx = i; });   /* text swaps halfway through the travel */
+                showText(idx);
                 count.textContent = String(idx + 1).padStart(2, "0");
                 fill.style.transform = `scaleX(${self.progress})`;
             }
         });
+        depth();                                       /* resting state before any scroll */
     }
     build();
 

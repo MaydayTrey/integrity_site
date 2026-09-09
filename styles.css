@@ -14,6 +14,7 @@
     --grey-300:  #D1D3D4;   /* the "I" on the shield, left half; secondary text on dark */
     --grey-100:  #E6E7E8;
     --white:     #FFFFFF;
+    --gold:      #F2B01E;   /* review stars only; the one colour outside the logo palette, by request */
 
     /* The brand "light source": bright left half, dark right half, taken
        from the shield's faceted lighting. Everything emphasised uses it. */
@@ -399,9 +400,19 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .review__bg { position: absolute; inset: 0; z-index: -1; }
 .review__bg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-/* the wipe: GSAP scrubs this from inset(100% 0 0 0) to inset(0% 0 0 0).
-   Only hide it when a before photo exists underneath to reveal from. */
-.review__before + .review__after { clip-path: inset(100% 0 0 0); }
+/* the after photo and its chip share one layer; GSAP scrubs the
+   layer's clip from inset(100% 0 0 0) to inset(0% 0 0 0), so the
+   "After" chip is uncovered by the wipe itself. Only clip when a
+   before photo exists underneath to reveal from. */
+.review__after-layer { position: absolute; inset: 0; z-index: 2; }   /* above the Before chip, so a finished wipe covers it */
+.review__before ~ .review__after-layer { clip-path: inset(100% 0 0 0); }
+.review__chip {
+    position: absolute; top: 14px; z-index: 1;
+    padding: 6px 10px; font-family: var(--font-ui); font-weight: 600; font-size: 12px;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--white);
+}
+.review__chip--before { left: 14px; background: rgba(35, 31, 32, .8); }
+.review__chip--after  { right: 14px; background: var(--grad-brand); }
 
 /* progress readout and hint: only meaningful in carousel mode */
 .reviews-progress, .reviews-hint { display: none; }
@@ -432,6 +443,21 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
             mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
 }
 .is-carousel .review { min-height: 300px; }
+.is-carousel .section__lede { display: none; }   /* phone height budget: the review text takes its place */
+
+/* the active review's text, moved into the left column by script.js.
+   On white it drops the glass and echoes the business card's red bar */
+.reviews-current { margin-top: 20px; }
+.reviews-current .review__glass {
+    background: none; border: 0; padding: 4px 0 4px 18px;
+    border-left: 4px solid var(--red);
+    -webkit-backdrop-filter: none; backdrop-filter: none;
+    color: var(--ink);
+}
+.reviews-current .review__glass::before { display: none; }
+.reviews-current .review__quote p { font-size: 17px; }
+.reviews-current .review__source { color: var(--grey-700); }
+.reviews-current .review__job { color: var(--red-dark); }
 /* brand rule on top */
 .review::after {
     content: ""; position: absolute; inset: 0 0 auto 0; height: 4px; z-index: 1;
@@ -457,7 +483,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
     color: var(--red); opacity: .55; pointer-events: none;
 }
 .review__stars { display: flex; gap: 3px; }
-.review__star { width: 17px; height: 17px; fill: url(#grad-brand); }
+.review__star { width: 17px; height: 17px; fill: var(--gold); }
 .review__quote p { font-size: 16px; line-height: 1.6; }
 .review--featured .review__quote p { font-size: 17px; }
 .review__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; }
@@ -605,14 +631,17 @@ body.has-dialog { overflow: hidden; }
         grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); grid-template-rows: 1fr;
         align-items: center; gap: 48px;
     }
-    .is-carousel .reviews-head { text-align: left; margin: 0; max-width: 40ch; }
+    .is-carousel .reviews-head { text-align: left; margin: 0; max-width: 44ch; align-self: start; padding-top: 4vh; }
+    .is-carousel .section__lede { display: block; }
     .is-carousel .reviews-window { height: 100%; }
     .is-carousel .review { min-height: 360px; }
     .is-carousel .reviews { max-width: none; }
+    .reviews-current { margin-top: 28px; }
+    .reviews-current .review__quote p { font-size: 19px; }
 }
 @media (min-width: 1024px) {
     .is-carousel .reviews-layout { gap: 80px; }
-    .is-carousel .review { min-height: 400px; }
+    .is-carousel .review { min-height: 440px; }
 }
 
 /* landscape phones and short laptops: the hero can't afford 176px of
