@@ -161,17 +161,54 @@ function ourWork() {
         });
     });
 
-    /* tap / keyboard flip; hover is pure CSS */
-    document.querySelectorAll(".pair").forEach((pair) => {
-        const flip = pair.querySelector(".pair__flip");
-        const set = (on) => {
-            pair.classList.toggle("is-after", on);
-            flip.setAttribute("aria-pressed", String(on));
-            flip.textContent = on ? "Show the before" : "Show the after";
-        };
-        flip.addEventListener("click", () => set(!pair.classList.contains("is-after")));
-        pair.querySelector(".pair__media").addEventListener("click", () => set(!pair.classList.contains("is-after")));
+    document.querySelectorAll(".pair").forEach(wirePair);
+}
+
+/* tap / keyboard flip for one before/after card; hover is pure CSS.
+   Shared with the job dialog, which wires the clone it shows. */
+function wirePair(pair) {
+    const flip = pair.querySelector(".pair__flip");
+    const set = (on) => {
+        pair.classList.toggle("is-after", on);
+        flip.setAttribute("aria-pressed", String(on));
+        flip.textContent = on ? "Show the before" : "Show the after";
+    };
+    flip.addEventListener("click", () => set(!pair.classList.contains("is-after")));
+    pair.querySelector(".pair__media").addEventListener("click", () => set(!pair.classList.contains("is-after")));
+}
+
+/* ---------- REVIEWS: "See the job" -> dialog with that pair ----------
+   The gallery pair stays the single source of truth: the dialog gets a
+   deep clone of its figure, so a photo swap in the gallery is a photo
+   swap here too. Native <dialog> handles focus trap, Escape, and
+   returning focus to the button that opened it. */
+function jobDialog() {
+    const dialog = document.getElementById("job-dialog");
+    const body   = dialog.querySelector(".job__body");
+    const title  = dialog.querySelector(".job__title");
+
+    document.querySelectorAll(".review__job[data-job]").forEach((btn) => {
+        const source = document.getElementById(btn.dataset.job);
+        if (!source) { btn.hidden = true; return; }     /* no such pair yet: hide the button */
+        btn.addEventListener("click", () => {
+            body.replaceChildren();
+            const clone = document.createElement("div");
+            clone.className = "pair";
+            clone.appendChild(source.querySelector(".pair__figure").cloneNode(true));
+            clone.querySelectorAll("img").forEach((img) => (img.loading = "eager"));
+            clone.querySelector(".pair__title").remove();   /* the dialog head carries the title */
+            wirePair(clone);
+            body.appendChild(clone);
+            title.textContent = source.querySelector(".pair__title").textContent;
+            document.body.classList.add("has-dialog");
+            dialog.showModal();
+        });
     });
+
+    dialog.querySelector(".job__close").addEventListener("click", () => dialog.close());
+    dialog.querySelector(".job__more").addEventListener("click", () => dialog.close());
+    dialog.addEventListener("click", (e) => { if (e.target === dialog) dialog.close(); });   /* backdrop */
+    dialog.addEventListener("close", () => document.body.classList.remove("has-dialog"));
 }
 
 /* ---------- SECTION FADE-INS (ScrollTrigger) ----------
@@ -180,7 +217,7 @@ function sectionReveals() {
     if (reduceMotion) return;
     /* section heads and the service blocks reveal separately so the
        four blocks can cascade instead of arriving as one slab */
-    const targets = ".section__head, .placeholder .section__inner, .service, .segments, .panel:not([hidden])";
+    const targets = ".section__head, .placeholder .section__inner, .service, .segments, .panel:not([hidden]), .review";
     gsap.set(targets, { autoAlpha: 0, y: 24 });
     ScrollTrigger.batch(targets, {
         start: "top 85%",
@@ -194,5 +231,6 @@ document.fonts.ready.then(() => {
     document.querySelectorAll("[data-roll]").forEach(rollingText);
     heroIntro();
     ourWork();
+    jobDialog();
     sectionReveals();
 });

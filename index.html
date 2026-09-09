@@ -350,7 +350,7 @@
 
                     <ul class="gallery" data-filter="kitchens">
                         <!--KITCHENS-->
-                        <li class="pair" data-category="kitchens"><!--(reference)-->
+                        <li class="pair" id="job-kitchen-1" data-category="kitchens"><!--(reference)-->
                             <figure class="pair__figure">
                                 <div class="pair__media">
                                     <img class="pair__before" src="assets/work/kitchen-1-before.webp" width="900" height="675" loading="lazy" decoding="async" alt="Kitchen before remodel: dated cabinets and worn countertops">
@@ -364,7 +364,7 @@
                                 </figcaption>
                             </figure>
                         </li>
-                        <li class="pair" data-category="kitchens"><!--(reference)-->
+                        <li class="pair" id="job-kitchen-2" data-category="kitchens"><!--(reference)-->
                             <figure class="pair__figure">
                                 <div class="pair__media">
                                     <img class="pair__before" src="assets/work/kitchen-2-before.webp" width="900" height="675" loading="lazy" decoding="async" alt="Kitchen before new flooring and cabinets">
@@ -379,7 +379,7 @@
                             </figure>
                         </li>
                         <!--BATHROOMS-->
-                        <li class="pair" data-category="bathrooms"><!--(reference)-->
+                        <li class="pair" id="job-bathroom-1" data-category="bathrooms"><!--(reference)-->
                             <figure class="pair__figure">
                                 <div class="pair__media">
                                     <img class="pair__before" src="assets/work/bathroom-1-before.webp" width="675" height="900" loading="lazy" decoding="async" alt="Shower before: water-damaged walls and mold stripped back to the studs">
@@ -393,7 +393,7 @@
                                 </figcaption>
                             </figure>
                         </li>
-                        <li class="pair" data-category="bathrooms"><!--(reference)-->
+                        <li class="pair" id="job-bathroom-2" data-category="bathrooms"><!--(reference)-->
                             <figure class="pair__figure">
                                 <div class="pair__media">
                                     <img class="pair__before" src="assets/work/bathroom-2-before.webp" width="675" height="900" loading="lazy" decoding="async" alt="Bathroom before remodel: crowded layout and old fixtures">
@@ -408,7 +408,7 @@
                             </figure>
                         </li>
                         <!--BASEMENTS-->
-                        <li class="pair" data-category="basements"><!--(reference)-->
+                        <li class="pair" id="job-basement-1" data-category="basements"><!--(reference)-->
                             <figure class="pair__figure">
                                 <div class="pair__media">
                                     <img class="pair__before" src="assets/work/basement-1-before.webp" width="900" height="675" loading="lazy" decoding="async" alt="Unfinished basement before: bare block walls and exposed framing">
@@ -422,7 +422,7 @@
                                 </figcaption>
                             </figure>
                         </li>
-                        <li class="pair" data-category="basements"><!--(placeholder)-->
+                        <li class="pair" id="job-basement-2" data-category="basements"><!--(placeholder)-->
                             <figure class="pair__figure">
                                 <div class="pair__media">
                                     <img class="pair__before" src="assets/work/basement-2-before.webp" width="900" height="900" loading="lazy" decoding="async" alt="Placeholder: basement before photo">
@@ -437,7 +437,7 @@
                             </figure>
                         </li>
                         <!--MORE-->
-                        <li class="pair" data-category="more"><!--(placeholder)-->
+                        <li class="pair" id="job-more-1" data-category="more"><!--(placeholder)-->
                             <figure class="pair__figure">
                                 <div class="pair__media">
                                     <img class="pair__before" src="assets/work/more-1-before.webp" width="900" height="900" loading="lazy" decoding="async" alt="Placeholder: entry before photo">
@@ -451,7 +451,7 @@
                                 </figcaption>
                             </figure>
                         </li>
-                        <li class="pair" data-category="more"><!--(placeholder)-->
+                        <li class="pair" id="job-more-2" data-category="more"><!--(placeholder)-->
                             <figure class="pair__figure">
                                 <div class="pair__media">
                                     <img class="pair__before" src="assets/work/more-2-before.webp" width="900" height="900" loading="lazy" decoding="async" alt="Placeholder: flooring before photo">
@@ -487,11 +487,89 @@
             </div>
         </section>
 
-        <!--4. REVIEWS: testimonial cards, Review schema later-->
-        <section class="section section--reviews placeholder" id="reviews" aria-labelledby="reviews-title">
+        <!--4. REVIEWS
+            Quotes are verbatim from Phil's Facebook page. Names show as
+            first name + last initial (Phil's call). A card may carry a
+            "See the job" button pointing at a gallery pair by id; it
+            opens the before/after in the #job-dialog. Job links marked
+            CONFIRM are a best guess from the photo notes: verify with
+            Phil which review goes with which photos.
+            No Review JSON-LD on purpose: Google ignores self-serving
+            review markup on a LocalBusiness page, so the schema would
+            add bytes and no rich result.-->
+        <section class="section section--reviews" id="reviews" aria-labelledby="reviews-title">
             <div class="section__inner">
-                <h2 class="section__title" id="reviews-title">Reviews</h2>
-                <p class="placeholder__note">Testimonial cards from Facebook reviews. Structured for Review schema.</p>
+                <header class="section__head">
+                    <p class="section__eyebrow">Reviews</p>
+                    <h2 class="section__title" id="reviews-title">What customers say</h2>
+                    <p class="section__lede">Straight from Phil's Facebook page, in their own words.</p>
+                </header>
+
+                <ul class="reviews">
+                    <li class="review review--featured">
+                        <blockquote class="review__quote">
+                            <p>Phil and his brother did a great job on our shower. It started out a mess, demo revealed a wet moldy ant filled mess, they cleaned it all, replaced wood and turned it into what you see in the picture. Really happy with it and would highly recommend Integrity Restoration!</p>
+                        </blockquote>
+                        <footer class="review__meta">
+                            <cite class="review__name">Larry H.</cite>
+                            <span class="review__source">Facebook</span>
+                            <button class="review__job" type="button" data-job="job-bathroom-1">See the job</button><!--CONFIRM-->
+                        </footer>
+                    </li>
+                    <li class="review">
+                        <blockquote class="review__quote"><p>Very impressive work!!</p></blockquote>
+                        <footer class="review__meta">
+                            <cite class="review__name">Kristen D.</cite>
+                            <span class="review__source">Facebook</span>
+                            <button class="review__job" type="button" data-job="job-bathroom-2">See the job</button><!--CONFIRM-->
+                        </footer>
+                    </li>
+                    <li class="review">
+                        <blockquote class="review__quote"><p>Awesome job! Would highly recommend if anyone is looking for a contractor.</p></blockquote>
+                        <footer class="review__meta">
+                            <cite class="review__name">Bruce D.</cite>
+                            <span class="review__source">Facebook</span>
+                            <!--TODO: link once his tile shower pair is in the gallery-->
+                        </footer>
+                    </li>
+                    <li class="review">
+                        <blockquote class="review__quote"><p>Thanks to Integrity Restorations and Remodeling for the fantastic installation of the slate tile on the entry of our Wayne Avenue location.</p></blockquote>
+                        <footer class="review__meta">
+                            <cite class="review__name">Westbrock &amp; Daniel Funeral Home</cite>
+                            <span class="review__source">Facebook</span>
+                            <button class="review__job" type="button" data-job="job-more-1">See the job</button><!--placeholder photos-->
+                        </footer>
+                    </li>
+                    <li class="review">
+                        <blockquote class="review__quote"><p>Phil just finished our fence and the work was excellent. Timely finish even with the bad weather we've had. Couldn't be happier.</p></blockquote>
+                        <footer class="review__meta">
+                            <cite class="review__name">Rodney W.</cite>
+                            <span class="review__source">Facebook</span>
+                        </footer>
+                    </li>
+                    <li class="review">
+                        <blockquote class="review__quote"><p>They were here late last night and all day today to get it finished! They have done a phenomenal job!</p></blockquote>
+                        <footer class="review__meta">
+                            <cite class="review__name">Kari D.</cite>
+                            <span class="review__source">Facebook</span>
+                        </footer>
+                    </li>
+                    <li class="review">
+                        <blockquote class="review__quote"><p>You do fantastic work.</p></blockquote>
+                        <footer class="review__meta">
+                            <cite class="review__name">Donna B.</cite>
+                            <span class="review__source">Facebook</span>
+                            <!--TODO: link once her mold-removal shower pair is in the gallery-->
+                        </footer>
+                    </li>
+                    <li class="review">
+                        <blockquote class="review__quote"><p>Amazing work from an amazing company!!!</p></blockquote>
+                        <footer class="review__meta">
+                            <cite class="review__name">Derek S.</cite>
+                            <span class="review__source">Facebook</span>
+                        </footer>
+                    </li>
+                </ul>
             </div>
         </section>
 
@@ -527,6 +605,18 @@
             </div>
         </section>
     </main>
+
+    <!--JOB DIALOG: "See the job" clones the matching gallery pair into
+        this native <dialog>. showModal() gives us focus trapping, Escape,
+        and focus restore for free; the backdrop is styled in CSS.-->
+    <dialog class="job" id="job-dialog" aria-labelledby="job-title">
+        <div class="job__head">
+            <h3 class="job__title" id="job-title">The job</h3>
+            <button class="job__close" type="button" aria-label="Close">&times;</button>
+        </div>
+        <div class="job__body"></div>
+        <a class="job__more" href="#our-work">See more before and after</a>
+    </dialog>
 
     <footer class="site-footer placeholder" aria-label="Site footer">
         <div class="section__inner">

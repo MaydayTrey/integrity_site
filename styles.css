@@ -378,6 +378,68 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .commercial__item strong { font-family: var(--font-ui); font-weight: 600; font-size: 15px; letter-spacing: .06em; text-transform: uppercase; }
 .commercial__item span { font-size: 14px; color: var(--ink); }
+
+/* ---------- REVIEWS ---------- */
+.reviews { display: grid; gap: 20px; }
+.review {
+    position: relative; display: flex; flex-direction: column; gap: 18px;
+    padding: 28px 24px 22px;
+    background: var(--white); border: 1px solid var(--grey-300);
+}
+/* brand rule on top: a pseudo element, not border-image, because
+   border-image repaints every side and would eat the grey 1px frame */
+.review::after {
+    content: ""; position: absolute; inset: -1px -1px auto -1px; height: 4px;
+    background: var(--grad-brand);
+}
+/* opening quote mark as a decoration, in the display face */
+.review::before {
+    content: "\201C"; position: absolute; top: 6px; right: 18px;
+    font-family: var(--font-display); font-size: 84px; line-height: 1;
+    color: var(--red); opacity: .25; pointer-events: none;
+}
+.review__quote p { font-size: 16px; line-height: 1.6; }
+.review--featured .review__quote p { font-size: 17px; }
+.review__meta {
+    margin-top: auto;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px;
+}
+.review__name {
+    font-style: normal; font-family: var(--font-ui); font-weight: 600; font-size: 15px;
+    letter-spacing: .08em; text-transform: uppercase;
+}
+.review__source { font-size: 13px; color: var(--grey-700); }
+.review__job {
+    margin-left: auto; min-height: 44px; padding: 8px 0;
+    font-family: var(--font-ui); font-weight: 500; font-size: 13px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--red-dark); border-bottom: 2px solid currentColor;
+}
+.review__job::after { content: " \2197"; }
+
+/* ---------- JOB DIALOG ---------- */
+.job {
+    width: min(100% - 32px, 720px); padding: 0; border: 0;
+    margin: auto;                    /* the reset zeroed the UA's margin:auto, which is what centres a modal dialog */
+    max-height: calc(100svh - 32px); overflow: auto;
+    background: var(--white); color: var(--ink);
+    box-shadow: 0 24px 64px rgba(35, 31, 32, .45);
+}
+/* cap the photo so title + photo + actions fit a 900px-tall screen
+   without the dialog needing to scroll */
+.job__body .pair__media { aspect-ratio: auto; height: min(58svh, 520px); }
+.job::backdrop { background: rgba(35, 31, 32, .82); }
+.job[open] { animation: job-in .35s var(--ease-out); }
+@keyframes job-in { from { opacity: 0; transform: translateY(16px) scale(.98); } }
+.job__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 16px 12px 20px; }
+.job__title { font-family: var(--font-display); font-weight: 400; font-size: 28px; line-height: 1; letter-spacing: .02em; text-transform: uppercase; }
+.job__close { width: 44px; height: 44px; font-size: 32px; line-height: 1; color: var(--ink); }
+.job__body .pair__figure { border: 0; }
+.job__more {
+    display: block; padding: 14px 20px 18px;
+    font-family: var(--font-ui); font-weight: 500; font-size: 13px; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--red-dark);
+}
+body.has-dialog { overflow: hidden; }
 /* alternating surfaces so the empty sections are visible while we build */
 .section--services  { background: var(--white); }
 .section--work      { background: var(--grey-100); }
@@ -479,6 +541,11 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
     .gallery { grid-template-columns: 1fr 1fr; gap: 32px; }
     .commercial { grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: start; }
     .commercial__copy p { font-size: 17px; }
+    .reviews { grid-template-columns: 1fr 1fr; gap: 24px; }
+    .review--featured { grid-column: span 2; }
+}
+@media (min-width: 1024px) {
+    .reviews { grid-template-columns: repeat(3, 1fr); }
 }
 
 /* landscape phones and short laptops: the hero can't afford 176px of
