@@ -311,9 +311,13 @@ function reviewCarousel() {
         const w = layers[i];
         if (w) gsap.to(w, { p: 0, duration: 0.5, ease: "power2.in", overwrite: true, onUpdate: () => render(w) });
     }
-    function setCentred(i) {
+    /* dir is the scroll direction (1 down, -1 up). A card that leaves the
+       centre because you scrolled ON stays After: the work is done. Only
+       scrolling back UP past it reverts it to Before, so the reveal can
+       replay on the next pass down. */
+    function setCentred(i, dir) {
         if (i === revealed) return;
-        if (revealed >= 0) conceal(revealed);
+        if (revealed >= 0 && dir < 0) conceal(revealed);
         if (i >= 0) reveal(i);
         revealed = i;
     }
@@ -371,13 +375,13 @@ function reviewCarousel() {
                 count.textContent = String(idx + 1).padStart(2, "0");
                 fill.style.transform = `scaleX(${self.progress})`;
                 /* the centre band: within 30% of a card-height of the midline */
-                setCentred(best <= cards[idx].offsetHeight * 0.3 ? idx : -1);
+                setCentred(best <= cards[idx].offsetHeight * 0.3 ? idx : -1, self.direction);
             },
             /* the pin engages with card 1 already centred. onEnter fires
                AFTER onUpdate, so only act when we really are at the start
                (a jump straight into the middle must not re-reveal card 1) */
-            onEnter: (self) => { if (self.progress < 0.01) setCentred(0); },
-            onLeaveBack: () => setCentred(-1)             /* scrolled back above the section: reset so it replays */
+            onEnter: (self) => { if (self.progress < 0.01) setCentred(0, 1); },
+            onLeaveBack: () => setCentred(-1, -1)          /* scrolled back above the section: reset so it replays */
         });
         depth();                                       /* resting state before any scroll */
     }
