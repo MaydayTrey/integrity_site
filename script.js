@@ -395,16 +395,15 @@ function reviewCarousel() {
     });
 }
 
-/* ---------- AREAS SERVED: county cutout map (Leaflet + OpenStreetMap) ----------
+/* ---------- AREAS SERVED: static map (Leaflet + OpenStreetMap) ----------
    Free and keyless: Leaflet is open source and OpenStreetMap serves
-   its tiles without a key. The map is STATIC (no drag, no zoom) and the
-   tile layer is clipped to the union of the six county shapes, so the
-   basemap only exists inside the service area; outside is blank. The
-   clip is an SVG clipPath built in Leaflet's layer-pixel space from the
-   same Census boundaries the outlines use (assets/service-counties.geojson).
-   The inline SVG in the HTML is the fallback until this runs. */
+   its tiles without a key. The map is STATIC (no drag, no zoom) so the
+   page scroll never gets trapped: it is framed on the six service
+   counties, which are outlined in red over the full street map so the
+   surrounding towns give people their bearings. County shapes come from
+   assets/service-counties.geojson (Census boundaries). The inline SVG
+   in the HTML is the fallback until this runs. */
 const SERVICE_HOME  = [39.4809, -84.4577];   /* Trenton, OH */
-const SERVICE_MILES = 50;
 const SERVICE_CITIES = [
     ["Hamilton", 39.3995, -84.5613, true], ["Fairfield", 39.3454, -84.5603], ["Monroe", 39.4403, -84.3622],
     ["Middletown", 39.5151, -84.3983, true], ["Oxford", 39.5070, -84.7452, true],
@@ -432,58 +431,21 @@ function serviceMap() {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    L.circle(SERVICE_HOME, {
-        radius: SERVICE_MILES * 1609.344,
-        color: "#ED1C24", weight: 1.5, dashArray: "8 8", fillOpacity: 0, interactive: false
-    }).addTo(map);
-
-    /* the clip: one SVG clipPath, userSpaceOnUse, in layer-pixel coordinates */
-    const svgNS = "http://www.w3.org/2000/svg";
-    const clipSvg = document.createElementNS(svgNS, "svg");
-    clipSvg.setAttribute("class", "map-clip");
-    clipSvg.setAttribute("aria-hidden", "true");
-    const clip = document.createElementNS(svgNS, "clipPath");
-    clip.setAttribute("id", "county-cut");
-    clip.setAttribute("clipPathUnits", "userSpaceOnUse");
-    clipSvg.appendChild(clip);
-    el.appendChild(clipSvg);
-
     let counties = null;
-    function rebuildClip() {
-        if (!counties) return;
-        clip.replaceChildren();
-        counties.eachLayer((layer) => {
-            const rings = layer.feature.geometry.type === "Polygon"
-                ? layer.feature.geometry.coordinates
-                : layer.feature.geometry.coordinates.map((p) => p[0]);
-            rings.forEach((ring) => {
-                const d = "M" + ring.map(([lng, lat]) => {
-                    const p = map.latLngToLayerPoint([lat, lng]);
-                    return `${p.x.toFixed(1)} ${p.y.toFixed(1)}`;
-                }).join(" L") + "Z";
-                const path = document.createElementNS(svgNS, "path");
-                path.setAttribute("d", d);
-                clip.appendChild(path);
-            });
-        });
-        el.querySelector(".leaflet-tile-pane").style.clipPath = "url(#county-cut)";
-    }
     function fit() {
         if (!counties) return;
         map.invalidateSize();
-        map.fitBounds(counties.getBounds(), { padding: [14, 14] });
-        rebuildClip();
+        map.fitBounds(counties.getBounds(), { padding: [18, 18] });
     }
 
     fetch("assets/service-counties.geojson")
         .then((r) => r.json())
         .then((gj) => {
             counties = L.geoJSON(gj, {
-                style: { color: "#BA1E23", weight: 2, fillOpacity: 0 },
+                style: { color: "#BA1E23", weight: 2, fillColor: "#ED1C24", fillOpacity: 0.07 },
                 onEachFeature: (f, layer) => layer.bindTooltip(`${f.properties.name} County`, { sticky: true, className: "map-tip" })
             }).addTo(map);
             fit();
-            map.on("zoomend moveend", rebuildClip);          /* layer points change with the view */
             el.classList.add("is-live");
         })
         .catch(() => {});                                  /* the SVG fallback stays */
