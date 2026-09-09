@@ -597,12 +597,18 @@ function addressCheck(map, fit) {
         street.removeAttribute("role"); street.removeAttribute("aria-autocomplete");
         street.removeAttribute("aria-expanded"); street.removeAttribute("aria-controls"); street.removeAttribute("aria-haspopup");
     }
+    /* budget: at most this many suggestion requests per visitor per
+       session, so one runaway tab or a bot cannot drain the daily
+       allowance. A normal address entry uses 3 to 6. */
+    const SUGGEST_BUDGET = 25;
+    let suggestUsed = 0;
     street.addEventListener("input", () => {
         clearTimeout(debounce);
-        if (!suggestKey) return;
+        if (!suggestKey || suggestUsed >= SUGGEST_BUDGET) return;
         const q = street.value.trim();
         if (q.length < 4) { closeList(); return; }
         debounce = setTimeout(async () => {
+            suggestUsed += 1;
             const query = q + (city.value ? ", " + city.value : "") + (zip.value ? " " + zip.value : "");
             lastQuery = query;
             try {
