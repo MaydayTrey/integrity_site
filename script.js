@@ -614,8 +614,9 @@ function addressCheck(map, fit) {
     }
     /* budget: at most this many suggestion requests per visitor per
        session, so one runaway tab or a bot cannot drain the daily
-       allowance. A normal address entry uses 3 to 6. */
-    const SUGGEST_BUDGET = 25;
+       allowance. A normal address entry uses 3 to 6, so 6 covers one
+       honest attempt; after that the visitor finishes typing by hand. */
+    const SUGGEST_BUDGET = 6;
     let suggestUsed = 0;
     street.addEventListener("input", () => {
         clearTimeout(debounce);
