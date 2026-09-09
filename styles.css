@@ -407,27 +407,36 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
    and "Before" is overtaken by "After". Only clip when a before photo
    exists underneath to reveal from. */
 .review__after-layer { position: absolute; inset: 0; }
-.review__before ~ .review__after-layer,
-.review__rail-label--before ~ .review__rail-fill { clip-path: inset(100% 0 0 0); }
+.has-before .review__after-layer,
+.has-before .review__rail-fill { clip-path: inset(100% 0 0 0); }
 
+/* the rail is a thin loading bar on the right edge */
 .review__rail {
-    position: absolute; top: 0; right: 0; bottom: 0; width: 38px; z-index: 2;
-    background: rgba(35, 31, 32, .62);
+    position: absolute; top: 0; right: 0; bottom: 0; width: 6px; z-index: 2;
+    background: rgba(35, 31, 32, .35);
 }
 .review__rail-fill {
     position: absolute; inset: 0;
     background: linear-gradient(to top, var(--red-dark), var(--red));
 }
-.review__rail-label {
-    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    writing-mode: vertical-rl; transform: rotate(180deg);   /* reads bottom to top, like a book spine */
-    font-family: var(--font-ui); font-weight: 600; font-size: 13px;
+/* the tag is one sideways word just left of the bar. script.js moves
+   it up with the fill's leading edge (GSAP owns its transform, so the
+   180-degree turn is set there too) and flips it to AFTER halfway */
+.review__tag {
+    position: absolute; right: 14px; bottom: 12px; z-index: 2;
+    display: grid; writing-mode: vertical-rl;
+    font-family: var(--font-ui); font-weight: 600; font-size: 12px;
     letter-spacing: .2em; text-transform: uppercase; white-space: nowrap;
+    color: var(--white); text-shadow: 0 1px 3px rgba(35, 31, 32, .7);
 }
-.review__rail-label--before { color: var(--grey-300); }
-.review__rail-label--after  { color: var(--white); }
-/* on the photo (phones, reduced motion) the glass panel leaves the rail clear */
-.review > .review__glass { margin-right: 46px; }
+.review__tag-word { grid-area: 1 / 1; transition: opacity .25s; }
+.review__tag-word--after { opacity: 0; }
+.review__tag.is-after .review__tag-word--before { opacity: 0; }
+.review__tag.is-after .review__tag-word--after  { opacity: 1; }
+/* a card with no before photo parks its tag at the top */
+.review:not(.has-before) .review__tag { bottom: auto; top: 12px; }
+/* on the photo (phones, reduced motion) the glass panel leaves the rail and tag clear */
+.review > .review__glass { margin-right: 40px; }
 
 /* progress readout and hint: only meaningful in carousel mode */
 .reviews-progress, .reviews-hint { display: none; }
