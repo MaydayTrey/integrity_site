@@ -619,11 +619,37 @@
             </div>
         </section>
 
-        <!--5. MEET PHIL: portrait + two paragraphs-->
-        <section class="section section--phil placeholder" id="meet-phil" aria-labelledby="phil-title">
-            <div class="section__inner">
-                <h2 class="section__title" id="phil-title">Meet Phil</h2>
-                <p class="placeholder__note">Portrait or family photo plus two paragraphs. Photo and copy due 9/13.</p>
+        <!--5. MEET PHIL: family photo + two paragraphs + quick facts.
+            Copy is PLACEHOLDER in Phil's voice; his own two paragraphs
+            replace it (due 9/13). Photo is the family portrait he sent.-->
+        <section class="section section--phil" id="meet-phil" aria-labelledby="phil-title">
+            <div class="section__inner about">
+                <figure class="about__media">
+                    <img class="about__photo"
+                         src="assets/phil-family-960.webp"
+                         srcset="assets/phil-family-640.webp 640w, assets/phil-family-960.webp 960w"
+                         sizes="(min-width: 768px) 46vw, 100vw"
+                         width="960" height="640" loading="lazy" decoding="async"
+                         alt="Phil Betzner seated on a couch with his wife and their four kids, everyone in plaid and denim">
+                    <figcaption class="about__caption">Phil Betzner and family, Trenton, Ohio</figcaption>
+                </figure>
+
+                <div class="about__body">
+                    <header class="section__head about__head">
+                        <p class="section__eyebrow">Meet Phil</p>
+                        <h2 class="section__title" id="phil-title">The name on the truck</h2>
+                    </header>
+                    <div class="about__copy">
+                        <p data-placeholder>I'm Phil Betzner, and Integrity Restorations and Remodeling is my company, my name, and my family's name. I grew up in the Miami Valley, I raised my kids here, and most of the homes I work in belong to people I'll run into at the grocery store. That's exactly how I like it.</p>
+                        <p data-placeholder>I started with the ugly jobs, the water damage and the demo nobody else wanted, and learned that a project goes right when the homeowner is never guessing what happens next. You'll deal with me from the first walkthrough to the last coat of paint, and when I say the job is done, it's done the way I'd want it done in my own house.</p>
+                    </div>
+                    <ul class="about__facts" aria-label="Quick facts">
+                        <li class="about__fact"><strong>Owner-operated</strong><span>Phil is on every job</span></li>
+                        <li class="about__fact"><strong>Trenton, Ohio</strong><span>Serving the Miami Valley</span></li>
+                        <li class="about__fact"><strong>Licensed</strong><span>Ohio general contractor, water remediation</span></li>
+                    </ul>
+                    <a class="btn btn--primary about__cta" href="#contact">Get a free estimate from Phil</a>
+                </div>
             </div>
         </section>
 
