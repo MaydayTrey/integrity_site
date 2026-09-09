@@ -670,6 +670,30 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .areas__note { margin-top: 18px; font-size: 14px; color: var(--grey-700); }
 .areas__link { color: var(--red-dark); text-decoration: underline; text-underline-offset: 3px; }
 
+/* ---------- QUALIFICATIONS: badge row ---------- */
+.badges { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.badge {
+    display: grid; justify-items: center; text-align: center; gap: 10px;
+    padding: 22px 14px 18px;
+    background: var(--white); border: 1px solid var(--grey-300);
+    position: relative;
+}
+.badge::before { content: ""; position: absolute; inset: -1px -1px auto -1px; height: 4px; background: var(--grad-brand); }
+/* same mask trick as the service icons: the SVG is the stencil, the
+   brand gradient is the paint */
+.badge__mark {
+    width: 56px; aspect-ratio: 1;
+    background: var(--grad-brand);
+    -webkit-mask: var(--icon) center / contain no-repeat;
+            mask: var(--icon) center / contain no-repeat;
+}
+.badge__mark--ohio  { --icon: url("assets/icon-ohio.svg"); }
+.badge__mark--water { --icon: url("assets/icon-water.svg"); }
+.badge__mark--plank { --icon: url("assets/icon-plank.svg"); }
+.badge__mark--claim { --icon: url("assets/icon-claim.svg"); }
+.badge__title { font-family: var(--font-ui); font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; line-height: 1.25; }
+.badge__text { font-size: 13px; line-height: 1.5; color: var(--ink); max-width: 26ch; }
+
 /* ---------- UTILITY PAGES (404, thanks) ----------
    The CSP has no 'unsafe-inline' for styles, so these pages cannot use
    style attributes; everything they need is a class here. */
@@ -830,6 +854,13 @@ body.has-dialog { overflow: hidden; }
     .beat:nth-child(even) .beat__media { order: 2; }
     .beat__body p:not(.beat__step) { font-size: 17px; }
     .about__facts { max-width: 900px; margin-inline: auto; }
+
+    /* qualifications: four across */
+    .badges { grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .badge { padding: 28px 18px 22px; gap: 12px; }
+    .badge__mark { width: 68px; }
+    .badge__title { font-size: 15px; }
+    .badge__text { font-size: 14px; }
 
     /* areas served: two-column county list; the checker panel docks top-left */
     .counties { grid-template-columns: 1fr 1fr; }

@@ -769,11 +769,41 @@
 
         
 
-        <!--7. QUALIFICATIONS: badge row-->
-        <section class="section section--quals placeholder" id="qualifications" aria-labelledby="quals-title">
+        <!--7. QUALIFICATIONS: badge row, not paragraphs.
+            Icons are brand-styled SVGs in /assets painted through the same
+            CSS mask as the service icons. The Ohio outline is real (Census
+            state boundary). Official marks (Cali's installer badge, an
+            IICRC seal) are trademarks: ask Phil for the badge files Cali
+            and his remediation certifier issued him, then drop them into
+            the .badge__mark slots as <img>. Licence numbers: TODO from Phil.-->
+        <section class="section section--quals" id="qualifications" aria-labelledby="quals-title">
             <div class="section__inner">
-                <h2 class="section__title" id="quals-title">Qualifications</h2>
-                <p class="placeholder__note">Badges: Ohio General Contractor License, Water Remediation License, Cali Vinyl Certified Installer, Insurance-claim experience.</p>
+                <header class="section__head">
+                    <p class="section__eyebrow">Qualifications</p>
+                    <h2 class="section__title" id="quals-title">Licensed, certified, and insurance-ready</h2>
+                </header>
+                <ul class="badges">
+                    <li class="badge">
+                        <span class="badge__mark badge__mark--ohio" aria-hidden="true"></span>
+                        <h3 class="badge__title">Ohio General Contractor</h3>
+                        <p class="badge__text">State-licensed general contractor. <span data-placeholder>Licence no. pending.</span></p>
+                    </li>
+                    <li class="badge">
+                        <span class="badge__mark badge__mark--water" aria-hidden="true"></span>
+                        <h3 class="badge__title">Water Remediation</h3>
+                        <p class="badge__text">Licensed to dry out, clean, and rebuild after leaks, floods, and mold.</p>
+                    </li>
+                    <li class="badge">
+                        <span class="badge__mark badge__mark--plank" aria-hidden="true"></span>
+                        <h3 class="badge__title">Cali Vinyl Certified Installer</h3>
+                        <p class="badge__text">Factory-certified on Cali luxury vinyl plank, so the warranty holds.</p>
+                    </li>
+                    <li class="badge">
+                        <span class="badge__mark badge__mark--claim" aria-hidden="true"></span>
+                        <h3 class="badge__title">Insurance Claims</h3>
+                        <p class="badge__text">Experienced working with adjusters on storm and water damage claims.</p>
+                    </li>
+                </ul>
             </div>
         </section>
 

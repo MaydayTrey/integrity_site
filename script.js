@@ -616,7 +616,7 @@ function addressCheck(map, fit) {
        session, so one runaway tab or a bot cannot drain the daily
        allowance. A normal address entry uses 3 to 6, so 6 covers one
        honest attempt; after that the visitor finishes typing by hand. */
-    const SUGGEST_BUDGET = 6;
+    const SUGGEST_BUDGET = 10;
     let suggestUsed = 0;
     street.addEventListener("input", () => {
         clearTimeout(debounce);
@@ -697,7 +697,7 @@ function sectionReveals() {
     /* the reviews section is excluded: its cards live inside the pinned,
        transformed column and its head must be visible the moment the
        pin engages */
-    const targets = ".section__head:not(.reviews-head), .placeholder .section__inner, .service, .segments, .panel:not([hidden]), .beat__media, .beat__body, .about__facts, .about__cta-row, .areas__body, .check__panel";
+    const targets = ".section__head:not(.reviews-head), .placeholder .section__inner, .service, .segments, .panel:not([hidden]), .beat__media, .beat__body, .about__facts, .about__cta-row, .areas__body, .check__panel, .badge";
     gsap.set(targets, { autoAlpha: 0, y: 24 });
     ScrollTrigger.batch(targets, {
         start: "top 85%",
