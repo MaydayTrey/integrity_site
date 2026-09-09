@@ -667,9 +667,14 @@ function addressCheck(map, fit) {
             if (!geo) geo = await fetch("assets/service-counties.geojson").then((r) => r.json());
             const county = countyAt(geo, hit.lng, hit.lat);
 
-            /* the checked address: a plain red dot, so the shield stays Phil's */
+            /* the checked address: a red map pin whose tip sits on the
+               point (the pin's tip is at 81% of the artwork's height);
+               the shield stays Phil's */
             if (pin) pin.remove();
-            pin = L.circleMarker([hit.lat, hit.lng], { radius: 8, color: "#FFFFFF", weight: 2.5, fillColor: "#ED1C24", fillOpacity: 1, interactive: false }).addTo(map);
+            pin = L.marker([hit.lat, hit.lng], {
+                icon: L.divIcon({ className: "map-pin", html: '<img src="assets/icon-pin.svg" alt="" width="40" height="40">', iconSize: [40, 40], iconAnchor: [20, 33] }),
+                interactive: false, zIndexOffset: 2000
+            }).addTo(map);
             fit([hit.lat, hit.lng]);
 
             if (county) say("is-yes", `Yes. ${hit.label} is in ${county} County, and Phil serves it. <a href="#contact">Get a free estimate</a>.`);

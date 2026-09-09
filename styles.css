@@ -612,7 +612,11 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .check__result a { color: var(--red-dark); text-decoration: underline; text-underline-offset: 3px; }
 .check__note { margin-top: 8px; font-size: 12px; line-height: 1.4; color: var(--grey-700); }
 /* the checked address on the map */
-.map-pin img { display: block; filter: drop-shadow(0 2px 4px rgba(35, 31, 32, .4)); }
+/* a white halo behind the red pin so it reads on the grey map, plus a drop */
+.map-pin img {
+    display: block;
+    filter: drop-shadow(0 0 1.5px #FFFFFF) drop-shadow(0 0 1.5px #FFFFFF) drop-shadow(0 3px 4px rgba(35, 31, 32, .45));
+}
 .areas__svg { width: 100%; height: 100%; display: block; background: var(--grey-100); }
 .check__map.is-live .areas__svg { display: none; }     /* the live map took over */
 /* Leaflet as a static cutout: blank outside the counties, basemap in
