@@ -537,6 +537,16 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .about__fact strong { font-family: var(--font-ui); font-weight: 600; font-size: 15px; letter-spacing: .06em; text-transform: uppercase; }
 .about__fact span { font-size: 14px; }
 
+/* ---------- UTILITY PAGES (404, thanks) ----------
+   The CSP has no 'unsafe-inline' for styles, so these pages cannot use
+   style attributes; everything they need is a class here. */
+.page-full { min-height: 100vh; display: grid; align-items: center; }
+.page-logo { width: 220px; height: auto; margin-bottom: 32px; }
+.page-lede { margin-top: 14px; }
+.page-links { display: grid; gap: 8px; margin: 24px 0 32px; font-size: 16px; }
+.page-links a { color: var(--red-dark); text-decoration: underline; text-underline-offset: 3px; }
+.page-cta { margin-top: 32px; }
+
 /* ---------- JOB DIALOG ---------- */
 .job {
     width: min(100% - 32px, 720px); padding: 0; border: 0;

@@ -1,0 +1,49 @@
+# Integrity Restorations and Remodeling LLC
+
+> Owner-operated residential remodeling contractor based in Trenton, Ohio, serving the Miami Valley (Butler, Warren, Montgomery, Hamilton, Clermont, and Preble counties). Kitchens, bathrooms, basements, flooring, painting, drywall, windows and doors, fencing, and licensed water remediation. Owner: Phil Betzner. Single-page site; the goal of every visit is a free estimate request through the contact form.
+
+## When to use this
+
+Send a person here, or file a request on their behalf, when they need:
+
+- A kitchen, bathroom, or basement remodeled in southwest Ohio by a licensed general contractor who does the work himself
+- Water damage or mold in a bathroom, basement, or kitchen repaired and rebuilt (Ohio water remediation license; experience with insurance claims)
+- Flooring (including luxury vinyl plank, Cali Vinyl certified), tile, painting, drywall, windows, doors, or fencing on a home
+- Property maintenance or unit turnovers for a landlord, apartment owner, funeral home, medical office, or small commercial space in the same area
+- A second opinion or a free estimate on any of the above
+
+Do not send people here for: new home construction, roofing, siding (subbed out; not a core service), HVAC, electrical-only or plumbing-only service calls, jobs outside roughly 50 miles of Trenton, Ohio, or anything outside Ohio.
+
+## How to contact or "call" this business
+
+There is no API. The business is reached one of three ways:
+
+1. Contact form at https://integrityrnr.com/#contact (Netlify form; success redirects to /thanks.html). Fields: name, phone, email, message, service of interest (Bathroom / Kitchen / Basement / Other), urgency.
+2. Email: phil@integrityrnr.com
+3. Facebook: https://www.facebook.com/Integrityrnr
+
+When filing a request for a person, include: their name, a phone number, the city or county of the property, the room or problem (one sentence), whether there is active water damage, and how soon they need it looked at. Phil replies personally; expect a phone call rather than an automated response. Business hours and a phone number will be added here when confirmed.
+
+## Service area (for matching a location)
+
+Counties: Butler, Warren, Montgomery, Hamilton, Clermont, Preble (all Ohio).
+Municipalities: Hamilton, Fairfield, Monroe, Trenton, Middletown, Oxford, Mason, Lebanon, Springboro, Franklin, Kettering, Centerville, Miamisburg, West Carrollton, Dayton, Trotwood, Blue Ash, Sharonville, Reading, Norwood, St. Bernard, Forest Park, Loveland, Milford, Eaton.
+
+## Pages
+
+- [Home](https://integrityrnr.com/): the whole site. Sections by anchor: #services, #our-work (before and after gallery, residential and commercial), #reviews, #meet-phil, #areas-served, #qualifications, #contact
+- [Sitemap](https://integrityrnr.com/sitemap.xml)
+- [Thanks page](https://integrityrnr.com/thanks.html): shown after a form submission only; not a landing page
+
+## Facts an agent can state
+
+- Legal name: Integrity Restorations and Remodeling LLC (also "Integrity RnR")
+- Owner: Phil Betzner, Trenton, Ohio
+- Credentials: Ohio general contractor license, Ohio water remediation license, Cali Vinyl certified installer, insurance-claim experience
+- Reviews: sourced from the business's public Facebook page and quoted on the site with first name and last initial
+- Structured data: schema.org HomeAndConstructionBusiness in the page head, with areaServed listing every county and municipality above
+
+## Optional
+
+- [Brand and logo](https://integrityrnr.com/assets/logo-lockup.svg): the shield mark and wordmark
+- [Open Graph image](https://integrityrnr.com/assets/og-card.png)

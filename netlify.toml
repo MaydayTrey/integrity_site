@@ -22,3 +22,20 @@
   for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+# Unknown paths get 404.html WITH a 404 status. Netlify does this on its
+# own when 404.html exists; the rule makes it explicit. No force, so real
+# files are never shadowed. Verify after deploy:
+#   curl -s -o /dev/null -w "%{http_code}" https://integrityrnr.com/nope
+[[redirects]]
+  from = "/*"
+  to = "/404.html"
+  status = 404
+
+# llms.txt changes with the business facts, so it should not sit in
+# caches for a year like the fingerprint-free assets do
+[[headers]]
+  for = "/llms.txt"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+    Content-Type = "text/plain; charset=utf-8"

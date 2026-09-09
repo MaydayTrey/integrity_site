@@ -1,5 +1,8 @@
 User-agent: *
 Allow: /
 Disallow: /thanks.html
+Disallow: /404.html
+
+# Summary for LLM agents: https://integrityrnr.com/llms.txt
 
 Sitemap: https://integrityrnr.com/sitemap.xml
