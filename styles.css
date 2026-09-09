@@ -437,11 +437,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .is-carousel .reviews-layout { height: 100%; grid-template-rows: auto 1fr; min-height: 0; }
 .is-carousel .reviews-head { margin-bottom: 0; }
-.is-carousel .reviews-window {
-    min-height: 0; overflow: hidden;
-    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
-            mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
-}
+.is-carousel .reviews-window { min-height: 0; overflow: hidden; }
 .is-carousel .review { min-height: 300px; }
 .is-carousel .section__lede { display: none; }   /* phone height budget: the review text takes its place */
 
@@ -631,13 +627,17 @@ body.has-dialog { overflow: hidden; }
         grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); grid-template-rows: 1fr;
         align-items: center; gap: 48px;
     }
-    .is-carousel .reviews-head { text-align: left; margin: 0; max-width: 44ch; align-self: start; padding-top: 4vh; }
-    .is-carousel .section__lede { display: block; }
+    /* the head must fit beside the window with the longest review showing,
+       so the title and lede come down a size in carousel mode */
+    .is-carousel .reviews-head { text-align: left; margin: 0; max-width: 46ch; align-self: start; padding-top: 2vh; }
+    .is-carousel .section__title { font-size: clamp(40px, 4.4vw, 60px); }
+    .is-carousel .section__lede { display: block; font-size: 15px; margin-top: 10px; }
+    .is-carousel .reviews-progress { margin-top: 16px; }
     .is-carousel .reviews-window { height: 100%; }
     .is-carousel .review { min-height: 360px; }
     .is-carousel .reviews { max-width: none; }
-    .reviews-current { margin-top: 28px; }
-    .reviews-current .review__quote p { font-size: 19px; }
+    .reviews-current { margin-top: 22px; }
+    .reviews-current .review__quote p { font-size: 17px; line-height: 1.55; }
 }
 @media (min-width: 1024px) {
     .is-carousel .reviews-layout { gap: 80px; }
