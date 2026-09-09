@@ -1,0 +1,24 @@
+# Netlify build settings: static site, no build step.
+[build]
+  publish = "."
+
+# Security headers + CSP. Netlify also honours a _headers file; keeping
+# them in one place (here) avoids the two drifting apart.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    # script-src: self + jsdelivr (GSAP). style-src: self + Google Fonts CSS.
+    # font-src: Google's font files. img-src data: covers inline SVG masks.
+    # form-action self keeps Netlify Forms posting to this origin only.
+    Content-Security-Policy = "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests"
+
+# Long cache for fingerprint-free assets we control; HTML stays fresh.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://integrityrnr.com/</loc>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://integrityrnr.com/assets/hero-kitchen-1600.webp</image:loc>
+      <image:title>Kitchen remodel by Integrity Restorations and Remodeling</image:title>
+    </image:image>
+  </url>
+</urlset>

@@ -1,0 +1,208 @@
+PROJECT HANDOFF: integrityrnr.com
+Prepared 2026-09-08 for Claude Code. Read fully before writing any code.
+
+=====================================================================
+0. HOW TO WORK WITH ME ON THIS PROJECT
+=====================================================================
+I am the developer (Trey, Pegasus Labs). I am learning as I build.
+- Teach, don't just hand over finished code. Explain the reasoning
+  behind structural choices so I understand them, not just paste them.
+- When I ask "why," answer the why before the how.
+- Show me the pattern once, then let me write the next instance myself
+  unless I ask you to write it.
+- Compressed, aggressive timelines. Don't pad plans with buffer days.
+- No em dashes anywhere: not in code comments, not in copy, not in
+  chat. Use commas, periods, or colons.
+- Plain HTML, CSS, and vanilla JavaScript. No framework, no build
+  step unless we decide one is needed for image processing.
+- Mobile-first. Write the phone layout first, add breakpoints up.
+
+=====================================================================
+1. WHAT THIS IS
+=====================================================================
+Single-page marketing site for Integrity Restorations and Remodeling
+LLC, a residential remodeler owned by Phil Betzner, Trenton, Ohio.
+Purpose: generate leads via a contact form, rank in local search for
+the Miami Valley area, convey trust and craftsmanship.
+
+Client budget: $800. Launch target: 2026-10-09.
+Preview site due: 2026-09-27. Client revisions: 1 round on the built
+site (2 rounds on the comp already accounted for).
+
+The Statement of Work is the contract. Everything in Section 4 of it
+ships. Nothing in Section 5 gets built without a change order.
+
+=====================================================================
+2. STACK AND INFRASTRUCTURE
+=====================================================================
+- Static site: index.html, one CSS file, one JS file, /assets
+- Hosting: Netlify (Trey's account), deploy from GitHub main branch
+- DNS: Cloudflare (Trey holds the domain integrityrnr.com)
+- Forms: Netlify Forms (data-netlify="true"), notifications to
+  phil@integrityrnr.com
+- Email: Zoho Mail already live at phil@integrityrnr.com, MX/SPF/DKIM
+  done in Cloudflare, Gmail forwarding verified
+- Fonts: Google Fonts. Bebas Neue (display), Oswald (subheads),
+  system sans or Inter (body). Self-host if CSP makes it simpler.
+- Images: WebP, resized to max display width, loading="lazy" on
+  everything below the fold, explicit width/height attributes on every
+  <img> to prevent layout shift. Hero image is NOT lazy; use
+  <link rel="preload"> for it.
+- Animations: Intersection Observer for fade-ins. GSAP only if a
+  specific effect needs it. Respect prefers-reduced-motion.
+
+=====================================================================
+3. BRAND TOKENS (from the logo's vector print files, authoritative)
+=====================================================================
+  :root {
+    --red:       #ED1C24;   /* accents, headline emphasis */
+    --red-dark:  #BA1E23;   /* buttons, white text on it */
+    --ink:       #231F20;   /* text; all photo overlays are this at alpha, never #000 */
+    --grey-900:  #88888A;   /* dark surfaces; exact logo background grey */
+    --grey-700:  #939598;
+    --grey-500:  #A7A9AC;
+    --grey-300:  #D1D3D4;   /* secondary text on dark */
+    --grey-100:  #E6E7E8;
+    --white:     #FFFFFF;
+  }
+Contrast rules:
+  - white on --red-dark: OK everywhere
+  - white on --red: headings only, never body text
+  - never put body text on --grey-900
+  - --red on white: headings only
+
+Logo: export SVG from the vector PDF (Integrity__1_.pdf). Do not use
+WhiteBackgroundLogo.png, it is an outdated mark with the wrong name.
+Client's shirt printer is "Design 2 Wear 2" if the exact typeface is
+ever needed; text in the vector files is outlined.
+
+Slogan (exact, used as the hero headline):
+  WORKING WITH YOU TO MAKE YOUR PROJECT A SUCCESS
+  ("A SUCCESS" in --red)
+
+=====================================================================
+4. PAGE STRUCTURE (top to bottom)
+=====================================================================
+Nav (sticky): Services · Our Work · Reviews · Meet Phil · Areas Served
+· Contact, plus "Get a Free Estimate" button. Collapses to a hamburger
+on mobile; CTA stays visible.
+
+1. HERO
+   Full-width photo (white kitchen, from client's Facebook page,
+   landscape). Dark --ink gradient overlay. Headline = slogan.
+   Placeholder paragraph for a 1 to 2 sentence personal note from Phil
+   with a vertical --red bar on its left (references his business
+   card). Two buttons: "See Our Work" (outlined) and "Get a Free
+   Estimate" (--red-dark). Trust strip under hero with icons:
+   Licensed & Insured · Ohio General Contractor · Serving the Miami
+   Valley. ("Insured" is unconfirmed; verify with client before launch.)
+   Comp approved in principle 2026-09-05; confirm any feedback Phil gave.
+
+2. SERVICES
+   Four blocks with inline SVG icons: Kitchens, Bathrooms, Basements,
+   Other. One sentence each (client supplies).
+
+3. OUR WORK (before/after gallery)
+   Filter buttons: Kitchens / Bathrooms / Basements / Other.
+   2 before/after pairs per category = 16 images total.
+   All 16 <img> tags in the HTML with data-category attributes; filter
+   toggles a class to show/hide. Hidden items have no layout box, so
+   lazy images don't fetch until revealed. Nothing injected by JS.
+   Above the grid: residential intro copy (default). Small secondary
+   link "Property manager or landlord?" swaps in commercial copy.
+   Both copy blocks live in the HTML, hidden via CSS, for SEO.
+
+4. REVIEWS
+   Testimonial cards. Client supplies text. Structure so they can also
+   be marked up with Review schema later.
+
+5. MEET PHIL
+   Portrait/family photo + two paragraphs (client supplies).
+
+6. AREAS SERVED
+   3-sentence paragraph (client supplies) + the county/city list below.
+   This section carries most of the local SEO weight.
+
+7. QUALIFICATIONS
+   Badge row: Ohio General Contractor License, Water Remediation
+   License, Cali Vinyl Certified Installer, Insurance-claim experience.
+   Badges, not paragraphs.
+
+8. CONTACT
+   Netlify form. Fields: name, phone, email, message, service of
+   interest (select: Bathroom / Kitchen / Basement / Other), urgency
+   (select). Honeypot field for spam. Success redirect to /thanks.html
+   (this is the Google Ads conversion endpoint required by the SOW).
+   Facebook link: www.facebook.com/Integrityrnr
+
+Footer: logo, phone, phil@integrityrnr.com, Facebook, service area
+one-liner, copyright.
+
+=====================================================================
+5. SEO REQUIREMENTS (all in SOW Section 4, all must ship)
+=====================================================================
+- Meta title and description, one H1 (the slogan), semantic H2 per
+  section, descriptive alt text on every image
+- JSON-LD LocalBusiness (or HomeAndConstructionBusiness) schema with
+  areaServed listing all 25 municipalities and 6 counties:
+    Butler: Hamilton, Fairfield, Monroe, Trenton, Middletown, Oxford
+    Warren: Mason, Lebanon, Springboro, Franklin
+    Montgomery: Kettering, Centerville, Miamisburg, West Carrollton,
+                Dayton, Trotwood
+    Hamilton: Blue Ash, Sharonville, Reading, Norwood, St. Bernard,
+              Forest Park, Loveland
+    Clermont: Milford
+    Preble: Eaton
+- sitemap.xml, robots.txt
+- Google Search Console verification + sitemap submission (post-deploy)
+- Security headers + CSP via Netlify _headers file (or netlify.toml)
+- HTTPS (Netlify handles the cert)
+- Core Web Vitals: target LCP under 2.5s on mobile. The hero image
+  size is the main lever.
+
+=====================================================================
+6. WHAT IS STILL PENDING FROM THE CLIENT
+=====================================================================
+As of 2026-09-08:
+- Before/after photos, 4 per category (were due 9/6): CHECK STATUS
+- Website copy for every section (due 9/13)
+- Testimonials (due 9/13)
+- Portrait photo (due 9/13)
+- Confirmation of "Insured" claim
+- Signed SOW + $400 deposit (were due 9/6): CHECK STATUS
+
+Build with clearly labeled placeholder copy and placeholder images
+until these arrive. Never let placeholder text reach production.
+
+=====================================================================
+7. BUILD ORDER (compressed)
+=====================================================================
+Day 1: repo, Netlify site, netlify.toml, _headers with CSP, blank
+       index.html deploying green. Tokens in CSS. Font loading.
+Day 2: nav + hero + trust strip, mobile first, then desktop.
+Day 3: services + qualifications + areas served (all static, fast).
+Day 4: gallery structure + filter JS + lazy loading, with placeholders.
+Day 5: reviews + meet Phil + contact form wired to Netlify, /thanks.html.
+Day 6: schema JSON-LD, meta, sitemap, robots, alt text pass.
+Day 7: image pipeline (resize + WebP) once photos arrive; swap in
+       real copy; Lighthouse pass; fade-ins; reduced-motion.
+Preview deploy by 9/27. Feedback 9/30. Revisions to 10/7. Launch 10/9.
+
+=====================================================================
+8. OUT OF SCOPE (do not build even if it seems easy)
+=====================================================================
+Blog, CMS, e-commerce, additional pages, email marketing, water
+remediation landing content, paid ads setup, logo redesign.
+Anything else the client asks for gets a change order first.
+
+=====================================================================
+9. FILES I HAVE
+=====================================================================
+- IntegritySOW.pdf (the contract)
+- DiscoveryNotes.txt
+- integrityrnr-brand-tokens.txt (full palette + contrast table)
+- integrityrnr-design-brief.txt (the comp brief)
+- Integrity-Hero-Mobile.png, Integrity-Hero-Desktop.png (approved comps)
+- Logo files: Integrity__1_.pdf (vector, use this),
+  GreyBackgroundLogo.jpg, Integrity-Shield-Wordmark.png
+- Hero photo: white kitchen (from client's Facebook)

@@ -1,0 +1,12 @@
+{
+  "name": "Integrity Restorations & Remodeling",
+  "short_name": "Integrity RnR",
+  "icons": [
+    { "src": "assets/android-chrome-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/android-chrome-512.png", "sizes": "512x512", "type": "image/png" }
+  ],
+  "theme_color": "#231F20",
+  "background_color": "#88888A",
+  "display": "browser",
+  "start_url": "/"
+}
