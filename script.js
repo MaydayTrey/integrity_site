@@ -462,6 +462,110 @@ function serviceMap() {
     let timer;
     window.addEventListener("resize", () => { clearTimeout(timer); timer = setTimeout(fit, 200); });
     ScrollTrigger.addEventListener("refresh", () => map.invalidateSize());
+
+    addressCheck(map, () => counties);
+}
+
+/* ---------- ADDRESS CHECK ----------
+   Geocode with the US Census Bureau (free, no key, most accurate for US
+   street addresses; JSONP because it sends no CORS header), fall back
+   to Photon (komoot, CORS). Either way the answer is decided HERE by a
+   point-in-polygon test against the six county shapes, so a geocoder
+   that guesses the county wrong cannot mislead anyone. */
+const SERVICE_FIPS = ["39017", "39165", "39113", "39061", "39025", "39135"];
+
+function inRing(ring, lng, lat) {                        /* ray casting */
+    let inside = false;
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+        const [xi, yi] = ring[i], [xj, yj] = ring[j];
+        if ((yi > lat) !== (yj > lat) && lng < (xj - xi) * (lat - yi) / (yj - yi) + xi) inside = !inside;
+    }
+    return inside;
+}
+function countyAt(gj, lng, lat) {
+    for (const f of gj.features) {
+        const polys = f.geometry.type === "Polygon" ? [f.geometry.coordinates] : f.geometry.coordinates;
+        for (const poly of polys) {
+            if (inRing(poly[0], lng, lat) && !poly.slice(1).some((hole) => inRing(hole, lng, lat))) return f.properties.name;
+        }
+    }
+    return null;
+}
+
+function geocodeCensus(address) {
+    return new Promise((resolve, reject) => {
+        const cb = "censusCb" + Date.now();
+        const s = document.createElement("script");
+        const timeout = setTimeout(() => { cleanup(); reject(new Error("timeout")); }, 8000);
+        function cleanup() { clearTimeout(timeout); delete window[cb]; s.remove(); }
+        window[cb] = (data) => {
+            cleanup();
+            const m = data && data.result && data.result.addressMatches && data.result.addressMatches[0];
+            if (!m) return resolve(null);
+            resolve({ label: m.matchedAddress, lat: m.coordinates.y, lng: m.coordinates.x });
+        };
+        s.onerror = () => { cleanup(); reject(new Error("census")); };
+        s.src = "https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?benchmark=Public_AR_Current&format=jsonp"
+              + "&callback=" + cb + "&address=" + encodeURIComponent(address);
+        document.head.appendChild(s);
+    });
+}
+function geocodePhoton(address) {
+    return fetch("https://photon.komoot.io/api/?limit=1&lang=en&q=" + encodeURIComponent(address))
+        .then((r) => r.json())
+        .then((d) => {
+            const f = d.features && d.features[0];
+            if (!f) return null;
+            const p = f.properties;
+            const label = [p.housenumber && p.street ? `${p.housenumber} ${p.street}` : p.name || p.street, p.city || p.town || p.village, p.state].filter(Boolean).join(", ");
+            return { label, lat: f.geometry.coordinates[1], lng: f.geometry.coordinates[0] };
+        });
+}
+
+function addressCheck(map, getCounties) {
+    const form   = document.getElementById("check-form");
+    const input  = document.getElementById("check-address");
+    const result = document.getElementById("check-result");
+    if (!form) return;
+    let pin = null, geo = null;
+    fetch("assets/service-counties.geojson").then((r) => r.json()).then((gj) => { geo = gj; });
+
+    function say(cls, html) { result.className = "check__result " + cls; result.innerHTML = html; }
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const q = input.value.trim();
+        if (q.length < 5) { say("is-err", "Type a street address with the city, like 123 Main St, Middletown, OH."); input.focus(); return; }
+        say("", "Checking&hellip;");
+        form.querySelector(".check__btn").disabled = true;
+        try {
+            let hit = null;
+            try { hit = await geocodeCensus(q + (/\bOH\b|Ohio/i.test(q) ? "" : ", OH")); } catch (_) { /* fall through */ }
+            if (!hit) hit = await geocodePhoton(q);
+            if (!hit) { say("is-err", "We couldn't find that address. Try adding the city and state, or <a href=\"#contact\">ask Phil</a>."); return; }
+            if (!geo) geo = await fetch("assets/service-counties.geojson").then((r) => r.json());
+            const county = countyAt(geo, hit.lng, hit.lat);
+
+            if (pin) pin.remove();
+            pin = L.marker([hit.lat, hit.lng], {
+                icon: L.divIcon({ className: "map-pin", html: '<img src="assets/logo-shield.svg" alt="" width="26" height="28">', iconSize: [26, 28], iconAnchor: [13, 28] }),
+                interactive: false, zIndexOffset: 2000
+            }).addTo(map);
+            const counties = getCounties();
+            const bounds = counties ? counties.getBounds().extend([hit.lat, hit.lng]) : L.latLngBounds([[hit.lat, hit.lng]]);
+            map.flyToBounds(bounds, { padding: [24, 24], duration: reduceMotion ? 0 : 0.9 });
+
+            if (county) {
+                say("is-yes", `Yes. ${hit.label} is in ${county} County, and Phil serves it. <a href="#contact">Get a free estimate</a>.`);
+            } else {
+                say("is-no", `${hit.label} is outside the six counties. If you're close to the line, <a href="#contact">ask Phil anyway</a>.`);
+            }
+        } catch (_) {
+            say("is-err", "The address lookup didn't respond. Try again in a moment, or <a href=\"#contact\">ask Phil</a>.");
+        } finally {
+            form.querySelector(".check__btn").disabled = false;
+        }
+    });
 }
 
 /* ---------- SECTION FADE-INS (ScrollTrigger) ----------
@@ -473,7 +577,7 @@ function sectionReveals() {
     /* the reviews section is excluded: its cards live inside the pinned,
        transformed column and its head must be visible the moment the
        pin engages */
-    const targets = ".section__head:not(.reviews-head), .placeholder .section__inner, .service, .segments, .panel:not([hidden]), .beat__media, .beat__body, .about__facts, .about__cta-row, .areas__map, .areas__body";
+    const targets = ".section__head:not(.reviews-head), .placeholder .section__inner, .service, .segments, .panel:not([hidden]), .beat__media, .beat__body, .about__facts, .about__cta-row, .areas__body, .check__panel";
     gsap.set(targets, { autoAlpha: 0, y: 24 });
     ScrollTrigger.batch(targets, {
         start: "top 85%",

@@ -15,8 +15,9 @@
     # script-src: self + jsdelivr (GSAP). style-src: self + Google Fonts CSS.
     # font-src: Google's font files. img-src: data: for inline SVG masks,
     # tile.openstreetmap.org for the map tiles. style-src jsdelivr for leaflet.css.
+    # script-src census: the address check uses its JSONP geocoder; connect-src photon: fallback geocoder.
     # form-action self keeps Netlify Forms posting to this origin only.
-    Content-Security-Policy = "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src https://fonts.gstatic.com; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://geocoding.geo.census.gov; style-src 'self' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src https://fonts.gstatic.com; img-src 'self' data: https://tile.openstreetmap.org; connect-src 'self' https://photon.komoot.io; form-action 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests"
 
 # Long cache for fingerprint-free assets we control; HTML stays fresh.
 [[headers]]
