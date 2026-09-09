@@ -211,6 +211,22 @@ function jobDialog() {
     dialog.addEventListener("close", () => document.body.classList.remove("has-dialog"));
 }
 
+/* ---------- REVIEWS: after photo fades in as the card reaches mid-viewport ----------
+   One ScrollTrigger per card. Active while the card's top is above the
+   62% line and its bottom is below the 38% line, i.e. while the card
+   straddles the centre band. toggleClass adds and removes .is-after
+   in both scroll directions, so the CSS owns the actual transition. */
+function reviewReveals() {
+    const cards = gsap.utils.toArray(".review");
+    if (reduceMotion) { cards.forEach((c) => c.classList.add("is-after")); return; }
+    cards.forEach((card) => ScrollTrigger.create({
+        trigger: card,
+        start: "top 62%",
+        end: "bottom 38%",
+        toggleClass: { targets: card, className: "is-after" }
+    }));
+}
+
 /* ---------- SECTION FADE-INS (ScrollTrigger) ----------
    Empty shells for now; batch handles however many we add later. */
 function sectionReveals() {
@@ -232,5 +248,6 @@ document.fonts.ready.then(() => {
     heroIntro();
     ourWork();
     jobDialog();
+    reviewReveals();
     sectionReveals();
 });

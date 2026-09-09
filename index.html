@@ -168,6 +168,10 @@
                 <stop offset="0.5" stop-color="#ED1C24"/>
                 <stop offset="1" stop-color="#BA1E23"/>
             </linearGradient>
+            <!--one star, stamped five times per review card via <use>-->
+            <symbol id="icon-star" viewBox="0 0 24 24">
+                <path d="M12 2.5l2.9 6.1 6.7.8-4.9 4.6 1.3 6.6L12 17.3l-6 3.3 1.3-6.6L2.4 9.4l6.7-.8z"/>
+            </symbol>
         </defs>
     </svg>
 
@@ -506,68 +510,96 @@
                 </header>
 
                 <ul class="reviews">
-                    <li class="review review--featured">
-                        <blockquote class="review__quote">
-                            <p>Phil and his brother did a great job on our shower. It started out a mess, demo revealed a wet moldy ant filled mess, they cleaned it all, replaced wood and turned it into what you see in the picture. Really happy with it and would highly recommend Integrity Restoration!</p>
-                        </blockquote>
-                        <footer class="review__meta">
-                            <cite class="review__name">Larry H.</cite>
-                            <span class="review__source">Facebook</span>
-                            <button class="review__job" type="button" data-job="job-bathroom-1">See the job</button><!--CONFIRM-->
-                        </footer>
+                    <li class="review review--featured"><!--CONFIRM-->
+                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/bathroom-1-before.webp" loading="lazy" decoding="async" alt=""><img class="review__after" src="assets/work/bathroom-1-after.webp" loading="lazy" decoding="async" alt=""></div>
+                        <div class="review__glass">
+                            <span class="review__stars" role="img" aria-label="Rated 5 out of 5 stars"><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg></span>
+                            <blockquote class="review__quote"><p>Phil and his brother did a great job on our shower. It started out a mess, demo revealed a wet moldy ant filled mess, they cleaned it all, replaced wood and turned it into what you see in the picture. Really happy with it and would highly recommend Integrity Restoration!</p></blockquote>
+                            <footer class="review__meta">
+                                <cite class="review__name">Larry H.</cite>
+                                <span class="review__source">Facebook</span>
+                            <button class="review__job" type="button" data-job="job-bathroom-1">See the job</button>
+                            </footer>
+                        </div>
                     </li>
-                    <li class="review">
-                        <blockquote class="review__quote"><p>Very impressive work!!</p></blockquote>
-                        <footer class="review__meta">
-                            <cite class="review__name">Kristen D.</cite>
-                            <span class="review__source">Facebook</span>
-                            <button class="review__job" type="button" data-job="job-bathroom-2">See the job</button><!--CONFIRM-->
-                        </footer>
+                    <li class="review"><!--CONFIRM-->
+                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/bathroom-2-before.webp" loading="lazy" decoding="async" alt=""><img class="review__after" src="assets/work/bathroom-2-after.webp" loading="lazy" decoding="async" alt=""></div>
+                        <div class="review__glass">
+                            <span class="review__stars" role="img" aria-label="Rated 5 out of 5 stars"><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg></span>
+                            <blockquote class="review__quote"><p>Very impressive work!!</p></blockquote>
+                            <footer class="review__meta">
+                                <cite class="review__name">Kristen D.</cite>
+                                <span class="review__source">Facebook</span>
+                            <button class="review__job" type="button" data-job="job-bathroom-2">See the job</button>
+                            </footer>
+                        </div>
                     </li>
-                    <li class="review">
-                        <blockquote class="review__quote"><p>Awesome job! Would highly recommend if anyone is looking for a contractor.</p></blockquote>
-                        <footer class="review__meta">
-                            <cite class="review__name">Bruce D.</cite>
-                            <span class="review__source">Facebook</span>
-                            <!--TODO: link once his tile shower pair is in the gallery-->
-                        </footer>
+                    <li class="review"><!--CONFIRM photos; TODO job link when this pair joins the gallery-->
+                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/bathroom-3-before.webp" loading="lazy" decoding="async" alt=""><img class="review__after" src="assets/work/bathroom-3-after.webp" loading="lazy" decoding="async" alt=""></div>
+                        <div class="review__glass">
+                            <span class="review__stars" role="img" aria-label="Rated 5 out of 5 stars"><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg></span>
+                            <blockquote class="review__quote"><p>Awesome job! Would highly recommend if anyone is looking for a contractor.</p></blockquote>
+                            <footer class="review__meta">
+                                <cite class="review__name">Bruce D.</cite>
+                                <span class="review__source">Facebook</span>
+                            </footer>
+                        </div>
                     </li>
-                    <li class="review">
-                        <blockquote class="review__quote"><p>Thanks to Integrity Restorations and Remodeling for the fantastic installation of the slate tile on the entry of our Wayne Avenue location.</p></blockquote>
-                        <footer class="review__meta">
-                            <cite class="review__name">Westbrock &amp; Daniel Funeral Home</cite>
-                            <span class="review__source">Facebook</span>
-                            <button class="review__job" type="button" data-job="job-more-1">See the job</button><!--placeholder photos-->
-                        </footer>
+                    <li class="review"><!--stand-in tile photo; job link opens placeholder pair-->
+                        <div class="review__bg" aria-hidden="true"><img class="review__after" src="assets/work/tile-1-after.webp" loading="lazy" decoding="async" alt=""></div>
+                        <div class="review__glass">
+                            <span class="review__stars" role="img" aria-label="Rated 5 out of 5 stars"><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg></span>
+                            <blockquote class="review__quote"><p>Thanks to Integrity Restorations and Remodeling for the fantastic installation of the slate tile on the entry of our Wayne Avenue location.</p></blockquote>
+                            <footer class="review__meta">
+                                <cite class="review__name">Westbrock &amp; Daniel Funeral Home</cite>
+                                <span class="review__source">Facebook</span>
+                            <button class="review__job" type="button" data-job="job-more-1">See the job</button>
+                            </footer>
+                        </div>
                     </li>
-                    <li class="review">
-                        <blockquote class="review__quote"><p>Phil just finished our fence and the work was excellent. Timely finish even with the bad weather we've had. Couldn't be happier.</p></blockquote>
-                        <footer class="review__meta">
-                            <cite class="review__name">Rodney W.</cite>
-                            <span class="review__source">Facebook</span>
-                        </footer>
+                    <li class="review"><!--fence job, no photos: kitchen pair as stand-in background-->
+                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/kitchen-1-before.webp" loading="lazy" decoding="async" alt=""><img class="review__after" src="assets/work/kitchen-1-after.webp" loading="lazy" decoding="async" alt=""></div>
+                        <div class="review__glass">
+                            <span class="review__stars" role="img" aria-label="Rated 5 out of 5 stars"><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg></span>
+                            <blockquote class="review__quote"><p>Phil just finished our fence and the work was excellent. Timely finish even with the bad weather we've had. Couldn't be happier.</p></blockquote>
+                            <footer class="review__meta">
+                                <cite class="review__name">Rodney W.</cite>
+                                <span class="review__source">Facebook</span>
+                            </footer>
+                        </div>
                     </li>
-                    <li class="review">
-                        <blockquote class="review__quote"><p>They were here late last night and all day today to get it finished! They have done a phenomenal job!</p></blockquote>
-                        <footer class="review__meta">
-                            <cite class="review__name">Kari D.</cite>
-                            <span class="review__source">Facebook</span>
-                        </footer>
+                    <li class="review"><!--CONFIRM photos-->
+                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/bathroom-4-before.webp" loading="lazy" decoding="async" alt=""><img class="review__after" src="assets/work/bathroom-4-after.webp" loading="lazy" decoding="async" alt=""></div>
+                        <div class="review__glass">
+                            <span class="review__stars" role="img" aria-label="Rated 5 out of 5 stars"><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg></span>
+                            <blockquote class="review__quote"><p>They were here late last night and all day today to get it finished! They have done a phenomenal job!</p></blockquote>
+                            <footer class="review__meta">
+                                <cite class="review__name">Kari D.</cite>
+                                <span class="review__source">Facebook</span>
+                            </footer>
+                        </div>
                     </li>
-                    <li class="review">
-                        <blockquote class="review__quote"><p>You do fantastic work.</p></blockquote>
-                        <footer class="review__meta">
-                            <cite class="review__name">Donna B.</cite>
-                            <span class="review__source">Facebook</span>
-                            <!--TODO: link once her mold-removal shower pair is in the gallery-->
-                        </footer>
+                    <li class="review"><!--CONFIRM photos; TODO job link-->
+                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/bathroom-5-before.webp" loading="lazy" decoding="async" alt=""><img class="review__after" src="assets/work/bathroom-5-after.webp" loading="lazy" decoding="async" alt=""></div>
+                        <div class="review__glass">
+                            <span class="review__stars" role="img" aria-label="Rated 5 out of 5 stars"><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg></span>
+                            <blockquote class="review__quote"><p>You do fantastic work.</p></blockquote>
+                            <footer class="review__meta">
+                                <cite class="review__name">Donna B.</cite>
+                                <span class="review__source">Facebook</span>
+                            </footer>
+                        </div>
                     </li>
-                    <li class="review">
-                        <blockquote class="review__quote"><p>Amazing work from an amazing company!!!</p></blockquote>
-                        <footer class="review__meta">
-                            <cite class="review__name">Derek S.</cite>
-                            <span class="review__source">Facebook</span>
-                        </footer>
+                    <li class="review"><!--stand-in background-->
+                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/basement-1-before.webp" loading="lazy" decoding="async" alt=""><img class="review__after" src="assets/work/basement-1-after.webp" loading="lazy" decoding="async" alt=""></div>
+                        <div class="review__glass">
+                            <span class="review__stars" role="img" aria-label="Rated 5 out of 5 stars"><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg></span>
+                            <blockquote class="review__quote"><p>Amazing work from an amazing company!!!</p></blockquote>
+                            <footer class="review__meta">
+                                <cite class="review__name">Derek S.</cite>
+                                <span class="review__source">Facebook</span>
+                            </footer>
+                        </div>
                     </li>
                 </ul>
             </div>
