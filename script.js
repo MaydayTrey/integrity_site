@@ -224,14 +224,19 @@ function reviewCarousel() {
     const win     = section.querySelector(".reviews-window");
     const column  = section.querySelector(".reviews");
     const cards   = gsap.utils.toArray(".review");
-    const layers  = cards.map((c) => c.querySelector(".review__before ~ .review__after-layer"));   /* null when there is no before */
+    /* per card, the two things the wipe animates together: the after
+       photo layer and the rail fill. Empty when the card has no before. */
+    const layers  = cards.map((c) => {
+        const l = c.querySelector(".review__before ~ .review__after-layer");
+        return l ? [l, c.querySelector(".review__rail-fill")] : null;
+    });
     const texts   = cards.map((c) => c.querySelector(".review__glass"));
     const slot    = section.querySelector(".reviews-current");
     const count   = section.querySelector(".reviews-progress__count");
     const fill    = section.querySelector(".reviews-progress__fill");
 
     if (reduceMotion) {
-        gsap.set(layers.filter(Boolean), { clipPath: "inset(0% 0 0 0)" });   /* everything in its finished state */
+        gsap.set(layers.filter(Boolean).flat(), { clipPath: "inset(0% 0 0 0)" });   /* everything in its finished state */
         return;
     }
     section.classList.add("is-carousel");
@@ -310,7 +315,7 @@ function reviewCarousel() {
         if (tl) tl.kill();
         placeTexts();
         gsap.set(column, { y: 0, paddingTop: 0, paddingBottom: 0 });
-        gsap.set(layers.filter(Boolean), { clipPath: "inset(100% 0 0 0)" });
+        gsap.set(layers.filter(Boolean).flat(), { clipPath: "inset(100% 0 0 0)" });
         revealed = -1;
 
         const H = win.clientHeight;

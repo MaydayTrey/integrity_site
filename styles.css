@@ -400,19 +400,34 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .review__bg { position: absolute; inset: 0; z-index: -1; }
 .review__bg img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-/* the after photo and its chip share one layer; GSAP scrubs the
-   layer's clip from inset(100% 0 0 0) to inset(0% 0 0 0), so the
-   "After" chip is uncovered by the wipe itself. Only clip when a
-   before photo exists underneath to reveal from. */
-.review__after-layer { position: absolute; inset: 0; z-index: 2; }   /* above the Before chip, so a finished wipe covers it */
-.review__before ~ .review__after-layer { clip-path: inset(100% 0 0 0); }
-.review__chip {
-    position: absolute; top: 14px; z-index: 1;
-    padding: 6px 10px; font-family: var(--font-ui); font-weight: 600; font-size: 12px;
-    letter-spacing: .12em; text-transform: uppercase; color: var(--white);
+/* THE WIPE. The after photo sits in a layer that GSAP animates from
+   inset(100% 0 0 0) to inset(0% 0 0 0). The rail on the right edge
+   has a red fill that gets the SAME tween, and the sideways "After"
+   label lives inside that fill, so as the wipe rises the rail fills
+   and "Before" is overtaken by "After". Only clip when a before photo
+   exists underneath to reveal from. */
+.review__after-layer { position: absolute; inset: 0; }
+.review__before ~ .review__after-layer,
+.review__rail-label--before ~ .review__rail-fill { clip-path: inset(100% 0 0 0); }
+
+.review__rail {
+    position: absolute; top: 0; right: 0; bottom: 0; width: 38px; z-index: 2;
+    background: rgba(35, 31, 32, .62);
 }
-.review__chip--before { left: 14px; background: rgba(35, 31, 32, .8); }
-.review__chip--after  { right: 14px; background: var(--grad-brand); }
+.review__rail-fill {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, var(--red-dark), var(--red));
+}
+.review__rail-label {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    writing-mode: vertical-rl; transform: rotate(180deg);   /* reads bottom to top, like a book spine */
+    font-family: var(--font-ui); font-weight: 600; font-size: 13px;
+    letter-spacing: .2em; text-transform: uppercase; white-space: nowrap;
+}
+.review__rail-label--before { color: var(--grey-300); }
+.review__rail-label--after  { color: var(--white); }
+/* on the photo (phones, reduced motion) the glass panel leaves the rail clear */
+.review > .review__glass { margin-right: 46px; }
 
 /* progress readout and hint: only meaningful in carousel mode */
 .reviews-progress, .reviews-hint { display: none; }
@@ -454,11 +469,6 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .reviews-current .review__quote p { font-size: 17px; }
 .reviews-current .review__source { color: var(--grey-700); }
 .reviews-current .review__job { color: var(--red-dark); }
-/* brand rule on top */
-.review::after {
-    content: ""; position: absolute; inset: 0 0 auto 0; height: 4px; z-index: 1;
-    background: var(--grad-brand);
-}
 /* GLASS: a translucent ink tint plus backdrop blur. The blur samples
    the photo behind the panel, so the panel reads as frosted glass
    rather than a grey box. Browsers without backdrop-filter just get
