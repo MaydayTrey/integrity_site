@@ -111,13 +111,76 @@ function heroIntro() {
     });
 }
 
+/* ---------- OUR WORK: segments (tabs), filters, before/after flips ----------
+   Nothing here injects markup. Tabs flip the hidden attribute, the
+   filter writes one data attribute the CSS reads, and the flip button
+   toggles a class. The DOM is the source of truth, JS just points at it. */
+function ourWork() {
+    const tabs    = [...document.querySelectorAll(".segment")];
+    const panels  = tabs.map((t) => document.getElementById(t.getAttribute("aria-controls")));
+    const gallery = document.querySelector(".gallery");
+    const filters = [...document.querySelectorAll(".filter")];
+
+    function fadeIn(el) {
+        if (reduceMotion) return;
+        gsap.fromTo(el, { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out", clearProps: "transform" });
+    }
+
+    function selectTab(index, focus = false) {
+        tabs.forEach((tab, i) => {
+            const on = i === index;
+            tab.classList.toggle("is-active", on);
+            tab.setAttribute("aria-selected", String(on));
+            tab.tabIndex = on ? 0 : -1;          /* roving tabindex: one tab stop for the group */
+            panels[i].hidden = !on;
+        });
+        if (focus) tabs[index].focus();
+        fadeIn(panels[index]);
+        ScrollTrigger.refresh();                 /* the section changed height */
+    }
+    tabs.forEach((tab, i) => {
+        tab.addEventListener("click", () => selectTab(i));
+        tab.addEventListener("keydown", (e) => {
+            if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+                e.preventDefault();
+                selectTab((i + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length, true);
+            }
+        });
+    });
+
+    filters.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            filters.forEach((b) => {
+                const on = b === btn;
+                b.classList.toggle("is-active", on);
+                b.setAttribute("aria-pressed", String(on));
+            });
+            gallery.dataset.filter = btn.dataset.filter;
+            fadeIn(gallery.querySelectorAll(`.pair[data-category="${btn.dataset.filter}"]`));
+            ScrollTrigger.refresh();
+        });
+    });
+
+    /* tap / keyboard flip; hover is pure CSS */
+    document.querySelectorAll(".pair").forEach((pair) => {
+        const flip = pair.querySelector(".pair__flip");
+        const set = (on) => {
+            pair.classList.toggle("is-after", on);
+            flip.setAttribute("aria-pressed", String(on));
+            flip.textContent = on ? "Show the before" : "Show the after";
+        };
+        flip.addEventListener("click", () => set(!pair.classList.contains("is-after")));
+        pair.querySelector(".pair__media").addEventListener("click", () => set(!pair.classList.contains("is-after")));
+    });
+}
+
 /* ---------- SECTION FADE-INS (ScrollTrigger) ----------
    Empty shells for now; batch handles however many we add later. */
 function sectionReveals() {
     if (reduceMotion) return;
     /* section heads and the service blocks reveal separately so the
        four blocks can cascade instead of arriving as one slab */
-    const targets = ".section__head, .placeholder .section__inner, .service";
+    const targets = ".section__head, .placeholder .section__inner, .service, .segments, .panel:not([hidden])";
     gsap.set(targets, { autoAlpha: 0, y: 24 });
     ScrollTrigger.batch(targets, {
         start: "top 85%",
@@ -130,5 +193,6 @@ function sectionReveals() {
 document.fonts.ready.then(() => {
     document.querySelectorAll("[data-roll]").forEach(rollingText);
     heroIntro();
+    ourWork();
     sectionReveals();
 });

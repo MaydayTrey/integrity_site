@@ -308,11 +308,182 @@
             </div>
         </section>
 
-        <!--3. OUR WORK: filterable before/after gallery, 16 images in HTML-->
-        <section class="section section--work placeholder" id="our-work" aria-labelledby="work-title">
+        <!--3. OUR WORK
+            Two segments (tabs): Residential shows the category filters and
+            the before/after pairs; Commercial swaps in an informational
+            block. Both panels live in the HTML for SEO; the inactive one
+            carries the hidden attribute. All 16 gallery images are in the
+            markup with loading="lazy"; a filtered-out pair has no layout
+            box, so its images never download until it is shown.
+            IMAGES: pairs marked (reference) use Phil's Facebook photos as
+            stand-ins; (placeholder) are generated cards. Swap all for
+            client-approved photos before launch.-->
+        <section class="section section--work" id="our-work" aria-labelledby="work-title">
             <div class="section__inner">
-                <h2 class="section__title" id="work-title">Our Work</h2>
-                <p class="placeholder__note">Before and after gallery. Filter: Kitchens / Bathrooms / Basements / Other. Residential intro with a "Property manager or landlord?" swap.</p>
+                <header class="section__head">
+                    <p class="section__eyebrow">Our work</p>
+                    <h2 class="section__title" id="work-title">Before and after</h2>
+                    <p class="section__lede" data-placeholder>Every job starts with the ugly part. Hover or tap a photo to see where it ended up.</p>
+                </header>
+
+                <div class="segments" role="tablist" aria-label="Type of work">
+                    <button class="segment is-active" type="button" role="tab" id="tab-residential" aria-selected="true" aria-controls="panel-residential">
+                        <span class="segment__title">Residential</span>
+                        <span class="segment__sub">Kitchens, bathrooms, basements, and more for homeowners</span>
+                    </button>
+                    <button class="segment" type="button" role="tab" id="tab-commercial" aria-selected="false" aria-controls="panel-commercial" tabindex="-1">
+                        <span class="segment__title">Commercial</span>
+                        <span class="segment__sub">Apartments, offices, and property maintenance</span>
+                    </button>
+                </div>
+
+                <!--RESIDENTIAL PANEL-->
+                <div class="panel" id="panel-residential" role="tabpanel" aria-labelledby="tab-residential">
+                    <p class="work__intro" data-placeholder>Letting someone into your home takes trust. Phil keeps you in the loop from the first walkthrough to the last coat of paint, so the project stays yours. [ Placeholder: residential intro from Phil, due 9/13. ]</p>
+
+                    <div class="filters" role="group" aria-label="Filter projects by room">
+                        <button class="filter is-active" type="button" aria-pressed="true" data-filter="kitchens">Kitchens</button>
+                        <button class="filter" type="button" aria-pressed="false" data-filter="bathrooms">Bathrooms</button>
+                        <button class="filter" type="button" aria-pressed="false" data-filter="basements">Basements</button>
+                        <button class="filter" type="button" aria-pressed="false" data-filter="more">More</button>
+                    </div>
+
+                    <ul class="gallery" data-filter="kitchens">
+                        <!--KITCHENS-->
+                        <li class="pair" data-category="kitchens"><!--(reference)-->
+                            <figure class="pair__figure">
+                                <div class="pair__media">
+                                    <img class="pair__before" src="assets/work/kitchen-1-before.webp" width="900" height="675" loading="lazy" decoding="async" alt="Kitchen before remodel: dated cabinets and worn countertops">
+                                    <img class="pair__after" src="assets/work/kitchen-1-after.webp" width="900" height="675" loading="lazy" decoding="async" alt="Same kitchen after remodel: white shaker cabinets, quartz countertops, grey subway tile, and vinyl plank flooring">
+                                    <span class="pair__chip pair__chip--before" aria-hidden="true">Before</span>
+                                    <span class="pair__chip pair__chip--after" aria-hidden="true">After</span>
+                                </div>
+                                <figcaption class="pair__caption">
+                                    <h3 class="pair__title" data-placeholder>Full kitchen remodel</h3>
+                                    <button class="pair__flip" type="button" aria-pressed="false">Show the after</button>
+                                </figcaption>
+                            </figure>
+                        </li>
+                        <li class="pair" data-category="kitchens"><!--(reference)-->
+                            <figure class="pair__figure">
+                                <div class="pair__media">
+                                    <img class="pair__before" src="assets/work/kitchen-2-before.webp" width="900" height="675" loading="lazy" decoding="async" alt="Kitchen before new flooring and cabinets">
+                                    <img class="pair__after" src="assets/work/kitchen-2-after.webp" width="675" height="900" loading="lazy" decoding="async" alt="Same kitchen after new cabinets and flooring were installed">
+                                    <span class="pair__chip pair__chip--before" aria-hidden="true">Before</span>
+                                    <span class="pair__chip pair__chip--after" aria-hidden="true">After</span>
+                                </div>
+                                <figcaption class="pair__caption">
+                                    <h3 class="pair__title" data-placeholder>Cabinets and flooring</h3>
+                                    <button class="pair__flip" type="button" aria-pressed="false">Show the after</button>
+                                </figcaption>
+                            </figure>
+                        </li>
+                        <!--BATHROOMS-->
+                        <li class="pair" data-category="bathrooms"><!--(reference)-->
+                            <figure class="pair__figure">
+                                <div class="pair__media">
+                                    <img class="pair__before" src="assets/work/bathroom-1-before.webp" width="675" height="900" loading="lazy" decoding="async" alt="Shower before: water-damaged walls and mold stripped back to the studs">
+                                    <img class="pair__after" src="assets/work/bathroom-1-after.webp" width="675" height="900" loading="lazy" decoding="async" alt="Same shower after: new tile surround, niche, and glass door">
+                                    <span class="pair__chip pair__chip--before" aria-hidden="true">Before</span>
+                                    <span class="pair__chip pair__chip--after" aria-hidden="true">After</span>
+                                </div>
+                                <figcaption class="pair__caption">
+                                    <h3 class="pair__title" data-placeholder>Shower rebuild after water damage</h3>
+                                    <button class="pair__flip" type="button" aria-pressed="false">Show the after</button>
+                                </figcaption>
+                            </figure>
+                        </li>
+                        <li class="pair" data-category="bathrooms"><!--(reference)-->
+                            <figure class="pair__figure">
+                                <div class="pair__media">
+                                    <img class="pair__before" src="assets/work/bathroom-2-before.webp" width="675" height="900" loading="lazy" decoding="async" alt="Bathroom before remodel: crowded layout and old fixtures">
+                                    <img class="pair__after" src="assets/work/bathroom-2-after.webp" width="675" height="900" loading="lazy" decoding="async" alt="Same bathroom after remodel: new vanity, tile, and fixtures">
+                                    <span class="pair__chip pair__chip--before" aria-hidden="true">Before</span>
+                                    <span class="pair__chip pair__chip--after" aria-hidden="true">After</span>
+                                </div>
+                                <figcaption class="pair__caption">
+                                    <h3 class="pair__title" data-placeholder>Full bathroom remodel</h3>
+                                    <button class="pair__flip" type="button" aria-pressed="false">Show the after</button>
+                                </figcaption>
+                            </figure>
+                        </li>
+                        <!--BASEMENTS-->
+                        <li class="pair" data-category="basements"><!--(reference)-->
+                            <figure class="pair__figure">
+                                <div class="pair__media">
+                                    <img class="pair__before" src="assets/work/basement-1-before.webp" width="900" height="675" loading="lazy" decoding="async" alt="Unfinished basement before: bare block walls and exposed framing">
+                                    <img class="pair__after" src="assets/work/basement-1-after.webp" width="900" height="675" loading="lazy" decoding="async" alt="Same basement after finishing: drywall, flooring, and lighting">
+                                    <span class="pair__chip pair__chip--before" aria-hidden="true">Before</span>
+                                    <span class="pair__chip pair__chip--after" aria-hidden="true">After</span>
+                                </div>
+                                <figcaption class="pair__caption">
+                                    <h3 class="pair__title" data-placeholder>Basement finish</h3>
+                                    <button class="pair__flip" type="button" aria-pressed="false">Show the after</button>
+                                </figcaption>
+                            </figure>
+                        </li>
+                        <li class="pair" data-category="basements"><!--(placeholder)-->
+                            <figure class="pair__figure">
+                                <div class="pair__media">
+                                    <img class="pair__before" src="assets/work/basement-2-before.webp" width="900" height="900" loading="lazy" decoding="async" alt="Placeholder: basement before photo">
+                                    <img class="pair__after" src="assets/work/basement-2-after.webp" width="900" height="900" loading="lazy" decoding="async" alt="Placeholder: basement after photo">
+                                    <span class="pair__chip pair__chip--before" aria-hidden="true">Before</span>
+                                    <span class="pair__chip pair__chip--after" aria-hidden="true">After</span>
+                                </div>
+                                <figcaption class="pair__caption">
+                                    <h3 class="pair__title" data-placeholder>Basement living space</h3>
+                                    <button class="pair__flip" type="button" aria-pressed="false">Show the after</button>
+                                </figcaption>
+                            </figure>
+                        </li>
+                        <!--MORE-->
+                        <li class="pair" data-category="more"><!--(placeholder)-->
+                            <figure class="pair__figure">
+                                <div class="pair__media">
+                                    <img class="pair__before" src="assets/work/more-1-before.webp" width="900" height="900" loading="lazy" decoding="async" alt="Placeholder: entry before photo">
+                                    <img class="pair__after" src="assets/work/more-1-after.webp" width="900" height="900" loading="lazy" decoding="async" alt="Placeholder: entry after photo">
+                                    <span class="pair__chip pair__chip--before" aria-hidden="true">Before</span>
+                                    <span class="pair__chip pair__chip--after" aria-hidden="true">After</span>
+                                </div>
+                                <figcaption class="pair__caption">
+                                    <h3 class="pair__title" data-placeholder>Slate tile entry</h3>
+                                    <button class="pair__flip" type="button" aria-pressed="false">Show the after</button>
+                                </figcaption>
+                            </figure>
+                        </li>
+                        <li class="pair" data-category="more"><!--(placeholder)-->
+                            <figure class="pair__figure">
+                                <div class="pair__media">
+                                    <img class="pair__before" src="assets/work/more-2-before.webp" width="900" height="900" loading="lazy" decoding="async" alt="Placeholder: flooring before photo">
+                                    <img class="pair__after" src="assets/work/more-2-after.webp" width="900" height="900" loading="lazy" decoding="async" alt="Placeholder: flooring after photo">
+                                    <span class="pair__chip pair__chip--before" aria-hidden="true">Before</span>
+                                    <span class="pair__chip pair__chip--after" aria-hidden="true">After</span>
+                                </div>
+                                <figcaption class="pair__caption">
+                                    <h3 class="pair__title" data-placeholder>Vinyl plank flooring</h3>
+                                    <button class="pair__flip" type="button" aria-pressed="false">Show the after</button>
+                                </figcaption>
+                            </figure>
+                        </li>
+                    </ul>
+                </div>
+
+                <!--COMMERCIAL PANEL: informational, no gallery-->
+                <div class="panel commercial" id="panel-commercial" role="tabpanel" aria-labelledby="tab-commercial" hidden>
+                    <div class="commercial__copy">
+                        <h3 class="commercial__title">Commercial and property maintenance</h3>
+                        <p data-placeholder>Landlords, property managers, and business owners call Phil for the same reason homeowners do: the work gets done right, on schedule, and without surprises. From apartment turnovers to a slate tile entry at a Dayton funeral home, Integrity handles the jobs that keep a property looking the way it should.</p>
+                        <p data-placeholder>Licensed for water remediation and experienced with insurance claims, Phil can take a unit from flood damage back to rent-ready without you juggling three different contractors. [ Placeholder: commercial note from Phil, due 9/13. ]</p>
+                        <a class="btn btn--primary commercial__cta" href="#contact">Talk to Phil about your property</a>
+                    </div>
+                    <ul class="commercial__list" aria-label="Property types Phil has worked on">
+                        <li class="commercial__item"><strong>Apartments and rentals</strong><span>Unit turnovers, repairs, and ongoing maintenance</span></li>
+                        <li class="commercial__item"><strong>Funeral homes</strong><span>Entryways, tile, and finish work that has to look right</span></li>
+                        <li class="commercial__item"><strong>Medical and dental offices</strong><span>Flooring, paint, and drywall on a schedule</span></li>
+                        <li class="commercial__item"><strong>Retail and office space</strong><span>Refreshes and repairs between tenants</span></li>
+                        <li class="commercial__item"><strong>Insurance and water damage</strong><span>Licensed remediation and claim experience</span></li>
+                    </ul>
+                </div>
             </div>
         </section>
 
