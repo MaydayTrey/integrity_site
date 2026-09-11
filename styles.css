@@ -869,12 +869,14 @@ body.has-dialog { overflow: hidden; }
 .section--quals     { background: var(--grey-100); }
 /* .section--contact: styled in the CONTACT block below */
 /* ---------- FOOTER ----------
-   The Homicidal Fitness footer in Integrity's palette. Uppercase,
-   letterspaced UI type throughout; the rows dim by colour, not opacity,
-   so the rolled-in copy of a link can still reach pure white. */
+   The Homicidal Fitness footer in Integrity's palette: white ground,
+   type in the ink of the wordmark's RESTORATIONS & REMODELING line, red
+   for labels, hairlines, the Pegasus mark and the rolled-in copy of
+   every link. Rows dim by colour, not opacity, so a rolled link can
+   still reach full red. */
 .site-footer {
-    --hairline: rgba(255, 255, 255, .14);
-    background: var(--ink); color: var(--white);
+    --hairline: var(--red);
+    background: var(--white); color: var(--ink);
     border-top: 1px solid var(--hairline);
     padding: 64px var(--gutter) 32px;
     font-family: var(--font-ui); text-transform: uppercase;
@@ -883,34 +885,34 @@ body.has-dialog { overflow: hidden; }
 .footer__logo { display: block; width: 165px; height: auto; }
 .footer__tag {
     margin-top: 20px; font-weight: 500; font-size: 12px; letter-spacing: 2.5px; line-height: 1.8;
-    color: rgba(255, 255, 255, .65); max-width: 44ch;
+    color: var(--grey-700); max-width: 44ch;
 }
 .footer__label { display: block; font-weight: 600; font-size: 11px; letter-spacing: 3px; color: var(--red); margin-bottom: 18px; }
-.footer__col p { font-weight: 400; font-size: 14px; letter-spacing: .06em; line-height: 1.9; color: rgba(255, 255, 255, .85); }
+.footer__col p { font-weight: 400; font-size: 14px; letter-spacing: .06em; line-height: 1.9; color: var(--ink); }
 .footer__mail { color: inherit; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--red); text-transform: none; letter-spacing: .02em; }
 .footer__link {
     display: inline-block; margin-top: 20px;
-    font-weight: 600; font-size: 13px; letter-spacing: 2px; color: var(--white); text-decoration: none;
+    font-weight: 600; font-size: 13px; letter-spacing: 2px; color: var(--ink); text-decoration: none;
 }
 .footer__bottom {
     margin-top: 56px; padding-top: 22px; border-top: 1px solid var(--hairline);
     display: flex; flex-direction: column; gap: 16px; align-items: center; text-align: center;
-    font-weight: 500; font-size: 11px; letter-spacing: 2px; color: rgba(255, 255, 255, .55);
+    font-weight: 500; font-size: 11px; letter-spacing: 2px; color: var(--grey-700);
 }
 .footer__social { display: flex; gap: 34px; }
-.footer__social a { display: inline-block; color: var(--white); text-decoration: none; font-weight: 600; }
+.footer__social a { display: inline-block; color: var(--ink); text-decoration: none; font-weight: 600; }
 .footer__credit {
     margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--hairline);
     display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14px;
-    font-weight: 500; font-size: 11px; letter-spacing: 2px; color: rgba(255, 255, 255, .55); text-align: center;
+    font-weight: 500; font-size: 11px; letter-spacing: 2px; color: var(--grey-700); text-align: center;
 }
-.footer__mark { width: 26px; height: 26px; flex-shrink: 0; }   /* inherits the dimmed currentColor */
+.footer__mark { width: 26px; height: 26px; flex-shrink: 0; color: var(--red); }
 .footer__credit a {
-    display: inline-block; color: inherit; font-weight: 600; text-decoration: none;
+    display: inline-block; color: var(--ink); font-weight: 600; text-decoration: none;
     white-space: nowrap;                    /* the URL breaks whole, never mid-word across the char spans */
 }
-/* the roll reveals pure white */
-.footer__credit a .trackContent[aria-hidden] { color: var(--white); }
+/* the roll reveals red */
+.site-footer a[data-roll] .trackContent[aria-hidden] { color: var(--red); }
 /* a rolled link is an overflow-hidden inline-block, so its baseline is
    its bottom edge and it floats above the text beside it; aligning the
    box to the line's top puts the glyphs back on the line's baseline */
