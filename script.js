@@ -398,11 +398,17 @@ function reviewCarousel() {
 /* ---------- AREAS SERVED: static map (Leaflet + OpenStreetMap) ----------
    Free and keyless: Leaflet is open source and OpenStreetMap serves
    its tiles without a key. The map is STATIC (no drag, no zoom) so the
-   page scroll never gets trapped. It is framed tightly on the six
-   service counties, which are outlined in red; the basemap's own town
-   names do the labelling, so the only marker is the shield at home.
-   County shapes come from assets/service-counties.geojson (Census). */
+   page scroll never gets trapped. It is framed tightly on the SERVICE
+   AREA, drawn in red from assets/service-area.geojson. That file is
+   the single source of truth: the red overlay and the address check
+   both read it, so whatever shape it holds is what Phil serves. It
+   starts as the six counties (Census shapes) and can be any polygons;
+   draw a new one with the hidden editor (?edit-area in the URL).
+   The basemap's own town names do the labelling, so the only marker
+   is the shield at home. */
 const SERVICE_HOME = [39.4809, -84.4577];   /* Trenton, OH */
+const SERVICE_AREA_URL = "assets/service-area.geojson";
+const EDIT_AREA = new URLSearchParams(location.search).has("edit-area");
 
 function serviceMap() {
     const el = document.getElementById("service-map");
@@ -420,8 +426,8 @@ function serviceMap() {
     }).addTo(map);
 
     const wide = window.matchMedia("(min-width: 768px)");
-    let counties = null;
-    /* keep the counties clear of the docked panel: left/top on desktop, bottom on phones */
+    let area = null;
+    /* keep the area clear of the docked panel: left/top on desktop, bottom on phones */
     function framePadding() {
         const panel = el.parentElement.querySelector(".check__panel");
         const r = panel ? panel.getBoundingClientRect() : { width: 0, height: 0 };
@@ -429,15 +435,15 @@ function serviceMap() {
             ? { paddingTopLeft: [r.width + 40, 110], paddingBottomRight: [24, 24] }
             : { paddingTopLeft: [12, 72], paddingBottomRight: [12, r.height + 12] };
     }
-    /* The counties are the focal point: fit them tightly, zoom in a notch,
-       then shift the view so they sit beside the panel (desktop) or above
-       it (phones). Only when a checked address has to be shown does the
-       view widen to keep both the counties and the pin clear of the panel. */
+    /* The area is the focal point: fit it tightly, then shift the view so
+       it sits beside the panel (desktop) or above it (phones). Only when
+       a checked address has to be shown does the view widen to keep both
+       the area and the pin clear of the panel. */
     function fit(extra) {
-        if (!counties) return;
+        if (!area) return;
         map.invalidateSize();
         if (extra) {
-            map.fitBounds(counties.getBounds().extend(extra), framePadding());
+            map.fitBounds(area.getBounds().extend(extra), framePadding());
             return;
         }
         const panel = el.parentElement.querySelector(".check__panel");
@@ -445,20 +451,21 @@ function serviceMap() {
         const navH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--nav-h")) || 0;
         if (wide.matches) {
             /* as tall as the room under the header allows, then slid right of the panel */
-            map.fitBounds(counties.getBounds(), { paddingTopLeft: [16, navH + 12], paddingBottomRight: [16, 16], animate: false });
+            map.fitBounds(area.getBounds(), { paddingTopLeft: [16, navH + 12], paddingBottomRight: [16, 16], animate: false });
             map.panBy([-(r.width / 2 + 24), 0], { animate: false });
         } else {
             /* phones: fill the width; the bottom edge may tuck under the panel */
-            map.fitBounds(counties.getBounds(), { paddingTopLeft: [10, navH + 10], paddingBottomRight: [10, r.height * 0.45], animate: false });
+            map.fitBounds(area.getBounds(), { paddingTopLeft: [10, navH + 10], paddingBottomRight: [10, r.height * 0.45], animate: false });
         }
     }
 
-    fetch("assets/service-counties.geojson")
+    fetch(SERVICE_AREA_URL)
         .then((r) => r.json())
         .then((gj) => {
-            counties = L.geoJSON(gj, { style: { color: "#BA1E23", weight: 2, fillColor: "#ED1C24", fillOpacity: 0.07 }, interactive: false }).addTo(map);
+            area = L.geoJSON(gj, { style: { color: "#BA1E23", weight: 2, fillColor: "#ED1C24", fillOpacity: 0.07 }, interactive: false }).addTo(map);
             fit();
             el.classList.add("is-live");
+            if (EDIT_AREA) areaEditor(map, el, () => area);
         })
         .catch(() => {});                                  /* the SVG fallback stays */
 
@@ -474,14 +481,97 @@ function serviceMap() {
     addressCheck(map, fit);
 }
 
+/* ---------- AREA EDITOR (hidden tool: add ?edit-area to the URL) ----------
+   Draw Phil's real coverage on the live map, copy the GeoJSON it
+   produces, and save it as assets/service-area.geojson. That is the
+   whole workflow: the overlay and the check both read that file.
+   Click adds a corner. Enter closes the shape. Backspace removes the
+   last corner. U removes the last finished shape. Any number of shapes.
+   Not linked from anywhere and changes nothing on the site by itself. */
+function areaEditor(map, el, getArea) {
+    const section = el.closest(".section--check");
+    section.classList.add("is-editing");
+    map.dragging.enable(); map.scrollWheelZoom.enable(); map.touchZoom.enable(); map.keyboard.enable();
+    L.control.zoom({ position: "topright" }).addTo(map);
+
+    const DRAFT = { color: "#BA1E23", weight: 2, fillColor: "#ED1C24", fillOpacity: 0.2, interactive: false };
+    const draft = L.layerGroup().addTo(map);           /* finished shapes */
+    const dots  = L.layerGroup().addTo(map);           /* corners of the shape in progress */
+    let shapes = [], pts = [], line = null;
+
+    function redraw() {
+        if (line) line.remove();
+        line = pts.length ? L.polyline(pts, { color: "#231F20", weight: 2, dashArray: "6 6", interactive: false }).addTo(map) : null;
+        dots.clearLayers();
+        pts.forEach((p) => L.circleMarker(p, { radius: 5, color: "#231F20", weight: 2, fillColor: "#FFFFFF", fillOpacity: 1, interactive: false }).addTo(dots));
+    }
+    function repaint() { draft.clearLayers(); shapes.forEach((s) => L.polygon(s, DRAFT).addTo(draft)); }
+    function closeShape() { if (pts.length < 3) return; shapes.push(pts); pts = []; repaint(); redraw(); status(); }
+    function toGeoJSON() {
+        return { type: "FeatureCollection", features: shapes.map((s, i) => ({
+            type: "Feature", properties: { name: `Service area ${i + 1}` },
+            geometry: { type: "Polygon", coordinates: [[...s, s[0]].map(([lat, lng]) => [+lng.toFixed(5), +lat.toFixed(5)])] }
+        })) };
+    }
+
+    map.on("click", (e) => { pts.push([e.latlng.lat, e.latlng.lng]); redraw(); status(); });
+    document.addEventListener("keydown", (e) => {
+        if (e.target.closest("input, textarea, button")) return;
+        if (e.key === "Enter") closeShape();
+        else if (e.key === "Backspace") { pts.pop(); redraw(); status(); }
+        else if (e.key.toLowerCase() === "u") { shapes.pop(); repaint(); status(); }
+    });
+
+    const bar = document.createElement("div");
+    bar.className = "area-editor";
+    bar.innerHTML =
+        '<strong>Service area editor</strong><span class="area-editor__status"></span>' +
+        '<div class="area-editor__row">' +
+        '<button type="button" data-act="seed">Start from current area</button>' +
+        '<button type="button" data-act="close">Close shape (Enter)</button>' +
+        '<button type="button" data-act="undo">Remove last shape (U)</button>' +
+        '<button type="button" data-act="clear">Clear</button>' +
+        '<button type="button" data-act="export">Copy GeoJSON</button></div>' +
+        '<textarea class="area-editor__out" rows="3" readonly aria-label="GeoJSON output"></textarea>' +
+        '<p>Click adds a corner, Enter closes the shape, Backspace removes the last corner. Save the copied text as assets/service-area.geojson.</p>';
+    section.appendChild(bar);
+    const out = bar.querySelector(".area-editor__out"), st = bar.querySelector(".area-editor__status");
+    function status() { st.textContent = `${shapes.length} shape${shapes.length === 1 ? "" : "s"}, ${pts.length} corner${pts.length === 1 ? "" : "s"} pending`; }
+
+    bar.addEventListener("click", (e) => {
+        const act = e.target.dataset.act; if (!act) return;
+        if (act === "seed") {
+            const layer = getArea(); if (!layer) return;
+            shapes = [];
+            layer.eachLayer((l) => {
+                const g = l.feature.geometry;
+                (g.type === "Polygon" ? [g.coordinates] : g.coordinates).forEach((poly) => shapes.push(poly[0].slice(0, -1).map(([lng, lat]) => [lat, lng])));
+            });
+            repaint();
+        }
+        if (act === "close") closeShape();
+        if (act === "undo") { shapes.pop(); repaint(); }
+        if (act === "clear") { shapes = []; pts = []; repaint(); redraw(); }
+        if (act === "export") {
+            const txt = JSON.stringify(toGeoJSON());
+            out.value = txt; out.select();
+            if (navigator.clipboard) navigator.clipboard.writeText(txt).catch(() => {});
+            st.textContent = "Copied. Save as assets/service-area.geojson";
+            return;
+        }
+        status();
+    });
+    status();
+}
+
 /* ---------- ADDRESS CHECK ----------
    The check geocodes the structured address with the US Census Bureau
    (free, no key, most accurate for US street addresses because it
    interpolates house numbers from address ranges; JSONP because it
    sends no CORS header), Photon (OpenStreetMap) as a fallback. Either
    way the answer is decided HERE by a point-in-polygon test against
-   the six county shapes, so a geocoder that guesses the county wrong
-   cannot mislead anyone.
+   the service-area shapes (the same file the red overlay is drawn
+   from), so the answer always matches what the visitor sees.
    SUGGESTIONS while typing are optional: OpenStreetMap has no house
    number points for most of this area, so a keyless suggester can only
    offer street names, which reads as broken. With a Geoapify key in
@@ -497,11 +587,12 @@ function inRing(ring, lng, lat) {                        /* ray casting */
     }
     return inside;
 }
-function countyAt(gj, lng, lat) {
+/* the name of the service-area shape containing the point, or null */
+function areaAt(gj, lng, lat) {
     for (const f of gj.features) {
         const polys = f.geometry.type === "Polygon" ? [f.geometry.coordinates] : f.geometry.coordinates;
         for (const poly of polys) {
-            if (inRing(poly[0], lng, lat) && !poly.slice(1).some((hole) => inRing(hole, lng, lat))) return f.properties.name;
+            if (inRing(poly[0], lng, lat) && !poly.slice(1).some((hole) => inRing(hole, lng, lat))) return (f.properties && f.properties.name) || "the service area";
         }
     }
     return null;
@@ -570,7 +661,7 @@ function addressCheck(map, fit) {
     const result = document.getElementById("check-result");
     const btn    = form.querySelector(".check__btn");
     let pin = null, geo = null, items = [], active = -1, debounce, lastQuery = "";
-    fetch("assets/service-counties.geojson").then((r) => r.json()).then((gj) => { geo = gj; });
+    fetch(SERVICE_AREA_URL).then((r) => r.json()).then((gj) => { geo = gj; });
 
     /* --- suggestions: an ARIA combobox over the street field --- */
     function closeList() { list.hidden = true; list.replaceChildren(); street.setAttribute("aria-expanded", "false"); active = -1; }
@@ -665,8 +756,8 @@ function addressCheck(map, fit) {
                 if (alt[0]) hit = { label: `${alt[0].street}, ${alt[0].city}, ${alt[0].state} ${alt[0].zip}`.trim(), lat: alt[0].lat, lng: alt[0].lng };
             }
             if (!hit) { say("is-err", "We couldn't find that address. Check the spelling and city, or <a href=\"#contact\">ask Phil</a>."); return; }
-            if (!geo) geo = await fetch("assets/service-counties.geojson").then((r) => r.json());
-            const county = countyAt(geo, hit.lng, hit.lat);
+            if (!geo) geo = await fetch(SERVICE_AREA_URL).then((r) => r.json());
+            const zone = areaAt(geo, hit.lng, hit.lat);
 
             /* the checked address: a red map pin whose tip sits on the
                point (the pin's tip is at 81% of the artwork's height);
@@ -678,8 +769,11 @@ function addressCheck(map, fit) {
             }).addTo(map);
             fit([hit.lat, hit.lng]);
 
-            if (county) say("is-yes", `Yes. ${hit.label} is in ${county} County, and Phil serves it. <a href="#contact">Get a free estimate</a>.`);
-            else say("is-no", `${hit.label} is outside the six counties. If you're close to the line, <a href="#contact">ask Phil anyway</a>.`);
+            /* name the county only when the shape IS a county; a hand-drawn
+               zone just reads as "Phil's service area" */
+            const where = zone && /county$/i.test(zone) ? ` in ${zone}` : "";
+            if (zone) say("is-yes", `Yes. ${hit.label} is inside Phil's service area${where}. <a href="#contact">Get a free estimate</a>.`);
+            else say("is-no", `${hit.label} is outside Phil's service area. If you're close to the line, <a href="#contact">ask Phil anyway</a>.`);
         } catch (_) {
             say("is-err", "The address lookup didn't respond. Try again in a moment, or <a href=\"#contact\">ask Phil</a>.");
         } finally {
