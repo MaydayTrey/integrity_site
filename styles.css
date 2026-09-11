@@ -724,17 +724,41 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 /* ---------- CONTACT: one white card on the grey section ----------
    Left: heading, copy, the form. Right: what happens next, details,
    social. Stacked on phones; two columns from desktop widths. */
-.section.section--contact { background: var(--grey-900); }
+/* the section carries two angled slabs behind the card: an ink wedge
+   from the left and a brand-red band at the right, both clipped to
+   polygons and sitting under the card (isolation keeps them local) */
+.section.section--contact { background: var(--grey-900); position: relative; isolation: isolate; overflow: clip; }
+.section--contact::before {
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background: var(--ink); opacity: .16;
+    clip-path: polygon(0 0, 66% 0, 30% 100%, 0 100%);
+}
+.section--contact::after {
+    content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: 34%; z-index: -1;
+    background: var(--grad-brand);
+    clip-path: polygon(58% 0, 100% 0, 100% 100%, 18% 100%);
+}
+/* SHADOW ON THE WRAP, CLIP ON THE CARD: a clip-path cuts everything the
+   element paints, shadow included, so the shadow has to come from the
+   parent's filter */
+.contact-card__wrap { filter: drop-shadow(0 26px 34px rgba(35, 31, 32, .38)); }
 .contact-card {
+    --cut: 30px;                                   /* the chamfer size, echoing the shield's facets */
     display: grid; gap: 36px;
     padding: 30px 22px 28px;
     background: var(--white); color: var(--ink);
     border-top: 4px solid; border-image: var(--grad-brand) 1;
-    box-shadow: 0 24px 60px rgba(35, 31, 32, .3);
+    clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, var(--cut) 100%, 0 calc(100% - var(--cut)));
 }
 .contact-card__title { margin-top: 4px; }
 .contact-card__copy { font-size: 16px; line-height: 1.65; margin: 14px 0 26px; max-width: 52ch; }
-.contact-card__side { border-top: 1px solid var(--grey-300); padding-top: 30px; }
+/* the side column is the card's darker facet: a grey panel bled to
+   the card's edges with a slanted top (phones) or left (desktop) edge */
+.contact-card__side {
+    background: var(--grey-100);
+    margin: 0 -22px -28px; padding: 44px 22px 30px;
+    clip-path: polygon(0 28px, 100% 0, 100% 100%, 0 100%);
+}
 .contact-card__mark { width: 56px; height: auto; margin-bottom: 18px; }
 .contact-card__sub {
     font-family: var(--font-display); font-weight: 400; font-size: 28px; line-height: 1;
@@ -961,7 +985,8 @@ body.has-dialog { overflow: hidden; }
     .about__facts { max-width: 900px; margin-inline: auto; }
 
     /* contact card: roomier padding, two-up phone/email */
-    .contact-card { padding: 44px 40px 40px; }
+    .contact-card { padding: 44px 40px 40px; --cut: 40px; }
+    .contact-card__side { margin: 0 -40px -40px; padding: 56px 40px 40px; clip-path: polygon(0 40px, 100% 0, 100% 100%, 0 100%); }
     .contact-card__copy { font-size: 17px; }
     .form__row { grid-template-columns: 1fr 1fr; }
     .form__foot { flex-direction: row; align-items: center; gap: 18px; }
@@ -990,9 +1015,14 @@ body.has-dialog { overflow: hidden; }
 @media (min-width: 1024px) {
     .about__facts { grid-template-columns: repeat(3, 1fr); }   /* three-up only once each card has ~180px */
 
-    /* contact card: form left, next steps right, a hairline between */
-    .contact-card { grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: 56px; padding: 52px 56px 48px; }
-    .contact-card__side { border-top: 0; border-left: 1px solid var(--grey-300); padding: 6px 0 0 48px; }
+    /* contact card: form left, the grey facet right with a slanted
+       left edge, bled to the card's top, right, and bottom */
+    .contact-card { grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: 0; padding: 52px 0 48px 56px; }
+    .contact-card__main { padding-right: 56px; }
+    .contact-card__side {
+        margin: -52px 0 -48px; padding: 58px 56px 48px 72px;
+        clip-path: polygon(64px 0, 100% 0, 100% 100%, 0 100%);
+    }
 }
 @media (min-width: 1024px) {
     .is-carousel .reviews-layout { gap: 80px; }
