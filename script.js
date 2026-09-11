@@ -1141,12 +1141,17 @@ function qualsIntro() {
     /* first and third start high (the first highest), second and fourth
        start low (the fourth lowest): each pair a little different */
     const offsets = [-280, 230, -210, 280];
-    section.querySelectorAll(".badge").forEach((badge, i) => {
-        gsap.fromTo(badge, { y: offsets[i % offsets.length] }, {
-            y: 0, ease: "none",
-            scrollTrigger: { trigger: section, start: "top 90%", end: "center 50%", scrub: 0.6 }
-        });
-    });
+    const badges = [...section.querySelectorAll(".badge")];
+    const slides = badges.map((badge, i) => gsap.fromTo(badge, { y: offsets[i % offsets.length] }, {
+        y: 0, ease: "none",
+        scrollTrigger: { trigger: section, start: "top 90%", end: "center 50%", scrub: 0.6 }
+    }));
+    /* once they meet, they lock: the scroll no longer moves them, so
+       scrolling back up cannot fan them out over the revealed head */
+    const lock = () => {
+        slides.forEach((t) => { t.scrollTrigger.kill(); t.kill(); });
+        gsap.set(badges, { y: 0 });
+    };
 
     const eyebrow = section.querySelector(".section__eyebrow");
     const title   = section.querySelector(".section__title");
@@ -1156,6 +1161,7 @@ function qualsIntro() {
     gsap.set(words.words, { yPercent: 110 });
     gsap.timeline({
         scrollTrigger: { trigger: section, start: "center 52%", once: true },
+        onStart: lock,
         onComplete() { words.revert(); }
     })
     .to(eyebrow, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" })
