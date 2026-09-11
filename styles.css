@@ -793,7 +793,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .contact-card__side { border-top: 1px solid var(--grey-300); padding-top: 30px; }
 /* the portrait: a photo in a brand-gradient ring with a white inner keyline */
 .contact-card__portrait {
-    width: 104px; height: 104px; padding: 4px; margin-bottom: 16px;
+    width: 160px; height: 160px; padding: 5px; margin-bottom: 18px;
     border-radius: 50%; background: var(--grad-brand);
 }
 .contact-card__photo {
@@ -1153,7 +1153,7 @@ body.has-dialog { overflow: hidden; }
     .shield-card .chip span { min-height: 40px; padding: 8px 14px; }
     .shield-card .form__help { margin-top: 5px; }
     .contact-card__side { border-top: 0; border-left: 1px solid var(--grey-300); padding: 2px 0 0 32px; }
-    .contact-card__portrait { width: 120px; height: 120px; margin-bottom: 12px; }
+    .contact-card__portrait { width: 180px; height: 180px; margin-bottom: 14px; }
     .contact-card__sub { font-size: 24px; margin-bottom: 10px; }
     .steps { gap: 10px; margin-bottom: 18px; }
     .step p { font-size: 14px; }
