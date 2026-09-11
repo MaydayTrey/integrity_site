@@ -1236,7 +1236,7 @@ function sectionReveals() {
     /* the reviews section is excluded: its cards live inside the pinned,
        transformed column and its head must be visible the moment the
        pin engages */
-    const targets = ".section__head:not(.reviews-head):not(.quals-head), .placeholder .section__inner, .service, .segments, .panel:not([hidden]), .about__facts, .about__cta-row, .areas__body, .check__panel";   /* qualifications run their own entrance (qualsIntro) */   /* the contact card is excluded: the pour is its entrance, and a translated card would throw the tint projection off */
+    const targets = ".section__head:not(.reviews-head):not(.quals-head), .placeholder .section__inner, .service, .segments, .panel:not([hidden]), .about__cta-row, .areas__body, .check__panel";   /* qualifications run their own entrance (qualsIntro) */   /* the contact card is excluded: the pour is its entrance, and a translated card would throw the tint projection off */
     gsap.set(targets, { autoAlpha: 0, y: 24 });
     ScrollTrigger.batch(targets, {
         start: "top 85%",

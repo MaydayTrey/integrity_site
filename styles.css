@@ -601,14 +601,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
     line-height: 1; letter-spacing: .01em; text-transform: uppercase; margin-bottom: 14px;
 }
 .beat__body p:not(.beat__step) { font-size: 16px; line-height: 1.65; margin-bottom: 14px; }
-.about__facts { display: grid; gap: 10px; margin: 48px 0 26px; }
-.about__cta-row { text-align: center; }
-.about__fact {
-    display: grid; gap: 2px; padding: 12px 16px;
-    border-left: 4px solid var(--red); background: var(--white);
-}
-.about__fact strong { font-family: var(--font-ui); font-weight: 600; font-size: 15px; letter-spacing: .06em; text-transform: uppercase; }
-.about__fact span { font-size: 14px; }
+.about__cta-row { text-align: center; margin-top: 48px; }
 
 /* ---------- AREAS SERVED (screen 1: copy + list) ---------- */
 .section--areas { min-height: 100svh; display: grid; align-content: center; }
@@ -1139,7 +1132,6 @@ body.has-dialog { overflow: hidden; }
     .beat { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: center; }
     .beat:nth-child(even) .beat__media { order: 2; }
     .beat__body p:not(.beat__step) { font-size: 17px; }
-    .about__facts { max-width: 900px; margin-inline: auto; }
 
     /* split shield: wider caps, roomier panel */
     .shield-card { --cap: 90px; }
@@ -1169,7 +1161,6 @@ body.has-dialog { overflow: hidden; }
     .check__grid { grid-template-columns: minmax(0, 1fr) 72px 104px; }
 }
 @media (min-width: 1024px) {
-    .about__facts { grid-template-columns: repeat(3, 1fr); }   /* three-up only once each card has ~180px */
 
     /* footer: three columns, legal row and credit row inline */
     .site-footer { padding: 90px var(--gutter) 40px; }
