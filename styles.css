@@ -734,34 +734,49 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .contact__label { font-family: var(--font-ui); font-weight: 600; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; opacity: .85; }
 .contact__link { color: var(--white); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--red); }
 
-/* THE CLIPBOARD: an ink board with a grain, a metal clip hung over the
-   top edge, and the paper resting on it with a slight lift */
+/* THE CLIPBOARD: a hardboard back (kraft tan with fibre speckle and a
+   faint grain), a chrome clamp mounted across the top, and the paper
+   slid up UNDER the clamp's jaw. All CSS, no images. */
 .clipboard {
     position: relative;
-    padding: 46px 16px 18px;
+    padding: 30px 16px 18px;
     background:
-        repeating-linear-gradient(90deg, rgba(255, 255, 255, .025) 0 2px, transparent 2px 7px),
-        linear-gradient(160deg, #3A3536, var(--ink) 55%, #1A1718);
-    border-radius: 10px;
-    box-shadow: 0 30px 60px rgba(35, 31, 32, .45), inset 0 1px 0 rgba(255, 255, 255, .08);
+        radial-gradient(circle at 30% 40%, rgba(255, 255, 255, .22) 0 .8px, transparent 1.6px) 0 0 / 23px 19px,
+        radial-gradient(circle at 70% 60%, rgba(96, 64, 20, .22) 0 .8px, transparent 1.7px) 7px 5px / 29px 31px,
+        repeating-linear-gradient(97deg, rgba(120, 85, 35, .10) 0 1px, transparent 1px 4px),
+        linear-gradient(160deg, #D4B682, #C4A36A 60%, #B7955B);
+    border: 1px solid rgba(96, 64, 20, .35);
+    border-radius: 12px;
+    box-shadow: 0 30px 60px rgba(35, 31, 32, .45), inset 0 1px 0 rgba(255, 255, 255, .35), inset 0 -3px 0 rgba(0, 0, 0, .12);
 }
+.paper { z-index: 1; }
+/* the clamp: a chrome plate across the top, its lower lip pressed over
+   the paper, and the spring ring standing up behind it */
 .clipboard__clip {
-    position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
-    width: 150px; height: 44px; z-index: 2;
-    background: linear-gradient(180deg, #C9CBCE 0%, #8E9094 45%, #6E7074 55%, #B5B7BA 100%);
-    border-radius: 8px 8px 12px 12px;
-    box-shadow: 0 6px 14px rgba(35, 31, 32, .55), inset 0 -2px 0 rgba(0, 0, 0, .25), inset 0 2px 0 rgba(255, 255, 255, .45);
+    position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+    width: min(58%, 250px); height: 38px; z-index: 2;
+    background:
+        radial-gradient(circle at 12% 50%, #4A4C50 0 2.5px, transparent 3px),
+        radial-gradient(circle at 88% 50%, #4A4C50 0 2.5px, transparent 3px),
+        linear-gradient(180deg, #E4E6E8 0%, #B7B9BC 30%, #7F8286 55%, #A6A8AB 75%, #D5D7D9 100%);
+    border-radius: 6px 6px 4px 4px;
+    box-shadow: 0 5px 12px rgba(35, 31, 32, .5), inset 0 1px 0 rgba(255, 255, 255, .7), inset 0 -1px 0 rgba(0, 0, 0, .35);
 }
-.clipboard__clip::before {                 /* the pressed lip that holds the paper */
-    content: ""; position: absolute; left: 12px; right: 12px; bottom: 6px; height: 10px;
-    background: linear-gradient(180deg, #5B5D61, #2E2C2D);
-    border-radius: 3px; box-shadow: 0 2px 4px rgba(0, 0, 0, .4);
+.clipboard__clip::before {                 /* the rolled lip that holds the paper down */
+    content: ""; position: absolute; left: 8%; right: 8%; bottom: -7px; height: 12px;
+    background: linear-gradient(180deg, #8C8F93, #5A5C60 60%, #9EA0A3);
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, .35);
 }
-.clipboard__hook {                          /* the ring on top */
-    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-    width: 40px; height: 22px;
-    border: 5px solid #A9ABAE; border-bottom: 0; border-radius: 20px 20px 0 0;
-    box-shadow: inset 0 2px 0 rgba(255, 255, 255, .4);
+.clipboard__hook {                          /* the spring ring */
+    position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+    width: 48px; height: 30px;
+    border: 6px solid #C6C8CB; border-bottom: 0; border-radius: 24px 24px 0 0;
+    box-shadow: inset 0 3px 0 rgba(255, 255, 255, .55), 0 -1px 0 rgba(0, 0, 0, .2);
+}
+.clipboard__hook::after {                   /* the ring's shadow on the board */
+    content: ""; position: absolute; left: -6px; right: -6px; bottom: -4px; height: 6px;
+    background: radial-gradient(ellipse at center, rgba(35, 31, 32, .35), transparent 70%);
 }
 
 /* THE PAPER: white, a faint red margin rule down the left like a legal
@@ -813,12 +828,19 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
    keyboard; the drawn box shows state, a red check when picked */
 .tick { position: relative; display: inline-flex; align-items: center; gap: 8px; height: var(--rule); font-size: 15px; cursor: pointer; }
 .tick input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.tick__hint { font-size: 12px; color: var(--grey-700); }
 .tick__box { width: 20px; height: 20px; border: 2px solid var(--ink); background: var(--white); position: relative; flex: none; }
-.tick__box::after {
-    content: ""; position: absolute; left: 5px; top: 0; width: 6px; height: 12px;
-    border: solid var(--red); border-width: 0 3px 3px 0; transform: rotate(40deg) scale(0); transition: transform .15s var(--ease-out);
+/* THE PENCIL CHECK: an SVG stroke normalised to length 20 (pathLength),
+   hidden by a full dash offset. Picking the box runs the offset to 0,
+   so the stroke appears from its start (left) to its end (right), the
+   way a pencil would draw it. Unpicking has no transition: the mark
+   just lifts, no reverse drawing. */
+.tick__box svg { position: absolute; inset: -4px; width: 24px; height: 24px; overflow: visible; }
+.tick__box path {
+    fill: none; stroke: var(--red); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round;
+    stroke-dasharray: 20; stroke-dashoffset: 20;
 }
-.tick input:checked + .tick__box::after { transform: rotate(40deg) scale(1); }
+.tick input:checked + .tick__box path { stroke-dashoffset: 0; transition: stroke-dashoffset .38s cubic-bezier(.3, .7, .3, 1); }
 .tick input:focus-visible + .tick__box { outline: 3px solid var(--red); outline-offset: 2px; }
 .paper__error { margin: 0; line-height: var(--rule); font-size: 14px; color: var(--red-dark); font-weight: 500; }
 .paper__foot { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; padding-top: calc(var(--rule) / 2); }
@@ -987,7 +1009,7 @@ body.has-dialog { overflow: hidden; }
 
     /* contact: on tablets the clipboard stays under the intro, centred */
     .contact__copy { font-size: 17px; }
-    .clipboard { padding: 54px 22px 22px; max-width: 640px; }
+    .clipboard { padding: 34px 22px 22px; max-width: 640px; }
     .paper { padding: var(--rule) 28px 22px 34px; }
     .paper__row { grid-template-columns: 1fr 1fr; }
     .paper__foot { flex-direction: row; align-items: center; gap: 18px; }
