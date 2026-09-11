@@ -50,7 +50,10 @@ if (!reduceMotion) {
         const photo = div.querySelector(".divider__photo");
         const media = div.querySelector(".divider__media");
         const mirror = div.classList.contains("divider--mirror");
-        gsap.set(photo, { height: "190%", yPercent: -47.4 });
+        /* data-grow overrides the 190% for a band whose photo is too wide
+           to survive a long vertical trip (the subject would leave the frame) */
+        const grow = parseFloat(div.dataset.grow) || 190;
+        gsap.set(photo, { height: grow + "%", yPercent: -((grow - 100) / grow) * 100 });
         gsap.to(photo, { yPercent: 0, ease: "none", scrollTrigger: { trigger: div, start: "top bottom", end: "bottom top", scrub: true } });
 
         const wipe = { p: 0 };

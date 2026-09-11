@@ -929,6 +929,8 @@ body.has-dialog { overflow: hidden; }
 }
 /* the mirror: cuts run the other way (high on the right), grey above, white below */
 .divider--mirror { --above: var(--grey-100); --below: var(--white); }
+/* the wide Phil photo: a shorter parallax box (data-grow) and a crop biased to him, low in the frame */
+.divider--phil .divider__photo { object-position: 50% 78%; }
 .divider--mirror .divider__media { clip-path: polygon(0 var(--slant), 100% 0, 100% calc(100% - var(--slant)), 0 100%); }
 .divider--mirror .divider__media::after { background: linear-gradient(90deg, rgba(35,31,32,.45) 0%, rgba(35,31,32,.25) 40%, rgba(35,31,32,.55) 100%); }
 .divider--mirror::before { clip-path: polygon(0 var(--slant), 100% 0, 100% 5px, 0 calc(var(--slant) + 5px)); }
