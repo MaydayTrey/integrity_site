@@ -46,15 +46,15 @@ if (!reduceMotion) {
         gsap.set(band, { height: "190%", yPercent: -47.4 });
         gsap.to(band, { yPercent: 0, ease: "none", scrollTrigger: { trigger: ".divider", start: "top bottom", end: "bottom top", scrub: true } });
 
-        /* THE REVEAL, once: the photo wipes in from the top cut downward,
-           its front edge parallel to the slant (left end higher), until it
-           meets the bottom cut. Timed, not scrubbed, so it never runs
-           back. GSAP would snap a polygon string, so a number drives it. */
+        /* THE REVEAL, once: the photo wipes in from the left edge to the
+           right, a vertical front that follows the two slanted cuts.
+           Timed, not scrubbed, so it never runs back. GSAP would snap a
+           polygon string, so a number drives it. */
         const media = document.querySelector(".divider__media");
         const wipe = { p: 0 };
         const draw = () => {
-            const P = wipe.p.toFixed(4);
-            media.style.clipPath = `polygon(0 0, 100% var(--slant), 100% calc(var(--slant) + (100% - var(--slant)) * ${P}), 0 calc((100% - var(--slant)) * ${P}))`;
+            const P = wipe.p, X = (P * 100).toFixed(3) + "%";
+            media.style.clipPath = `polygon(0 0, ${X} calc(var(--slant) * ${P.toFixed(4)}), ${X} calc(100% - var(--slant) * ${(1 - P).toFixed(4)}), 0 calc(100% - var(--slant)))`;
         };
         draw();
         gsap.to(wipe, {
