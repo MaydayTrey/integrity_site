@@ -807,27 +807,28 @@
             </div>
         </section>
 
-        <!--8. CONTACT: one white card. Left: heading, copy, the Netlify
-            estimate form. Right: what happens next, contact details,
-            Facebook. data-netlify + the hidden form-name input make Netlify
-            collect the form at deploy time; netlify-honeypot names the trap
-            field; action sends a successful submit to /thanks.html (the
-            Google Ads conversion endpoint from the SOW). Service and urgency
-            are radio groups styled as chips, the gallery filter pattern.
-            Phone number: TODO from Phil.-->
+        <!--8. CONTACT: the shield, split. The two halves of the real shield
+            artwork (assets/logo-shield.svg) are the card's left and right
+            sides, stretched to the form's height; the white panel between
+            them holds the form and the next-steps column. On arrival the
+            shield sits small and whole at the centre, then splits: the
+            halves slide out and grow, the panel opens between them.
+            Netlify form: data-netlify + hidden form-name, honeypot
+            bot-field, action /thanks.html. Phone: TODO from Phil.-->
         <section class="section section--contact" id="contact" aria-labelledby="contact-title">
-            <!--the painted slabs behind the card: an ink wedge and a red
-                band. The band's edge is also projected into the card's grey
-                right segment as a lighter fill (.contact-card__tint, placed
-                by script.js). script.js pours it all in from the top when the
-                section arrives.-->
-            <div class="slab slab--ink" aria-hidden="true"></div>
-            <div class="slab slab--red" aria-hidden="true"></div>
             <div class="section__inner">
-                <!--wrap carries the drop-shadow; the card carries the clip-path.
-                    A clip on the shadowed element would cut the shadow off.-->
-                <div class="contact-card__wrap">
-                <div class="contact-card">
+                <!--wrap carries the drop-shadow of the whole silhouette-->
+                <div class="shield-card__wrap">
+                <div class="shield-card">
+                    <div class="shield-card__cap shield-card__cap--left" aria-hidden="true">
+                        <svg class="shield-card__half" viewBox="192.88 21.15 110.03 231.06" preserveAspectRatio="none" focusable="false"><path fill="#FFFFFF" d="M192.88 48.52 L302.91 21.15 L411.90 51.22 L388.43 223.99 L302.58 252.21 L217.70 223.98 L192.88 48.52Z"/>
+<path fill="#BA1E23" d="M202.18 54.79 L302.80 29.76 L402.66 57.32 L380.87 217.70 L302.60 243.43 L225.23 217.70 L202.18 54.79Z"/>
+<path fill="#ED1C24" d="M202.18 54.79 L302.80 29.76 L302.92 29.79 L302.92 243.32 L302.60 243.43 L225.23 217.70 L202.18 54.79Z"/>
+<path fill="#939598" d="M263.98 175.31 L283.91 175.31 L283.91 96.07 L263.98 96.07 L263.98 72.08 L341.64 72.08 L341.64 96.07 L321.72 96.07 L321.72 175.31 L341.64 175.31 L341.64 199.31 L263.98 199.31 L263.98 175.31Z"/>
+<path fill="#D1D3D4" d="M263.98 175.31 L283.91 175.31 L283.91 96.07 L263.98 96.07 L263.98 72.08 L302.92 72.08 L302.92 199.31 L263.98 199.31 L263.98 175.31Z"/></svg>
+                    </div>
+                    <div class="shield-card__panel">
+                        <div class="shield-card__content">
                     <div class="contact-card__main">
                         <p class="section__eyebrow">Contact</p>
                         <h2 class="section__title contact-card__title" id="contact-title">Let's talk about your project</h2>
@@ -886,10 +887,6 @@
                     </div>
 
                     <aside class="contact-card__side" aria-labelledby="next-title">
-                        <!--the red band's line, projected into this grey segment
-                            as an opaque lighter fill behind the content; placed
-                            by script.js, hidden until then-->
-                        <div class="contact-card__tint" aria-hidden="true"></div>
                         <img class="contact-card__mark" src="assets/logo-shield.svg" alt="" width="219" height="231" decoding="async">
                         <h3 class="contact-card__sub" id="next-title">What happens next</h3>
                         <ol class="steps">
@@ -922,6 +919,15 @@
                             </a>
                         </div>
                     </aside>
+                        </div>
+                    </div>
+                    <div class="shield-card__cap shield-card__cap--right" aria-hidden="true">
+                        <svg class="shield-card__half" viewBox="302.91 21.15 108.99 231.06" preserveAspectRatio="none" focusable="false"><path fill="#FFFFFF" d="M192.88 48.52 L302.91 21.15 L411.90 51.22 L388.43 223.99 L302.58 252.21 L217.70 223.98 L192.88 48.52Z"/>
+<path fill="#BA1E23" d="M202.18 54.79 L302.80 29.76 L402.66 57.32 L380.87 217.70 L302.60 243.43 L225.23 217.70 L202.18 54.79Z"/>
+<path fill="#ED1C24" d="M202.18 54.79 L302.80 29.76 L302.92 29.79 L302.92 243.32 L302.60 243.43 L225.23 217.70 L202.18 54.79Z"/>
+<path fill="#939598" d="M263.98 175.31 L283.91 175.31 L283.91 96.07 L263.98 96.07 L263.98 72.08 L341.64 72.08 L341.64 96.07 L321.72 96.07 L321.72 175.31 L341.64 175.31 L341.64 199.31 L263.98 199.31 L263.98 175.31Z"/>
+<path fill="#D1D3D4" d="M263.98 175.31 L283.91 175.31 L283.91 96.07 L263.98 96.07 L263.98 72.08 L302.92 72.08 L302.92 199.31 L263.98 199.31 L263.98 175.31Z"/></svg>
+                    </div>
                 </div>
                 </div>
             </div>

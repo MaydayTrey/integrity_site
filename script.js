@@ -815,72 +815,42 @@ function contactForm() {
     form.addEventListener("input", (e) => e.target.classList.remove("is-invalid"));
 }
 
-/* ---------- CONTACT SLABS: the wedge and the band paint down ----------
-   Each slab's clip-path is tweened from a polygon collapsed onto its
-   top edge to its full shape, so the colour appears to run down the
-   section and over the card. The under and over copies of a shape
-   share one tween, so they move as a single stroke. Plays once, when
-   the section is well into view; reduced motion leaves the CSS state. */
-function contactSlabs() {
-    const section = document.querySelector(".section--contact");
-    if (!section) return;
-    const side = section.querySelector(".contact-card__side");
-    const ink  = section.querySelector(".slab--ink");
-    const red  = section.querySelector(".slab--red"), tRed = side.querySelector(".contact-card__tint");
-    const INK_FULL = "polygon(0% 0%, 66% 0%, 30% 100%, 0% 100%)",   INK_FLAT = "polygon(0% 0%, 66% 0%, 66% 0%, 0% 0%)";
-    const RED_FULL = "polygon(58% 0%, 100% 0%, 100% 100%, 18% 100%)", RED_FLAT = "polygon(58% 0%, 100% 0%, 100% 0%, 58% 0%)";
+/* ---------- CONTACT: the shield splits open ----------
+   At rest the two halves sit together at the centre as one small
+   shield in its true proportions, the panel closed to a line behind
+   them. On arrival the halves slide to the card's edges while they
+   grow to the card's height, the panel opens between them, and the
+   content fades in. Plays once. Reduced motion: the finished card. */
+function shieldCard() {
+    const card = document.querySelector(".shield-card");
+    if (!card || reduceMotion) return;
+    const left    = card.querySelector(".shield-card__cap--left");
+    const right   = card.querySelector(".shield-card__cap--right");
+    const panel   = card.querySelector(".shield-card__panel");
+    const content = card.querySelector(".shield-card__content");
 
-    /* PROJECTION: the band's polygon lives in section space (percentages
-       of the section). The tint lives inside the grey segment, so the
-       same corners are expressed in pixels relative to that segment:
-       section point minus the segment's offset. Same line, to the pixel,
-       and it can only ever paint the segment. */
-    function project() {
-        const s = section.getBoundingClientRect(), g = side.getBoundingClientRect();
-        const dx = g.left - s.left, dy = g.top - s.top, W = s.width, H = s.height;
-        const bx = W * 0.66, bw = W * 0.34;                     /* the red band's box: the right 34% */
-        const pt = (x, y) => `${(x - dx).toFixed(1)}px ${(y - dy).toFixed(1)}px`;
-        return {
-            redFull: `polygon(${pt(bx + 0.58 * bw, 0)}, ${pt(bx + bw, 0)}, ${pt(bx + bw, H)}, ${pt(bx + 0.18 * bw, H)})`,
-            redFlat: `polygon(${pt(bx + 0.58 * bw, 0)}, ${pt(bx + bw, 0)}, ${pt(bx + bw, 0)}, ${pt(bx + 0.58 * bw, 0)})`
-        };
-    }
-    let played = reduceMotion;                                   /* reduced motion: straight to the finished state */
-    function rest() {
-        const p = project();
-        gsap.set(tRed, { clipPath: played ? p.redFull : p.redFlat });
-    }
-    rest();
-    window.addEventListener("resize", rest);                      /* re-project after any layout change */
-    if (reduceMotion) return;
+    const H = card.offsetHeight;
+    const cap = left.offsetWidth;
+    const SHIELD_H = Math.min(240, H * 0.35);           /* the whole shield's size at rest */
+    const halfW = SHIELD_H * (110 / 231);               /* a half's true width at that height */
+    const shift = card.offsetWidth / 2 - cap;           /* from the card's edge to the centre line */
 
-    gsap.set(ink, { clipPath: INK_FLAT });
-    gsap.set(red, { clipPath: RED_FLAT });
+    /* the rest state hangs from the card's TOP edge (origins at 0%), so
+       the small shield is on screen when the trigger fires and the card
+       grows downward out of it; the panel grows in both axes with the
+       halves so the middle reads as the shield's centre opening */
+    gsap.set(left,  { transformOrigin: "100% 0%", x:  shift, scaleX: halfW / cap, scaleY: SHIELD_H / H });
+    gsap.set(right, { transformOrigin: "0% 0%",   x: -shift, scaleX: halfW / cap, scaleY: SHIELD_H / H });
+    gsap.set(panel, { transformOrigin: "50% 0%", scaleX: 0, scaleY: SHIELD_H / H });
+    gsap.set(content, { autoAlpha: 0, y: 16 });
 
-    /* GSAP interpolates the slabs' percentage polygons on its own, but
-       it snaps the tints' pixel polygons to the end value instead of
-       tweening them. So the tints are driven by a plain number: a
-       progress tween writes the interpolated corners every tick. */
-    function pour(tl, el, from, to, duration, at) {
-        const a = from.match(/-?[\d.]+/g).map(Number), b = to.match(/-?[\d.]+/g).map(Number);
-        const o = { p: 0 };
-        tl.to(o, { p: 1, duration, onUpdate() {
-            const pts = a.map((v, i) => (v + (b[i] - v) * o.p).toFixed(1));
-            const pairs = []; for (let i = 0; i < pts.length; i += 2) pairs.push(`${pts[i]}px ${pts[i + 1]}px`);
-            el.style.clipPath = `polygon(${pairs.join(", ")})`;
-        } }, at);
-    }
-    ScrollTrigger.create({
-        trigger: section, start: "top 60%", once: true,
-        onEnter() {
-            played = true;
-            const p = project();                                 /* slab and its projection pour as one stroke */
-            const tl = gsap.timeline({ defaults: { ease: "power3.inOut" } });
-            tl.to(ink, { clipPath: INK_FULL, duration: 1.3 }, 0);
-            tl.to(red, { clipPath: RED_FULL, duration: 1.1 }, 0.55);
-            pour(tl, tRed, p.redFlat, p.redFull, 1.1, 0.55);
-        }
-    });
+    gsap.timeline({
+        scrollTrigger: { trigger: card, start: "top 70%", once: true },
+        defaults: { ease: "power3.inOut", duration: 1.2 }
+    })
+    .to([left, right], { x: 0, scaleX: 1, scaleY: 1 }, 0)
+    .to(panel, { scaleX: 1, scaleY: 1 }, 0)
+    .to(content, { autoAlpha: 1, y: 0, duration: 0.7, ease: "power2.out" }, 0.85);
 }
 
 /* ---------- SECTION FADE-INS (ScrollTrigger) ----------
@@ -910,6 +880,6 @@ document.fonts.ready.then(() => {
     reviewCarousel();
     serviceMap();
     contactForm();
-    contactSlabs();
+    shieldCard();
     sectionReveals();
 });
