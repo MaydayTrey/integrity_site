@@ -78,10 +78,20 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
     background: var(--grad-brand);
     box-shadow: 0 6px 22px rgba(35, 31, 32, .45);
 }
+/* the outline button: the logo's light grey at rest (the I on the
+   shield), the brand gradient filling in on hover */
 .btn--outline {
-    border: 2px solid rgba(255, 255, 255, .85);
+    position: relative; isolation: isolate;
+    border: 2px solid var(--grey-300); color: var(--grey-300);
     font-weight: 500;
+    transition: transform .25s var(--ease-out), color .3s, border-color .3s;
 }
+.btn--outline::before {
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background: var(--grad-brand); opacity: 0; transition: opacity .3s;
+}
+.btn--outline:hover, .btn--outline:focus-visible { color: var(--white); border-color: var(--red-dark); }
+.btn--outline:hover::before, .btn--outline:focus-visible::before { opacity: 1; }
 .btn:hover, .btn:focus-visible { transform: translateY(-2px); }
 .btn--primary:hover { box-shadow: 0 10px 28px rgba(35, 31, 32, .55); }
 
@@ -220,7 +230,6 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .hero__actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .hero__actions .btn--outline { flex: 1 1 140px; }
 .hero__actions .btn--primary { flex: 1.2 1 150px; }
-.btn__arrow { font-family: var(--font-body); }
 
 /* trust: text lines on phones, icon bar on desktop */
 .trust {
