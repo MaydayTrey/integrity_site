@@ -1128,6 +1128,39 @@ function shieldCard() {
     .to(items, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out", stagger: 0.045, clearProps: "transform" }, "+=0.05");
 }
 
+/* ---------- QUALIFICATIONS: the badges converge, then the words ----------
+   Each badge column starts out of line, the first high, the second low,
+   the third and fourth at their own offsets, and slides into line as
+   the section scrolls to the centre of the screen (scrubbed, so it
+   tracks the scroll exactly). The moment they line up, the head
+   arrives once: the eyebrow, the title's words rising out of their
+   masks, then the paragraph. Reduced motion: everything just shows. */
+function qualsIntro() {
+    const section = document.querySelector(".section--quals");
+    if (!section || reduceMotion) return;
+    const offsets = [-120, 140, -70, 100];
+    section.querySelectorAll(".badge").forEach((badge, i) => {
+        gsap.fromTo(badge, { y: offsets[i % offsets.length] }, {
+            y: 0, ease: "none",
+            scrollTrigger: { trigger: section, start: "top 90%", end: "center 50%", scrub: 0.6 }
+        });
+    });
+
+    const eyebrow = section.querySelector(".section__eyebrow");
+    const title   = section.querySelector(".section__title");
+    const lede    = section.querySelector(".section__lede");
+    gsap.set([eyebrow, lede], { autoAlpha: 0, y: 14 });
+    const words = SplitText.create(title, { type: "words", mask: "words", wordsClass: "qword" });
+    gsap.set(words.words, { yPercent: 110 });
+    gsap.timeline({
+        scrollTrigger: { trigger: section, start: "center 52%", once: true },
+        onComplete() { words.revert(); }
+    })
+    .to(eyebrow, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" })
+    .to(words.words, { yPercent: 0, duration: 0.6, ease: "power3.out", stagger: 0.14 }, "<0.1")
+    .to(lede, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, "-=0.2");
+}
+
 /* ---------- SECTION FADE-INS (ScrollTrigger) ----------
    Empty shells for now; batch handles however many we add later. */
 function sectionReveals() {
@@ -1137,7 +1170,7 @@ function sectionReveals() {
     /* the reviews section is excluded: its cards live inside the pinned,
        transformed column and its head must be visible the moment the
        pin engages */
-    const targets = ".section__head:not(.reviews-head), .placeholder .section__inner, .service, .segments, .panel:not([hidden]), .beat__media, .beat__body, .about__facts, .about__cta-row, .areas__body, .check__panel, .badge";   /* the contact card is excluded: the pour is its entrance, and a translated card would throw the tint projection off */
+    const targets = ".section__head:not(.reviews-head):not(.quals-head), .placeholder .section__inner, .service, .segments, .panel:not([hidden]), .beat__media, .beat__body, .about__facts, .about__cta-row, .areas__body, .check__panel";   /* qualifications run their own entrance (qualsIntro) */   /* the contact card is excluded: the pour is its entrance, and a translated card would throw the tint projection off */
     gsap.set(targets, { autoAlpha: 0, y: 24 });
     ScrollTrigger.batch(targets, {
         start: "top 85%",
@@ -1157,6 +1190,7 @@ document.fonts.ready.then(() => {
     serviceMap();
     contactForm();
     shieldCard();
+    qualsIntro();
     sectionReveals();
     sectionFades();
 });

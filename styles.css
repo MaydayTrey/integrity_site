@@ -936,7 +936,7 @@ body.has-dialog { overflow: hidden; }
 .section--reviews   { background: var(--white); }
 .section--phil      { background: var(--grey-100); overflow: clip; }   /* clip: the photo's red bar hangs 4px outside it */
 .section--areas     { background: var(--white); }
-.section--quals     { background: var(--white); }
+.section--quals     { background: var(--white); min-height: 100svh; display: grid; align-content: center; }   /* a full screen: the badges converge as it centres */
 /* .section--contact: styled in the CONTACT block below */
 /* ---------- FOOTER ----------
    The Homicidal Fitness footer in Integrity's palette: white ground,
