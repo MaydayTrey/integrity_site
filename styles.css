@@ -298,29 +298,42 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 /* ---------- OUR WORK ---------- */
 /* segmented control: two cards, the active one goes ink with a brand
    rule on top. role=tab buttons; the panels below are the tabpanels */
-.segments {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
-    margin-bottom: 32px;
-}
+/* THE SEGMENT TABS as photo cards: the house for Residential, the
+   towers for Commercial, rounded, the words on an ink fade at the foot.
+   The active tab carries the gradient rule and shows its photo brighter;
+   the other sits darker until chosen. */
+.segments { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 32px; }
 .segment {
-    position: relative; text-align: left;
-    padding: 18px 16px 16px;
-    border: 2px solid var(--grey-300); background: var(--white); color: var(--ink);
-    transition: background-color .3s var(--ease-out), color .3s var(--ease-out), border-color .3s var(--ease-out);
+    position: relative; overflow: hidden; isolation: isolate;
+    border-radius: 16px; aspect-ratio: 4 / 3; padding: 14px;
+    display: flex; flex-direction: column; justify-content: flex-end; gap: 6px;   /* the words stack at the foot */
+    text-align: left; color: var(--white); background: var(--ink);
+    box-shadow: 0 10px 26px rgba(35, 31, 32, .22);
+}
+.segment__photo {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    filter: saturate(.55) brightness(.75); transform: scale(1.02);
+    transition: filter .35s, transform .6s var(--ease-out);
+}
+.segment::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(35,31,32,.88) 0%, rgba(35,31,32,.4) 45%, rgba(35,31,32,.05) 80%);
 }
 .segment::before {
-    content: ""; position: absolute; inset: -2px -2px auto -2px; height: 5px;
+    content: ""; position: absolute; inset: 0 0 auto 0; height: 5px; z-index: 2;
     background: var(--grad-brand); opacity: 0; transition: opacity .3s;
 }
+.segment__title, .segment__sub { position: relative; z-index: 1; }
 .segment__title {
     display: block; font-family: var(--font-display); font-size: 28px; line-height: 1;
     letter-spacing: .02em; text-transform: uppercase;
 }
-.segment__sub { display: block; margin-top: 6px; font-size: 13px; line-height: 1.4; color: var(--grey-700); }
-.segment:hover { border-color: var(--grey-700); }
-.segment.is-active { background: var(--ink); color: var(--white); border-color: var(--ink); }
+.segment__sub { display: block; font-size: 13px; line-height: 1.4; color: var(--grey-300); }
+.segment:hover .segment__photo, .segment:focus-visible .segment__photo { filter: saturate(.9) brightness(.95); transform: scale(1.06); }
+.segment.is-active .segment__photo { filter: none; transform: scale(1); }
 .segment.is-active::before { opacity: 1; }
-.segment.is-active .segment__sub { color: var(--grey-300); }
+.segment.is-active .segment__sub { color: var(--white); }
+.segment:focus-visible { outline: 3px solid var(--red); outline-offset: 3px; }
 
 .work__intro { max-width: 62ch; margin: 0 auto 28px; font-size: 16px; line-height: 1.6; text-align: center; }
 
@@ -1074,10 +1087,10 @@ body.has-dialog { overflow: hidden; }
 
 /* our work: two-up gallery and side-by-side commercial from tablet */
 @media (min-width: 768px) {
-    .segments { max-width: 720px; margin-inline: auto; margin-bottom: 40px; gap: 16px; }
-    .segment { padding: 22px 22px 20px; }
-    .segment__title { font-size: 34px; }
-    .segment__sub { font-size: 14px; }
+    .segments { margin-bottom: 40px; gap: 20px; }
+    .segment { aspect-ratio: 2 / 1; border-radius: 20px; padding: 24px; gap: 8px; }
+    .segment__title { font-size: 40px; }
+    .segment__sub { font-size: 15px; }
     .work__intro { font-size: 17px; }
     .gallery { grid-template-columns: 1fr 1fr; gap: 32px; }
     .commercial { grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: start; }
