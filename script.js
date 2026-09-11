@@ -823,19 +823,64 @@ function contactForm() {
    the section is well into view; reduced motion leaves the CSS state. */
 function contactSlabs() {
     const section = document.querySelector(".section--contact");
-    if (!section || reduceMotion) return;
-    /* the under and over copies of a shape share one tween, so the
-       solid slab and its tint across the card move as a single stroke */
-    const ink = section.querySelectorAll(".slab--ink");
-    const red = section.querySelectorAll(".slab--red");
-    gsap.set(ink, { clipPath: "polygon(0% 0%, 66% 0%, 66% 0%, 0% 0%)" });
-    gsap.set(red, { clipPath: "polygon(58% 0%, 100% 0%, 100% 0%, 58% 0%)" });
-    gsap.timeline({
-        scrollTrigger: { trigger: section, start: "top 60%", once: true },
-        defaults: { ease: "power3.inOut" }
-    })
-    .to(ink, { clipPath: "polygon(0% 0%, 66% 0%, 30% 100%, 0% 100%)", duration: 1.3 }, 0)
-    .to(red, { clipPath: "polygon(58% 0%, 100% 0%, 100% 100%, 18% 100%)", duration: 1.1 }, 0.55);
+    if (!section) return;
+    const side = section.querySelector(".contact-card__side");
+    const ink  = section.querySelector(".slab--ink");
+    const red  = section.querySelector(".slab--red"), tRed = side.querySelector(".contact-card__tint");
+    const INK_FULL = "polygon(0% 0%, 66% 0%, 30% 100%, 0% 100%)",   INK_FLAT = "polygon(0% 0%, 66% 0%, 66% 0%, 0% 0%)";
+    const RED_FULL = "polygon(58% 0%, 100% 0%, 100% 100%, 18% 100%)", RED_FLAT = "polygon(58% 0%, 100% 0%, 100% 0%, 58% 0%)";
+
+    /* PROJECTION: the band's polygon lives in section space (percentages
+       of the section). The tint lives inside the grey segment, so the
+       same corners are expressed in pixels relative to that segment:
+       section point minus the segment's offset. Same line, to the pixel,
+       and it can only ever paint the segment. */
+    function project() {
+        const s = section.getBoundingClientRect(), g = side.getBoundingClientRect();
+        const dx = g.left - s.left, dy = g.top - s.top, W = s.width, H = s.height;
+        const bx = W * 0.66, bw = W * 0.34;                     /* the red band's box: the right 34% */
+        const pt = (x, y) => `${(x - dx).toFixed(1)}px ${(y - dy).toFixed(1)}px`;
+        return {
+            redFull: `polygon(${pt(bx + 0.58 * bw, 0)}, ${pt(bx + bw, 0)}, ${pt(bx + bw, H)}, ${pt(bx + 0.18 * bw, H)})`,
+            redFlat: `polygon(${pt(bx + 0.58 * bw, 0)}, ${pt(bx + bw, 0)}, ${pt(bx + bw, 0)}, ${pt(bx + 0.58 * bw, 0)})`
+        };
+    }
+    let played = reduceMotion;                                   /* reduced motion: straight to the finished state */
+    function rest() {
+        const p = project();
+        gsap.set(tRed, { clipPath: played ? p.redFull : p.redFlat });
+    }
+    rest();
+    window.addEventListener("resize", rest);                      /* re-project after any layout change */
+    if (reduceMotion) return;
+
+    gsap.set(ink, { clipPath: INK_FLAT });
+    gsap.set(red, { clipPath: RED_FLAT });
+
+    /* GSAP interpolates the slabs' percentage polygons on its own, but
+       it snaps the tints' pixel polygons to the end value instead of
+       tweening them. So the tints are driven by a plain number: a
+       progress tween writes the interpolated corners every tick. */
+    function pour(tl, el, from, to, duration, at) {
+        const a = from.match(/-?[\d.]+/g).map(Number), b = to.match(/-?[\d.]+/g).map(Number);
+        const o = { p: 0 };
+        tl.to(o, { p: 1, duration, onUpdate() {
+            const pts = a.map((v, i) => (v + (b[i] - v) * o.p).toFixed(1));
+            const pairs = []; for (let i = 0; i < pts.length; i += 2) pairs.push(`${pts[i]}px ${pts[i + 1]}px`);
+            el.style.clipPath = `polygon(${pairs.join(", ")})`;
+        } }, at);
+    }
+    ScrollTrigger.create({
+        trigger: section, start: "top 60%", once: true,
+        onEnter() {
+            played = true;
+            const p = project();                                 /* slab and its projection pour as one stroke */
+            const tl = gsap.timeline({ defaults: { ease: "power3.inOut" } });
+            tl.to(ink, { clipPath: INK_FULL, duration: 1.3 }, 0);
+            tl.to(red, { clipPath: RED_FULL, duration: 1.1 }, 0.55);
+            pour(tl, tRed, p.redFlat, p.redFull, 1.1, 0.55);
+        }
+    });
 }
 
 /* ---------- SECTION FADE-INS (ScrollTrigger) ----------
@@ -847,7 +892,7 @@ function sectionReveals() {
     /* the reviews section is excluded: its cards live inside the pinned,
        transformed column and its head must be visible the moment the
        pin engages */
-    const targets = ".section__head:not(.reviews-head), .placeholder .section__inner, .service, .segments, .panel:not([hidden]), .beat__media, .beat__body, .about__facts, .about__cta-row, .areas__body, .check__panel, .badge, .contact-card";
+    const targets = ".section__head:not(.reviews-head), .placeholder .section__inner, .service, .segments, .panel:not([hidden]), .beat__media, .beat__body, .about__facts, .about__cta-row, .areas__body, .check__panel, .badge";   /* the contact card is excluded: the pour is its entrance, and a translated card would throw the tint projection off */
     gsap.set(targets, { autoAlpha: 0, y: 24 });
     ScrollTrigger.batch(targets, {
         start: "top 85%",

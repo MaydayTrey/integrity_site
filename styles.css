@@ -724,24 +724,22 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 /* ---------- CONTACT: one white card on the grey section ----------
    Left: heading, copy, the form. Right: what happens next, details,
    social. Stacked on phones; two columns from desktop widths. */
-/* THE PAINTED SLABS. Two shapes, an ink wedge from the left and a
-   brand-red band at the right, each drawn twice with the SAME polygon:
-   a solid copy under the card and a light-tint copy over it. Because
-   the polygons match, the edges continue straight across the card and
-   the card reads as a window the shapes pass through: light grey where
-   the wedge crosses, light red where the band crosses, text readable
-   in both. The resting clip is the full shape (no-JS state); script.js
-   collapses them to their top edge and pours them in on arrival. */
+/* THE PAINTED SLABS behind the card: an ink wedge from the left and a
+   brand-red band at the right. The resting clip is the full shape
+   (no-JS state); script.js collapses them to their top edge and pours
+   them in on arrival. */
 .section.section--contact { background: var(--grey-900); position: relative; isolation: isolate; overflow: clip; }
-.slab { position: absolute; inset: 0; pointer-events: none; }
-.slab--ink { background: var(--ink); clip-path: polygon(0% 0%, 66% 0%, 30% 100%, 0% 100%); }
+.slab { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.slab--ink { background: var(--ink); opacity: .12; clip-path: polygon(0% 0%, 66% 0%, 30% 100%, 0% 100%); }
 .slab--red { left: auto; width: 34%; background: var(--grad-brand); clip-path: polygon(58% 0%, 100% 0%, 100% 100%, 18% 100%); }
-.slab--under { z-index: 0; }
-.slab--under.slab--ink { opacity: .12; }
-.slab--over { z-index: 2; }
-.slab--over.slab--ink { opacity: .08; }     /* white -> about the grey-100 facet tone */
-.slab--over.slab--red { opacity: .2; }      /* white -> a light red the ink text still reads on */
 .section--contact .section__inner { position: relative; z-index: 1; }
+/* THE PROJECTED FILL: the red band's shape in the grey segment's own
+   coordinates, OPAQUE and a shade lighter, painted behind the segment's
+   content. The form side stays pure white; only the band's line carries
+   into the grey segment. script.js computes the polygon from the
+   section shape; until it does the fill stays hidden. */
+.contact-card__tint { position: absolute; inset: 0; z-index: 0; pointer-events: none; background: #FBD2D3; clip-path: polygon(0 0, 0 0, 0 0); }   /* white with 20% brand red */
+.contact-card__side > :not(.contact-card__tint) { position: relative; z-index: 1; }
 /* SHADOW ON THE WRAP, CLIP ON THE CARD: a clip-path cuts everything the
    element paints, shadow included, so the shadow has to come from the
    parent's filter */
@@ -757,9 +755,13 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .contact-card__title { margin-top: 4px; }
 .contact-card__copy { font-size: 16px; line-height: 1.65; margin: 14px 0 26px; max-width: 52ch; }
-/* the side column: no panel of its own, the tints passing through the
-   card give it its colour; a hairline separates it when stacked */
-.contact-card__side { border-top: 1px solid var(--grey-300); padding-top: 30px; }
+/* the side column is the card's light grey segment, bled to the
+   card's edges: below the form on phones, to the right on desktop */
+.contact-card__side {
+    position: relative; isolation: isolate;
+    background: var(--grey-100);
+    margin: 0 -22px -28px; padding: 30px 22px 28px;
+}
 .contact-card__mark { width: 56px; height: auto; margin-bottom: 18px; }
 .contact-card__sub {
     font-family: var(--font-display); font-weight: 400; font-size: 28px; line-height: 1;
@@ -987,6 +989,7 @@ body.has-dialog { overflow: hidden; }
 
     /* contact card: roomier padding, two-up phone/email */
     .contact-card { padding: 44px 40px 40px; --cut: 40px; }
+    .contact-card__side { margin: 0 -40px -40px; padding: 36px 40px 40px; }
     .contact-card__copy { font-size: 17px; }
     .form__row { grid-template-columns: 1fr 1fr; }
     .form__foot { flex-direction: row; align-items: center; gap: 18px; }
@@ -1015,9 +1018,11 @@ body.has-dialog { overflow: hidden; }
 @media (min-width: 1024px) {
     .about__facts { grid-template-columns: repeat(3, 1fr); }   /* three-up only once each card has ~180px */
 
-    /* contact card: form left, next steps right, a hairline between */
-    .contact-card { grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: 56px; padding: 52px 56px 48px; }
-    .contact-card__side { border-top: 0; border-left: 1px solid var(--grey-300); padding: 6px 0 0 48px; }
+    /* contact card: form left, the grey segment right, bled to the
+       card's top, right, and bottom */
+    .contact-card { grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: 0; padding: 52px 0 48px 56px; }
+    .contact-card__main { padding-right: 56px; }
+    .contact-card__side { margin: -52px 0 -48px; padding: 58px 56px 48px 48px; }
 }
 @media (min-width: 1024px) {
     .is-carousel .reviews-layout { gap: 80px; }

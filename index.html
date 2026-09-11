@@ -816,16 +816,13 @@
             are radio groups styled as chips, the gallery filter pattern.
             Phone number: TODO from Phil.-->
         <section class="section section--contact" id="contact" aria-labelledby="contact-title">
-            <!--the painted slabs: an ink wedge and a red band, each drawn
-                twice. The "under" copy is the solid slab behind the card.
-                The "over" copy is the same shape above the card as a light
-                tint, so the shapes continue straight across the card and the
-                card reads as a window they pass through. script.js pours all
-                four in from the top when the section arrives.-->
-            <div class="slab slab--ink slab--under" aria-hidden="true"></div>
-            <div class="slab slab--red slab--under" aria-hidden="true"></div>
-            <div class="slab slab--ink slab--over" aria-hidden="true"></div>
-            <div class="slab slab--red slab--over" aria-hidden="true"></div>
+            <!--the painted slabs behind the card: an ink wedge and a red
+                band. The band's edge is also projected into the card's grey
+                right segment as a lighter fill (.contact-card__tint, placed
+                by script.js). script.js pours it all in from the top when the
+                section arrives.-->
+            <div class="slab slab--ink" aria-hidden="true"></div>
+            <div class="slab slab--red" aria-hidden="true"></div>
             <div class="section__inner">
                 <!--wrap carries the drop-shadow; the card carries the clip-path.
                     A clip on the shadowed element would cut the shadow off.-->
@@ -889,6 +886,10 @@
                     </div>
 
                     <aside class="contact-card__side" aria-labelledby="next-title">
+                        <!--the red band's line, projected into this grey segment
+                            as an opaque lighter fill behind the content; placed
+                            by script.js, hidden until then-->
+                        <div class="contact-card__tint" aria-hidden="true"></div>
                         <img class="contact-card__mark" src="assets/logo-shield.svg" alt="" width="219" height="231" decoding="async">
                         <h3 class="contact-card__sub" id="next-title">What happens next</h3>
                         <ol class="steps">
