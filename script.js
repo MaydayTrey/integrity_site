@@ -824,23 +824,18 @@ function contactForm() {
 function contactSlabs() {
     const section = document.querySelector(".section--contact");
     if (!section || reduceMotion) return;
-    const ink   = section.querySelector(".slab--ink");
-    const red   = section.querySelector(".slab--red");
-    const facet = section.querySelector(".contact-card__facet");   /* the card's grey right facet */
-    const edge  = section.querySelector(".contact-card__edge");    /* the red rim on the card */
+    /* the under and over copies of a shape share one tween, so the
+       solid slab and its tint across the card move as a single stroke */
+    const ink = section.querySelectorAll(".slab--ink");
+    const red = section.querySelectorAll(".slab--red");
     gsap.set(ink, { clipPath: "polygon(0% 0%, 66% 0%, 66% 0%, 0% 0%)" });
     gsap.set(red, { clipPath: "polygon(58% 0%, 100% 0%, 100% 0%, 58% 0%)" });
-    gsap.set([facet, edge], { clipPath: "inset(0 0 100% 0)" });
     gsap.timeline({
         scrollTrigger: { trigger: section, start: "top 60%", once: true },
         defaults: { ease: "power3.inOut" }
     })
-    /* the grey pours first: the wedge behind and the facet on the card together */
-    .to(ink,   { clipPath: "polygon(0% 0%, 66% 0%, 30% 100%, 0% 100%)", duration: 1.3 }, 0)
-    .to(facet, { clipPath: "inset(0 0 0% 0)", duration: 1.1 }, 0.1)
-    /* then the red: the band behind and the rim on the card together */
-    .to(red,   { clipPath: "polygon(58% 0%, 100% 0%, 100% 100%, 18% 100%)", duration: 1.1 }, 0.55)
-    .to(edge,  { clipPath: "inset(0 0 0% 0)", duration: 1.0 }, 0.65);
+    .to(ink, { clipPath: "polygon(0% 0%, 66% 0%, 30% 100%, 0% 100%)", duration: 1.3 }, 0)
+    .to(red, { clipPath: "polygon(58% 0%, 100% 0%, 100% 100%, 18% 100%)", duration: 1.1 }, 0.55);
 }
 
 /* ---------- SECTION FADE-INS (ScrollTrigger) ----------
