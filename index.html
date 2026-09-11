@@ -953,9 +953,41 @@
         <a class="job__more" href="#our-work">See more before and after</a>
     </dialog>
 
-    <footer class="site-footer placeholder" aria-label="Site footer">
-        <div class="section__inner">
-            <p class="placeholder__note">Footer: logo, phone, phil@integrityrnr.com, Facebook, service-area one-liner, copyright.</p>
+    <!--FOOTER: same bones as the Homicidal Fitness footer (brand column,
+        two info columns, legal row, designer credit row) in Integrity's
+        palette: ink ground, red labels, white hairlines. Links roll on
+        hover (data-roll); the credit URL rolls in pure white.
+        Phone: TODO from Phil.-->
+    <footer class="site-footer" id="site-footer">
+        <div class="footer__grid">
+            <div class="footer__brand">
+                <img class="footer__logo" src="assets/logo-lockup.svg" alt="Integrity Restorations and Remodeling" width="410" height="378">
+                <p class="footer__tag">Integrity Restorations and Remodeling LLC. Owner-operated, licensed in Ohio, and on every job himself.</p>
+            </div>
+            <div class="footer__col">
+                <span class="footer__label">Areas we serve</span>
+                <p>Trenton &middot; Middletown &middot; Hamilton<br>
+                    Butler, Warren, Montgomery, Hamilton,<br>
+                    Clermont &amp; Preble counties</p>
+                <a class="footer__link" href="#service-check" data-roll>Check your address &rarr;</a>
+            </div>
+            <div class="footer__col">
+                <span class="footer__label">Get a free estimate</span>
+                <p>Phone number coming soon<br>
+                    <a class="footer__mail" href="mailto:phil@integrityrnr.com">phil@integrityrnr.com</a></p>
+                <a class="footer__link" href="#contact" data-roll>Request an estimate &rarr;</a>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <span>&copy; 2026 Integrity Restorations and Remodeling LLC. All rights reserved.</span>
+            <div class="footer__social">
+                <a href="https://www.facebook.com/Integrityrnr" target="_blank" rel="noopener" data-roll>Facebook</a>
+            </div>
+        </div>
+        <div class="footer__credit">
+            <svg class="footer__mark" viewBox="374.44715576171876 383.6255615234375 1270.6113037109376 1270.6113037109376" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path fill="currentColor" d="M502.547,463.073c60.182,87.6 143.025,151.132 229.423,211.182c53.369,36.556 107.735,71.634 163.036,105.194c112.134,68.017 245.054,141.185 279.994,277.951c13.52,-102.787 44.9,-200.414 130.19,-266.813c17.85,-13.899 42.82,-29.049 64.07,-37.102c25.6,-10.184 44.5,-15.199 72.2,-17.909c28.55,-25.93 45.42,-35.387 82.54,-44.712c-2.93,14.448 -13.8,45.003 -18.96,59.465c4.91,12.876 16.09,31.711 22.58,45.069c15.71,32.479 31.12,65.102 46.22,97.866c9.87,21.298 25.94,45.24 16.37,68.501c-5.42,12.818 -15.84,22.865 -28.84,27.815c-6.3,2.404 -15.23,3.442 -21.19,-0.295c-17.71,-11.114 -15.27,-28.806 -32.96,-42.586c-24.32,-18.945 -54.53,-11.171 -77.9,-31.276c-15.78,-13.585 -23.35,-33.887 -25.18,-54.139c-6.58,18.828 -12.23,38.498 -11.17,58.693c4.42,84.033 66.45,181.203 -5.43,254.043c36.99,-5.64 114.15,-26.73 147.89,-23.53c10.15,0.86 19.88,4.44 28.16,10.36c14.43,10.46 26.46,30.71 36.2,45.69c13.05,20.1 32.61,50.89 11.55,72.49c-37.58,38.53 -86.94,94.47 -143.03,101.89c-5.43,0.68 -10.91,0.91 -16.38,0.68c13.42,-39.67 22.98,-64.5 44.08,-101.35c18.76,2.32 35.76,7.44 52.41,-5.12c5.9,-4.45 10.98,-11.24 11.66,-18.8c0.79,-8.81 -4.65,-17.22 -10.39,-23.39c-8.24,-8.87 -18.84,-14.82 -31.1,-15c-32.23,-0.48 -120.05,50.46 -154.33,66.91c-18.19,8.73 -37.28,16.9 -56.67,22.56c-46.58,13.61 -94.92,16.23 -143.16,15.99c-98.63,-0.49 -209.894,-16.66 -286.279,60.87c-20.776,21.09 -37.517,45.71 -58.69,66.51c-56.115,55.15 -131.616,88.91 -206.306,110.57c-17.768,5.16 -35.954,8.53 -53.765,13.44c15.296,-36.26 28.078,-56.85 58.565,-83.9c23.768,-21.08 46.474,-37.35 63.461,-65.42c39.014,-64.46 22.447,-138.62 75.014,-199.5c13.873,-16.07 19.96,-19.31 34.82,-32.26c56.266,-30.11 105.989,-35.4 168.643,-32.78c17.843,0.74 35.521,1.19 53.257,3.85c-13.757,-5.94 -26.662,-13.39 -40.3,-19.44c-108.493,-48.09 -233.552,-66.07 -319.87,-154.405c-47.151,-48.25 -70.962,-103.139 -85.988,-167.829c15.536,12.296 29.682,23.206 46.147,34.039c80.973,53.277 174.853,79.393 262.29,119.212c9.886,4.502 19.52,9.119 29.009,14.505c-25.131,-21.747 -74.832,-48.69 -104.149,-63.789c-159.145,-81.962 -291.557,-127.123 -304.089,-331.578c-3.548,-57.887 0.781,-74.876 6.347,-132.422z"/><path fill="currentColor" d="M416.787,1345.76c53.974,-32.33 68.672,-74.84 103.161,-123.01c46.187,-64.5 108.431,-92.03 186.367,-71.78c27.735,7.2 62.744,24.33 84.935,42.74c-48.274,3.73 -88.179,18.09 -117.604,56.45c-45.323,59.09 -79.192,119.75 -162.466,125.7c-42.794,3.05 -72.326,-4.47 -112.298,-21.34c5.932,-2.88 12.046,-5.77 17.905,-8.76z"/><path fill="currentColor" d="M1347.52,708.389c21.35,-2.23 47.74,-0.525 68.72,2.9c-5.83,1.438 -12.19,2.526 -18.12,3.76c-99.74,20.766 -178.32,89.723 -221.47,180.205c-8.27,18.521 -13.86,32.819 -20.57,52.031c-1.09,-60.343 8.28,-113.162 47.55,-161.578c35.55,-44.152 87.45,-72.041 143.89,-77.318z"/></svg>
+            <span>Designed by Pegasus Labs. Like this design? Come see what we offer at
+                <a href="https://getpegasuslabs.com" target="_blank" rel="noopener" data-roll>getpegasuslabs.com</a></span>
         </div>
     </footer>
 </body>
