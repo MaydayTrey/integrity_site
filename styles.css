@@ -319,9 +319,11 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
     content: ""; position: absolute; inset: 0;
     background: linear-gradient(to top, rgba(35,31,32,.88) 0%, rgba(35,31,32,.4) 45%, rgba(35,31,32,.05) 80%);
 }
+/* the rule runs in from the left when a card is chosen, like the rails */
 .segment::before {
     content: ""; position: absolute; inset: 0 0 auto 0; height: 5px; z-index: 2;
-    background: var(--grad-brand); opacity: 0; transition: opacity .3s;
+    background: var(--grad-brand);
+    transform: scaleX(0); transform-origin: 0 50%; transition: transform .55s var(--ease-out);
 }
 .segment__title, .segment__sub { position: relative; z-index: 1; }
 .segment__title {
@@ -331,7 +333,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .segment__sub { display: block; font-size: 13px; line-height: 1.4; color: var(--grey-300); }
 .segment:hover .segment__photo, .segment:focus-visible .segment__photo { filter: saturate(.9) brightness(.95); transform: scale(1.06); }
 .segment.is-active .segment__photo { filter: none; transform: scale(1); }
-.segment.is-active::before { opacity: 1; }
+.segment.is-active::before { transform: scaleX(1); }
 .segment.is-active .segment__sub { color: var(--white); }
 .segment:focus-visible { outline: 3px solid var(--red); outline-offset: 3px; }
 
