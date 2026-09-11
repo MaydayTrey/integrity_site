@@ -588,6 +588,11 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .beat { display: grid; gap: 20px; }
 .beat__media { position: relative; }
 .beat__photo { width: 100%; height: auto; display: block; }
+/* two corners rounded, two square, mirrored between the beats: the
+   family photo rounds top-right and bottom-left, the craft photo
+   top-left and bottom-right, so the pair reads as a matched set */
+.beat:nth-child(odd)  .beat__photo { border-radius: 0 56px 0 56px; }
+.beat:nth-child(even) .beat__photo { border-radius: 56px 0 56px 0; }
 .beat__caption {
     margin-top: 10px; font-family: var(--font-ui); font-weight: 500; font-size: 13px;
     letter-spacing: .1em; text-transform: uppercase; color: var(--grey-700);
@@ -1131,6 +1136,8 @@ body.has-dialog { overflow: hidden; }
     .story { gap: 72px; }
     .beat { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: center; }
     .beat:nth-child(even) .beat__media { order: 2; }
+    .beat:nth-child(odd)  .beat__photo { border-radius: 0 88px 0 88px; }
+    .beat:nth-child(even) .beat__photo { border-radius: 88px 0 88px 0; }
     .beat__body p:not(.beat__step) { font-size: 17px; }
 
     /* split shield: wider caps, roomier panel */
