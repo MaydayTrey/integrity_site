@@ -768,6 +768,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .lockup__name .char, .lockup__tag .char { display: inline-block; }
 .shield-card__content { display: grid; gap: 36px; }
+.shield-card .form__row { grid-template-columns: 1fr; }   /* name, phone, email stack at every width */
 .shield-card__content .section__eyebrow { text-align: left; }
 .contact-card__title { margin-top: 4px; }
 .contact-card__copy { font-size: 16px; line-height: 1.65; margin: 14px 0 26px; max-width: 52ch; }
@@ -1089,14 +1090,18 @@ body.has-dialog { overflow: hidden; }
        900px-tall screen under the nav: wider than it is tall. */
     .section.section--contact { padding-top: calc(64px + 20px); padding-bottom: 28px; }
     .shield-card { --cap: 150px; }
-    .shield-card__panel { padding: 30px 40px 28px; }
+    .shield-card__panel { padding: 24px 40px 22px; }
     .shield-card__content { grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); gap: 40px; align-items: start; }
-    .contact-card__title { font-size: clamp(36px, 3.2vw, 46px); }
-    .contact-card__copy { font-size: 15px; margin: 10px 0 18px; max-width: none; }
-    .shield-card .form__field, .shield-card .form__group { margin-bottom: 12px; }
-    .shield-card .form__row { grid-template-columns: 1fr 1fr 1fr; gap: 0 12px; }
-    .shield-card .form__textarea { min-height: 96px; }
-    .shield-card .form__help { margin-top: 6px; }
+    .contact-card__title { font-size: clamp(32px, 2.6vw, 40px); }
+    .contact-card__copy { font-size: 15px; margin: 8px 0 14px; max-width: none; }
+    /* name, phone and email stack (three narrow boxes read squished), so
+       every field is a little shorter to keep the card on one screen */
+    .shield-card .form__field, .shield-card .form__group { margin-bottom: 10px; }
+    .shield-card .form__label { margin-bottom: 4px; font-size: 11px; }
+    .shield-card .form__input { min-height: 44px; padding: 8px 12px; }
+    .shield-card .form__textarea { min-height: 76px; }
+    .shield-card .chip span { min-height: 40px; padding: 8px 14px; }
+    .shield-card .form__help { margin-top: 5px; }
     .contact-card__side { border-top: 0; border-left: 1px solid var(--grey-300); padding: 2px 0 0 32px; }
     .contact-card__mark { width: 44px; margin-bottom: 10px; }
     .contact-card__sub { font-size: 24px; margin-bottom: 10px; }
