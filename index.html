@@ -816,15 +816,11 @@
             are radio groups styled as chips, the gallery filter pattern.
             Phone number: TODO from Phil.-->
         <section class="section section--contact" id="contact" aria-labelledby="contact-title">
-            <!--the painted slabs: an ink wedge and a red band. The "under"
-                pair sits behind the card; the "over" pair is the same shapes
-                above the card, translucent and multiplied, so where a slab
-                crosses the card it washes over the form. script.js drops
-                all four in from the top when the section arrives.-->
-            <div class="slab slab--ink slab--under" aria-hidden="true"></div>
-            <div class="slab slab--red slab--under" aria-hidden="true"></div>
-            <div class="slab slab--ink slab--over" aria-hidden="true"></div>
-            <div class="slab slab--red slab--over" aria-hidden="true"></div>
+            <!--the painted slabs behind the card: an ink wedge and a red
+                band. script.js drops them in from the top when the section
+                arrives, together with the card's grey facet and its red rim.-->
+            <div class="slab slab--ink" aria-hidden="true"></div>
+            <div class="slab slab--red" aria-hidden="true"></div>
             <div class="section__inner">
                 <!--wrap carries the drop-shadow; the card carries the clip-path.
                     A clip on the shadowed element would cut the shadow off.-->
@@ -888,6 +884,7 @@
                     </div>
 
                     <aside class="contact-card__side" aria-labelledby="next-title">
+                        <div class="contact-card__facet" aria-hidden="true"></div>
                         <img class="contact-card__mark" src="assets/logo-shield.svg" alt="" width="219" height="231" decoding="async">
                         <h3 class="contact-card__sub" id="next-title">What happens next</h3>
                         <ol class="steps">
@@ -920,6 +917,9 @@
                             </a>
                         </div>
                     </aside>
+                    <!--the rim: where the red band runs behind the card, its
+                        right edge gets painted-->
+                    <div class="contact-card__edge" aria-hidden="true"></div>
                 </div>
                 </div>
             </div>

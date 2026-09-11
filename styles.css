@@ -724,29 +724,26 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 /* ---------- CONTACT: one white card on the grey section ----------
    Left: heading, copy, the form. Right: what happens next, details,
    social. Stacked on phones; two columns from desktop widths. */
-/* THE PAINTED SLABS. Two shapes, an ink wedge from the left and a
-   brand-red band at the right, each drawn twice: an opaque copy UNDER
-   the card and a translucent, multiplied copy OVER it. Over the grey
-   section the two copies read as one solid slab; over the white card
-   only the over copy shows, as a wash of that colour across the form.
-   The resting clip is the full shape (no-JS state); script.js collapses
-   them to their top edge and drops them in when the section arrives. */
+/* THE PAINTED SLABS behind the card: an ink wedge from the left and a
+   brand-red band at the right. The resting clip is the full shape
+   (no-JS state); script.js collapses them to their top edge and drops
+   them in when the section arrives, together with the card's grey
+   facet and its red rim, so it all reads as one pour of paint. */
 .section.section--contact { background: var(--grey-900); position: relative; isolation: isolate; overflow: clip; }
-.slab { position: absolute; inset: 0; pointer-events: none; }
-.slab--ink { background: var(--ink); clip-path: polygon(0% 0%, 66% 0%, 30% 100%, 0% 100%); }
+.slab { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.slab--ink { background: var(--ink); opacity: .16; clip-path: polygon(0% 0%, 66% 0%, 30% 100%, 0% 100%); }
 .slab--red { left: auto; width: 34%; background: var(--grad-brand); clip-path: polygon(58% 0%, 100% 0%, 100% 100%, 18% 100%); }
-.slab--under { z-index: 0; }
-.slab--under.slab--ink { opacity: .16; }
-.slab--over { z-index: 2; mix-blend-mode: multiply; }
-.slab--over.slab--ink { opacity: .10; }
-.slab--over.slab--red { opacity: .32; }
 .section--contact .section__inner { position: relative; z-index: 1; }
+/* the red rim: a strip down the card's right edge, inside the card so
+   the chamfer clips it; it fills top-down with the band behind it */
+.contact-card__edge { position: absolute; top: 0; right: 0; bottom: 0; width: 14px; z-index: 3; background: var(--grad-brand-smooth); pointer-events: none; }
 /* SHADOW ON THE WRAP, CLIP ON THE CARD: a clip-path cuts everything the
    element paints, shadow included, so the shadow has to come from the
    parent's filter */
 .contact-card__wrap { filter: drop-shadow(0 26px 34px rgba(35, 31, 32, .38)); }
 .contact-card {
     --cut: 30px;                                   /* the chamfer size, echoing the shield's facets */
+    position: relative;
     display: grid; gap: 36px;
     padding: 30px 22px 28px;
     background: var(--white); color: var(--ink);
@@ -758,10 +755,13 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 /* the side column is the card's darker facet: a grey panel bled to
    the card's edges with a slanted top (phones) or left (desktop) edge */
 .contact-card__side {
-    background: var(--grey-100);
+    position: relative; isolation: isolate;
     margin: 0 -22px -28px; padding: 44px 22px 30px;
     clip-path: polygon(0 28px, 100% 0, 100% 100%, 0 100%);
 }
+/* the facet's grey is its own layer so it can be painted down; the
+   side's slanted clip cuts it to the same shape */
+.contact-card__facet { position: absolute; inset: 0; z-index: -1; background: var(--grey-100); }
 .contact-card__mark { width: 56px; height: auto; margin-bottom: 18px; }
 .contact-card__sub {
     font-family: var(--font-display); font-weight: 400; font-size: 28px; line-height: 1;
@@ -1026,6 +1026,7 @@ body.has-dialog { overflow: hidden; }
         margin: -52px 0 -48px; padding: 58px 56px 48px 72px;
         clip-path: polygon(64px 0, 100% 0, 100% 100%, 0 100%);
     }
+    .contact-card__edge { width: 22px; }
 }
 @media (min-width: 1024px) {
     .is-carousel .reviews-layout { gap: 80px; }
