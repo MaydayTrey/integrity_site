@@ -381,12 +381,11 @@ function wirePair(pair) {
    Nobody assumes a word on a photo is a button, so a finger sits by the
    AFTER button of the first photo showing, its outline drawing itself
    in the brand gradient, fading, and drawing again. The first tap on
-   any BEFORE, AFTER, or photo ends it for good (remembered in
-   localStorage, so a returning visitor is not nagged). */
+   any BEFORE, AFTER, or photo ends it for that visit. It is not
+   remembered across visits: it was, and the site's owner never saw it. */
 function pairHint() {
     const gallery = document.querySelector(".gallery");
     if (!gallery || reduceMotion) return;
-    try { if (localStorage.getItem("irr-pair-hint") === "1") return; } catch (_) {}
 
     const NS = "http://www.w3.org/2000/svg";
     const svg = document.createElementNS(NS, "svg");
@@ -418,7 +417,6 @@ function pairHint() {
 
     const done = () => {
         loop.kill(); gsap.to(svg, { opacity: 0, duration: 0.3, onComplete: () => svg.remove() });
-        try { localStorage.setItem("irr-pair-hint", "1"); } catch (_) {}
         gallery.removeEventListener("click", onTap, true);
     };
     const onTap = (e) => { if (e.target.closest(".pair__opt, .pair__media")) done(); };
