@@ -782,6 +782,38 @@ function addressCheck(map, fit) {
     });
 }
 
+/* ---------- CONTACT FORM: friendly validation before Netlify gets it ----------
+   novalidate turns off the browser's bubbles; this marks the first
+   empty required field, focuses it, and says what is missing in a
+   live region. Netlify receives the plain POST when everything is in. */
+function contactForm() {
+    const form = document.querySelector(".paper");
+    if (!form) return;
+    const error = form.querySelector(".paper__error");
+    form.addEventListener("submit", (e) => {
+        const missing = [];
+        form.querySelectorAll("[required]").forEach((f) => f.classList.remove("is-invalid"));
+        /* one pass in document order, so the first thing named is the
+           first thing on the page the visitor skipped */
+        form.querySelectorAll(".paper__input[required], fieldset").forEach((f) => {
+            if (f.tagName === "FIELDSET") {
+                if (!f.querySelector("input:checked")) missing.push(f.querySelector("input"));
+                return;
+            }
+            const bad = !f.value.trim() || (f.type === "email" && !f.checkValidity());
+            if (bad) { f.classList.add("is-invalid"); missing.push(f); }
+        });
+        if (!missing.length) { error.hidden = true; return; }        /* let the POST go */
+        e.preventDefault();
+        const first = missing[0];
+        const label = first.closest("fieldset") ? first.closest("fieldset").querySelector("legend").textContent : form.querySelector(`label[for="${first.id}"]`).textContent;
+        error.textContent = first.type === "email" && first.value.trim() ? "That email address doesn't look right." : `Please fill in: ${label.toLowerCase()}.`;
+        error.hidden = false;
+        first.focus();
+    });
+    form.addEventListener("input", (e) => e.target.classList.remove("is-invalid"));
+}
+
 /* ---------- SECTION FADE-INS (ScrollTrigger) ----------
    Empty shells for now; batch handles however many we add later. */
 function sectionReveals() {
@@ -791,7 +823,7 @@ function sectionReveals() {
     /* the reviews section is excluded: its cards live inside the pinned,
        transformed column and its head must be visible the moment the
        pin engages */
-    const targets = ".section__head:not(.reviews-head), .placeholder .section__inner, .service, .segments, .panel:not([hidden]), .beat__media, .beat__body, .about__facts, .about__cta-row, .areas__body, .check__panel, .badge";
+    const targets = ".section__head:not(.reviews-head), .placeholder .section__inner, .service, .segments, .panel:not([hidden]), .beat__media, .beat__body, .about__facts, .about__cta-row, .areas__body, .check__panel, .badge, .contact__intro, .clipboard";
     gsap.set(targets, { autoAlpha: 0, y: 24 });
     ScrollTrigger.batch(targets, {
         start: "top 85%",
@@ -808,5 +840,6 @@ document.fonts.ready.then(() => {
     jobDialog();
     reviewCarousel();
     serviceMap();
+    contactForm();
     sectionReveals();
 });

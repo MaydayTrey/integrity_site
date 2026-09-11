@@ -807,11 +807,85 @@
             </div>
         </section>
 
-        <!--8. CONTACT: Netlify form, honeypot, redirect to /thanks.html-->
-        <section class="section section--contact placeholder" id="contact" aria-labelledby="contact-title">
-            <div class="section__inner">
-                <h2 class="section__title" id="contact-title">Contact</h2>
-                <p class="placeholder__note">Netlify form: name, phone, email, message, service of interest, urgency. Success redirects to /thanks.html.</p>
+        <!--8. CONTACT: a Netlify form drawn as a clipboard holding a sheet
+            of ruled paper. data-netlify + the hidden form-name input make
+            Netlify collect it at deploy time; netlify-honeypot names the
+            trap field; action sends a successful submit to /thanks.html
+            (the Google Ads conversion endpoint from the SOW). Service and
+            urgency are radio groups drawn as tick boxes on the paper.
+            Phone number: TODO from Phil.-->
+        <section class="section section--contact" id="contact" aria-labelledby="contact-title">
+            <div class="section__inner contact">
+                <div class="contact__intro">
+                    <img class="contact__mark" src="assets/logo-shield.svg" alt="" width="219" height="231" decoding="async">
+                    <p class="section__eyebrow">Contact</p>
+                    <h2 class="section__title" id="contact-title">Let's talk about your project</h2>
+                    <p class="contact__copy" data-placeholder>Tell Phil what you have in mind. He reads every request himself and calls back to set up a free walkthrough, usually within one business day.</p>
+                    <ul class="contact__details">
+                        <li class="contact__detail"><span class="contact__label">Email</span><a class="contact__link" href="mailto:phil@integrityrnr.com">phil@integrityrnr.com</a></li>
+                        <li class="contact__detail"><span class="contact__label">Phone</span><span data-placeholder>Number coming soon</span></li>
+                        <li class="contact__detail"><span class="contact__label">Facebook</span><a class="contact__link" href="https://www.facebook.com/Integrityrnr" rel="noopener">facebook.com/Integrityrnr</a></li>
+                        <li class="contact__detail"><span class="contact__label">Based in</span><span>Trenton, Ohio</span></li>
+                    </ul>
+                </div>
+
+                <div class="clipboard">
+                    <div class="clipboard__clip" aria-hidden="true"><span class="clipboard__hook"></span></div>
+                    <form class="paper" name="estimate" method="POST" action="/thanks.html" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+                        <input type="hidden" name="form-name" value="estimate">
+                        <p class="paper__hp"><label>Leave this field empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+
+                        <header class="paper__head">
+                            <p class="paper__title">Free estimate request</p>
+                            <p class="paper__sub">No obligation. Phil calls you back.</p>
+                        </header>
+
+                        <div class="paper__field">
+                            <label class="paper__label" for="f-name">Name</label>
+                            <input class="paper__input" id="f-name" name="name" type="text" autocomplete="name" required>
+                        </div>
+                        <div class="paper__row">
+                            <div class="paper__field">
+                                <label class="paper__label" for="f-phone">Phone</label>
+                                <input class="paper__input" id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required>
+                            </div>
+                            <div class="paper__field">
+                                <label class="paper__label" for="f-email">Email</label>
+                                <input class="paper__input" id="f-email" name="email" type="email" autocomplete="email" required>
+                            </div>
+                        </div>
+
+                        <fieldset class="paper__group">
+                            <legend class="paper__label">What can Phil help with?</legend>
+                            <div class="ticks">
+                                <label class="tick"><input type="radio" name="service" value="Kitchen" required><span class="tick__box" aria-hidden="true"></span>Kitchen</label>
+                                <label class="tick"><input type="radio" name="service" value="Bathroom"><span class="tick__box" aria-hidden="true"></span>Bathroom</label>
+                                <label class="tick"><input type="radio" name="service" value="Basement"><span class="tick__box" aria-hidden="true"></span>Basement</label>
+                                <label class="tick"><input type="radio" name="service" value="Other"><span class="tick__box" aria-hidden="true"></span>Other</label>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="paper__group">
+                            <legend class="paper__label">How soon?</legend>
+                            <div class="ticks">
+                                <label class="tick"><input type="radio" name="urgency" value="As soon as possible" required><span class="tick__box" aria-hidden="true"></span>As soon as possible</label>
+                                <label class="tick"><input type="radio" name="urgency" value="In the next few months"><span class="tick__box" aria-hidden="true"></span>Next few months</label>
+                                <label class="tick"><input type="radio" name="urgency" value="Just planning"><span class="tick__box" aria-hidden="true"></span>Just planning</label>
+                            </div>
+                        </fieldset>
+
+                        <div class="paper__field paper__field--lines">
+                            <label class="paper__label" for="f-message">Tell Phil about the job</label>
+                            <textarea class="paper__input paper__lines" id="f-message" name="message" rows="4" required placeholder="The room, what's wrong with it, and what you'd like it to be."></textarea>
+                        </div>
+
+                        <p class="paper__error" id="f-error" role="alert" hidden></p>
+                        <div class="paper__foot">
+                            <button class="btn btn--primary" type="submit">Send my request</button>
+                            <p class="paper__note">Your details go straight to Phil and nowhere else.</p>
+                        </div>
+                    </form>
+                </div>
             </div>
         </section>
     </main>

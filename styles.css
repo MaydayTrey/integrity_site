@@ -721,6 +721,109 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .badge__title { font-family: var(--font-ui); font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; line-height: 1.25; }
 .badge__text { font-size: 13px; line-height: 1.5; color: var(--ink); max-width: 26ch; }
 
+/* ---------- CONTACT: intro + a clipboard holding a sheet of paper ---------- */
+/* two classes: outranks the single-class surface rules and the later
+   desktop .section padding block */
+.section.section--contact { background: var(--grey-900); color: var(--white); }
+.contact { display: grid; gap: 40px; }
+.contact__mark { width: 64px; height: auto; margin-bottom: 18px; filter: drop-shadow(0 4px 10px rgba(35, 31, 32, .35)); }
+.contact__intro .section__eyebrow { color: var(--white); opacity: .85; }
+.contact__copy { font-size: 16px; line-height: 1.65; margin-top: 14px; max-width: 46ch; color: var(--white); }
+.contact__details { display: grid; gap: 10px; margin-top: 26px; }
+.contact__detail { display: grid; grid-template-columns: 84px 1fr; gap: 12px; align-items: baseline; font-size: 15px; }
+.contact__label { font-family: var(--font-ui); font-weight: 600; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; opacity: .85; }
+.contact__link { color: var(--white); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--red); }
+
+/* THE CLIPBOARD: an ink board with a grain, a metal clip hung over the
+   top edge, and the paper resting on it with a slight lift */
+.clipboard {
+    position: relative;
+    padding: 46px 16px 18px;
+    background:
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, .025) 0 2px, transparent 2px 7px),
+        linear-gradient(160deg, #3A3536, var(--ink) 55%, #1A1718);
+    border-radius: 10px;
+    box-shadow: 0 30px 60px rgba(35, 31, 32, .45), inset 0 1px 0 rgba(255, 255, 255, .08);
+}
+.clipboard__clip {
+    position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+    width: 150px; height: 44px; z-index: 2;
+    background: linear-gradient(180deg, #C9CBCE 0%, #8E9094 45%, #6E7074 55%, #B5B7BA 100%);
+    border-radius: 8px 8px 12px 12px;
+    box-shadow: 0 6px 14px rgba(35, 31, 32, .55), inset 0 -2px 0 rgba(0, 0, 0, .25), inset 0 2px 0 rgba(255, 255, 255, .45);
+}
+.clipboard__clip::before {                 /* the pressed lip that holds the paper */
+    content: ""; position: absolute; left: 12px; right: 12px; bottom: 6px; height: 10px;
+    background: linear-gradient(180deg, #5B5D61, #2E2C2D);
+    border-radius: 3px; box-shadow: 0 2px 4px rgba(0, 0, 0, .4);
+}
+.clipboard__hook {                          /* the ring on top */
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    width: 40px; height: 22px;
+    border: 5px solid #A9ABAE; border-bottom: 0; border-radius: 20px 20px 0 0;
+    box-shadow: inset 0 2px 0 rgba(255, 255, 255, .4);
+}
+
+/* THE PAPER: white, a faint red margin rule down the left like a legal
+   pad, and a hairline grid of ruled lines under everything */
+/* Everything on the paper is measured in writing lines (--rule = 32px):
+   the ruled background repeats every rule, the top padding is one
+   rule, each label is one rule tall, each field line lands on a rule,
+   so the writing sits on the lines the way it would on a real pad. */
+.paper {
+    --rule: 32px;
+    position: relative;
+    padding: var(--rule) 20px 18px 26px;
+    background:
+        linear-gradient(90deg, transparent 18px, rgba(237, 28, 36, .55) 18px, rgba(237, 28, 36, .55) 19.5px, transparent 19.5px),
+        repeating-linear-gradient(180deg, transparent 0 calc(var(--rule) - 1px), rgba(35, 31, 32, .09) calc(var(--rule) - 1px) var(--rule)),
+        var(--white);
+    color: var(--ink);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .25), 0 12px 24px rgba(0, 0, 0, .3);
+}
+.paper__hp { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; }   /* the honeypot, off-screen for people */
+/* head = 3 rules: title on one, subtitle on one, one empty rule below the underline */
+.paper__head { height: calc(var(--rule) * 2); margin-bottom: var(--rule); border-bottom: 2px solid var(--ink); }
+.paper__title { font-family: var(--font-display); font-size: 30px; line-height: var(--rule); letter-spacing: .02em; text-transform: uppercase; }
+.paper__sub { font-family: var(--font-ui); font-weight: 500; font-size: 13px; line-height: calc(var(--rule) - 2px); letter-spacing: .1em; text-transform: uppercase; color: var(--grey-700); }
+/* field = 2 rules: label on one, the writing line is the next rule */
+.paper__field { height: calc(var(--rule) * 2); margin: 0; }
+.paper__row { display: grid; gap: 0 14px; }
+.paper__label {
+    display: block; height: var(--rule); line-height: var(--rule);
+    font-family: var(--font-ui); font-weight: 600; font-size: 12px;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--ink); margin: 0;
+}
+/* fields are just the ruled line: no box, no fill, a stronger line on focus */
+.paper__input {
+    display: block; width: 100%; height: var(--rule); padding: 0 2px;
+    font: inherit; font-size: 17px; line-height: calc(var(--rule) - 1.5px); color: var(--ink);
+    background: transparent; border: 0; border-bottom: 1.5px solid var(--grey-500); border-radius: 0;
+}
+.paper__input::placeholder { color: var(--grey-500); }
+.paper__input:focus { outline: none; border-bottom-color: var(--red-dark); box-shadow: 0 1.5px 0 var(--red-dark); }
+.paper__input.is-invalid { border-bottom-color: var(--red); }
+/* the message: label + 4 writing lines, growable by whole rules */
+.paper__field--lines { height: auto; }
+.paper__lines { height: calc(var(--rule) * 4); min-height: calc(var(--rule) * 4); line-height: var(--rule); padding: 0 2px; resize: vertical; }
+/* tick group = label rule + one rule of boxes (two on narrow screens when they wrap) */
+.paper__group { border: 0; margin: 0; padding: 0; min-width: 0; }
+.ticks { display: flex; flex-wrap: wrap; gap: 0 18px; }
+/* tick boxes: the real radio is visually hidden but keeps focus and
+   keyboard; the drawn box shows state, a red check when picked */
+.tick { position: relative; display: inline-flex; align-items: center; gap: 8px; height: var(--rule); font-size: 15px; cursor: pointer; }
+.tick input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.tick__box { width: 20px; height: 20px; border: 2px solid var(--ink); background: var(--white); position: relative; flex: none; }
+.tick__box::after {
+    content: ""; position: absolute; left: 5px; top: 0; width: 6px; height: 12px;
+    border: solid var(--red); border-width: 0 3px 3px 0; transform: rotate(40deg) scale(0); transition: transform .15s var(--ease-out);
+}
+.tick input:checked + .tick__box::after { transform: rotate(40deg) scale(1); }
+.tick input:focus-visible + .tick__box { outline: 3px solid var(--red); outline-offset: 2px; }
+.paper__error { margin: 0; line-height: var(--rule); font-size: 14px; color: var(--red-dark); font-weight: 500; }
+.paper__foot { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; padding-top: calc(var(--rule) / 2); }
+.paper__note { font-size: 12px; line-height: 1.4; color: var(--grey-700); }
+
 /* ---------- UTILITY PAGES (404, thanks) ----------
    The CSP has no 'unsafe-inline' for styles, so these pages cannot use
    style attributes; everything they need is a class here. */
@@ -762,7 +865,7 @@ body.has-dialog { overflow: hidden; }
 .section--phil      { background: var(--grey-100); overflow: clip; }   /* clip: the photo's red bar hangs 4px outside it */
 .section--areas     { background: var(--white); }
 .section--quals     { background: var(--grey-100); }
-.section--contact   { background: var(--white); }
+/* .section--contact: styled in the CONTACT block below */
 .site-footer {
     background: var(--ink); color: var(--grey-300);
     padding: 48px var(--gutter);
@@ -882,6 +985,13 @@ body.has-dialog { overflow: hidden; }
     .beat__body p:not(.beat__step) { font-size: 17px; }
     .about__facts { max-width: 900px; margin-inline: auto; }
 
+    /* contact: on tablets the clipboard stays under the intro, centred */
+    .contact__copy { font-size: 17px; }
+    .clipboard { padding: 54px 22px 22px; max-width: 640px; }
+    .paper { padding: var(--rule) 28px 22px 34px; }
+    .paper__row { grid-template-columns: 1fr 1fr; }
+    .paper__foot { flex-direction: row; align-items: center; gap: 18px; }
+
     /* qualifications: four across */
     .badges { grid-template-columns: repeat(4, 1fr); gap: 20px; }
     .badge { padding: 28px 18px 22px; gap: 12px; }
@@ -905,6 +1015,11 @@ body.has-dialog { overflow: hidden; }
 }
 @media (min-width: 1024px) {
     .about__facts { grid-template-columns: repeat(3, 1fr); }   /* three-up only once each card has ~180px */
+
+    /* contact: intro beside the clipboard from desktop widths */
+    .contact { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 56px; align-items: start; }
+    .contact__intro { position: sticky; top: calc(var(--nav-h) + 24px); }
+    .clipboard { max-width: none; }
 }
 @media (min-width: 1024px) {
     .is-carousel .reviews-layout { gap: 80px; }
