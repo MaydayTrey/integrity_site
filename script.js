@@ -271,18 +271,21 @@ function heroIntro() {
 
             const stamp = self.words.filter((w) => w.closest(".hl"));
             const words = self.words.filter((w) => !stamp.includes(w));
+            const others = rest.filter((s) => s !== ".nav__brand");
 
-            const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-            tl.from(words, {
-                    yPercent: 110, duration: 0.7, stagger: 0.09,
-                    force3D: false          /* keep words 2D so the gradient clip holds */
-                })
+            /* 1. the line fades in, word by word, no rising
+               2. the shield (the nav brand) appears
+               3. "a success" stamps in
+               4. everything else follows */
+            const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+            tl.from(words, { autoAlpha: 0, duration: 0.9, stagger: 0.05, force3D: false })   /* 2D: the gradient clip holds */
+              .to(".nav__brand", { autoAlpha: 1, y: 0, duration: 0.6 }, "-=0.2")
               .from(stamp, {
                     scale: 1.7, autoAlpha: 0, transformOrigin: "50% 60%",
                     duration: 0.55, ease: "back.out(2.2)", stagger: 0.08,
                     force3D: false
-                }, "-=0.15")
-              .to(rest, { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.08 }, "-=0.25");
+                }, "+=0.1")
+              .to(others, { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.08 }, "-=0.2");
             return tl;              /* returned so autoSplit can revert + replay it cleanly */
         }
     });
