@@ -529,9 +529,10 @@ function reviewCarousel() {
    page scroll never gets trapped. It is framed tightly on the SERVICE
    AREA, drawn in red from assets/service-area.geojson. That file is
    the single source of truth: the red overlay and the address check
-   both read it, so whatever shape it holds is what Phil serves. It
-   starts as the six counties (Census shapes) and can be any polygons;
-   draw a new one with the hidden editor (?edit-area in the URL).
+   both read it, so whatever shape it holds is what Phil serves. It is
+   now the outline Phil drew (a rounded box: Indiana line to western
+   Greene County, just north of I-70 down to Loveland; see
+   tools/service-area.py); redraw with the hidden editor (?edit-area).
    The basemap's own town names do the labelling, so the only marker
    is the shield at home. */
 const SERVICE_HOME = [39.4809, -84.4577];   /* Trenton, OH */
