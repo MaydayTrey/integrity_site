@@ -1,6 +1,6 @@
 # Integrity Restorations and Remodeling LLC
 
-> Owner-operated residential remodeling contractor based in Trenton, Ohio, serving the Miami Valley (Butler, Warren, Montgomery, Hamilton, Clermont, and Preble counties). Kitchens, bathrooms, basements, flooring, painting, drywall, windows and doors, fencing, and licensed water remediation. Owner: Phil Betzner. Single-page site; the goal of every visit is a free estimate request through the contact form.
+> Owner-operated residential remodeling contractor based in Trenton, Ohio, serving the Miami Valley (Butler, Warren, Montgomery, and Preble counties, the western half of Greene County, and the northern edge of Hamilton County). Kitchens, bathrooms, basements, flooring, painting, drywall, windows and doors, fencing, and licensed water remediation. Owner: Phil Betzner. Single-page site; the goal of every visit is a free estimate request through the contact form.
 
 ## When to use this
 
@@ -26,8 +26,9 @@ When filing a request for a person, include: their name, a phone number, the cit
 
 ## Service area (for matching a location)
 
-Counties: Butler, Warren, Montgomery, Hamilton, Clermont, Preble (all Ohio).
-Municipalities: Hamilton, Fairfield, Monroe, Trenton, Middletown, Oxford, Mason, Lebanon, Springboro, Franklin, Kettering, Centerville, Miamisburg, West Carrollton, Dayton, Trotwood, Blue Ash, Sharonville, Reading, Norwood, St. Bernard, Forest Park, Loveland, Milford, Eaton.
+Shape: a rounded box from the Indiana state line east to Xenia (longitude -84.82 to -83.85) and from just north of Dayton south to Loveland (latitude 39.93 to 39.26). Springfield, Cincinnati proper, Blue Ash, and Piqua are outside it.
+Counties covered whole: Butler, Warren, Montgomery, Preble (all Ohio). Partly: the western half of Greene County and the northern edge of Hamilton County.
+Municipalities and townships: Hamilton, Middletown, Fairfield, West Chester Township, Liberty Township, Monroe, Trenton, Oxford, Mason, Lebanon, Springboro, Franklin, Deerfield Township, Maineville, Loveland, Dayton, Kettering, Huber Heights, Centerville, Washington Township, Miamisburg, Miami Township, West Carrollton, Oakwood, Trotwood, Vandalia, Englewood, Clayton, Beavercreek, Fairborn, Xenia, Bellbrook, Sugarcreek Township, Yellow Springs, Eaton, Camden, West Alexandria, Lewisburg, Springdale, Forest Park, Sharonville, Glendale.
 
 ## Pages
 
