@@ -29,9 +29,11 @@ document.addEventListener("click", (e) => {
 
 /* ---------- HEADER: the hero crossing ----------
    Over the hero the header is the full centred nav; past the hero it is
-   the 64px bar. The two are different layouts (.is-scrolled), so instead
-   of snapping between them: as the hero's bottom nears the top the logo
-   shrinks with the scroll to its bar size; at the crossing the links
+   the 64px bar. The crossing is when the hero's bottom passes 30% of the
+   viewport, so the bar is in place while the nav is still over the
+   photo, never over the white section below. The two are different
+   layouts (.is-scrolled), so instead of snapping between them: as the
+   hero's bottom passes 60% the logo shrinks to its bar size; at the crossing the links
    fade, the shield and wordmark glide left into their bar positions
    (GSAP Flip across the class change), the grey bar wipes in left to
    right, then the hamburger fades in. Scrolling back up runs it in
@@ -93,12 +95,12 @@ function cross(on) {
 
 if (reduceMotion) {
     ScrollTrigger.create({
-        trigger: ".hero", start: "bottom top+=1",
+        trigger: ".hero", start: "bottom 30%",
         onEnter: () => setScrolled(true), onLeaveBack: () => setScrolled(false)
     });
 } else {
     ScrollTrigger.create({
-        trigger: ".hero", start: "bottom top+=1",
+        trigger: ".hero", start: "bottom 30%",
         onEnter: () => cross(true), onLeaveBack: () => cross(false)
     });
     /* the shrink: as the hero's bottom passes 45% of the viewport the
@@ -110,7 +112,7 @@ if (reduceMotion) {
             .to(shield,   { width: 48 },  0)
             .to(wordmark, { width: 132 }, 0);
         shrinkAt = ScrollTrigger.create({
-            trigger: ".hero", start: "bottom 45%",
+            trigger: ".hero", start: "bottom 60%",
             onEnter: () => shrink.play(), onLeaveBack: () => { if (!flipping) shrink.reverse(); }
         });
         return () => { shrinkAt.kill(); shrink.kill(); shrink = shrinkAt = null; gsap.set([shield, wordmark], { clearProps: "width" }); };
