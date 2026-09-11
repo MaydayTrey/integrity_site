@@ -874,6 +874,30 @@ body.has-dialog { overflow: hidden; }
 /* alternating surfaces so the empty sections are visible while we build */
 .section--services  { background: var(--white); }
 .section--work      { background: var(--grey-100); }
+
+/* ---------- DIVIDER: the slanted photo band between Services and Our Work ---------- */
+.divider {
+    --slant: 9vw;                                   /* the rise of each cut edge */
+    position: relative; height: clamp(260px, 46vh, 560px);
+    background: linear-gradient(to bottom, var(--white) 50%, var(--grey-100) 50%);   /* the neighbours' colours fill the corners */
+}
+.divider__media {
+    position: absolute; inset: 0; overflow: hidden; background: var(--ink);
+    clip-path: polygon(0 0, 100% var(--slant), 100% 100%, 0 calc(100% - var(--slant)));
+}
+.divider__photo { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 45%; }
+/* ink tint so the band sits with the dark hero and the grey section, not a bright hole */
+.divider__media::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(90deg, rgba(35,31,32,.55) 0%, rgba(35,31,32,.25) 60%, rgba(35,31,32,.45) 100%);
+}
+/* a brand-red rule along the top cut, like the one under the hero */
+.divider::before {
+    content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: var(--red);
+    clip-path: polygon(0 0, 100% var(--slant), 100% calc(var(--slant) + 5px), 0 5px);
+}
+@media (min-width: 1024px) { .divider { --slant: 6vw; } }
 .section--reviews   { background: var(--white); }
 .section--phil      { background: var(--grey-100); overflow: clip; }   /* clip: the photo's red bar hangs 4px outside it */
 .section--areas     { background: var(--white); }

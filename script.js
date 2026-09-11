@@ -38,6 +38,13 @@ if (!reduceMotion) {
     const photo = document.querySelector(".hero__photo");
     gsap.set(photo, { height: "130%", yPercent: -11.5 });
     gsap.to(photo, { yPercent: 0, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
+    /* the divider band's photo drifts the same way across its whole trip
+       through the viewport (it enters at the bottom and leaves at the top) */
+    const band = document.querySelector(".divider__photo");
+    if (band) {
+        gsap.set(band, { height: "130%", yPercent: -23 });
+        gsap.to(band, { yPercent: 0, ease: "none", scrollTrigger: { trigger: ".divider", start: "top bottom", end: "bottom top", scrub: true } });
+    }
 }
 
 /* ---------- HEADER: the hero crossing ----------
