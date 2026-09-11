@@ -737,6 +737,21 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .shield-card__cap { position: relative; }
 .shield-card__half { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .shield-card__panel { background: var(--white); color: var(--ink); padding: 26px 16px 26px; }
+/* the intro wordmark under the resting shield; script.js positions it
+   and reveals it, so it starts invisible and never catches a click */
+.shield-card__lockup {
+    position: absolute; left: 50%; top: 50%; transform: translateX(-50%);
+    text-align: center; white-space: nowrap; pointer-events: none; opacity: 0; z-index: 3;
+}
+.lockup__name {
+    font-family: var(--font-display); font-size: clamp(44px, 8vw, 76px); line-height: 1;
+    letter-spacing: .05em; text-transform: uppercase; color: var(--red);
+}
+.lockup__tag {
+    font-family: var(--font-ui); font-weight: 600; font-size: clamp(13px, 2.3vw, 22px); line-height: 1.2;
+    letter-spacing: .14em; text-transform: uppercase; color: var(--ink); margin-top: 6px;
+}
+.lockup__name .char, .lockup__tag .char { display: inline-block; }
 .shield-card__content { display: grid; gap: 36px; }
 .shield-card__content .section__eyebrow { text-align: left; }
 .contact-card__title { margin-top: 4px; }

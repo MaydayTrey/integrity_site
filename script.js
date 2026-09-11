@@ -828,29 +828,53 @@ function shieldCard() {
     const right   = card.querySelector(".shield-card__cap--right");
     const panel   = card.querySelector(".shield-card__panel");
     const content = card.querySelector(".shield-card__content");
+    const lockup  = card.querySelector(".shield-card__lockup");
 
     const H = card.offsetHeight;
     const cap = left.offsetWidth;
-    const SHIELD_H = Math.min(240, H * 0.35);           /* the whole shield's size at rest */
+    const SHIELD_H = Math.min(240, H * 0.3);            /* the whole shield's size at rest */
     const halfW = SHIELD_H * (110 / 231);               /* a half's true width at that height */
     const shift = card.offsetWidth / 2 - cap;           /* from the card's edge to the centre line */
+    const GROW = 1.5;                                   /* how much the shield swells before it opens */
 
-    /* the rest state hangs from the card's TOP edge (origins at 0%), so
-       the small shield is on screen when the trigger fires and the card
-       grows downward out of it; the panel grows in both axes with the
-       halves so the middle reads as the shield's centre opening */
-    gsap.set(left,  { transformOrigin: "100% 0%", x:  shift, scaleX: halfW / cap, scaleY: SHIELD_H / H });
-    gsap.set(right, { transformOrigin: "0% 0%",   x: -shift, scaleX: halfW / cap, scaleY: SHIELD_H / H });
-    gsap.set(panel, { transformOrigin: "50% 0%", scaleX: 0, scaleY: SHIELD_H / H });
+    /* rest: the two halves touch at the centre line as one shield in
+       its true proportions, vertically centred in the card's area, with
+       the wordmark just under it. Origins sit on the inner edges so
+       scaling keeps the halves touching. */
+    gsap.set(left,  { transformOrigin: "100% 50%", x:  shift, scaleX: halfW / cap, scaleY: SHIELD_H / H });
+    gsap.set(right, { transformOrigin: "0% 50%",   x: -shift, scaleX: halfW / cap, scaleY: SHIELD_H / H });
+    gsap.set(panel, { transformOrigin: "50% 50%", scaleX: 0, scaleY: SHIELD_H / H });
     gsap.set(content, { autoAlpha: 0, y: 16 });
+    gsap.set(lockup, { y: SHIELD_H / 2 + 18, autoAlpha: 1 });
+
+    /* THE WORDMARK. INTEGRITY: each letter sits in a mask exactly its
+       own height and drops into it from above, so it appears out of
+       nothing along its own top edge, left to right. The tagline: each
+       letter scales into place, left to right. Reverted after the
+       sequence so nothing odd is left in the DOM. */
+    const name = SplitText.create(lockup.querySelector(".lockup__name"), { type: "chars", mask: "chars", charsClass: "char" });
+    const tag  = SplitText.create(lockup.querySelector(".lockup__tag"),  { type: "chars", charsClass: "char" });
+    gsap.set(name.chars, { yPercent: -110 });
+    gsap.set(tag.chars,  { scale: 0, transformOrigin: "50% 50%" });
 
     gsap.timeline({
-        scrollTrigger: { trigger: card, start: "top 70%", once: true },
-        defaults: { ease: "power3.inOut", duration: 1.2 }
+        scrollTrigger: { trigger: card, start: "center 60%", once: true },
+        defaults: { ease: "power3.inOut" },
+        onComplete() { name.revert(); tag.revert(); }
     })
-    .to([left, right], { x: 0, scaleX: 1, scaleY: 1 }, 0)
-    .to(panel, { scaleX: 1, scaleY: 1 }, 0)
-    .to(content, { autoAlpha: 1, y: 0, duration: 0.7, ease: "power2.out" }, 0.85);
+    /* 1. INTEGRITY drops in, letter by letter */
+    .to(name.chars, { yPercent: 0, duration: 0.55, ease: "power2.out", stagger: 0.07 }, 0)
+    /* 2. the tagline scales in, letter by letter */
+    .to(tag.chars, { scale: 1, duration: 0.35, ease: "back.out(1.7)", stagger: 0.025 }, 0.5)
+    /* 3. a beat with the whole lockup on screen, then the text fades */
+    .to(lockup, { autoAlpha: 0, duration: 0.45, ease: "power2.in" }, "+=1")
+    /* 4. the shield swells */
+    .to([left, right], { scaleX: `*=${GROW}`, scaleY: `*=${GROW}`, duration: 0.6 }, "<+=0.1")
+    .to(panel, { scaleY: `*=${GROW}`, duration: 0.6 }, "<")
+    /* 5. it opens: halves to the edges at full height, the panel opens, the content arrives */
+    .to([left, right], { x: 0, scaleX: 1, scaleY: 1, duration: 1.2 }, "+=0.15")
+    .to(panel, { scaleX: 1, scaleY: 1, duration: 1.2 }, "<")
+    .to(content, { autoAlpha: 1, y: 0, duration: 0.7, ease: "power2.out" }, "<0.85");
 }
 
 /* ---------- SECTION FADE-INS (ScrollTrigger) ----------
