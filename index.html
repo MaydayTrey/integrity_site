@@ -816,6 +816,15 @@
             are radio groups styled as chips, the gallery filter pattern.
             Phone number: TODO from Phil.-->
         <section class="section section--contact" id="contact" aria-labelledby="contact-title">
+            <!--the painted slabs: an ink wedge and a red band. The "under"
+                pair sits behind the card; the "over" pair is the same shapes
+                above the card, translucent and multiplied, so where a slab
+                crosses the card it washes over the form. script.js drops
+                all four in from the top when the section arrives.-->
+            <div class="slab slab--ink slab--under" aria-hidden="true"></div>
+            <div class="slab slab--red slab--under" aria-hidden="true"></div>
+            <div class="slab slab--ink slab--over" aria-hidden="true"></div>
+            <div class="slab slab--red slab--over" aria-hidden="true"></div>
             <div class="section__inner">
                 <!--wrap carries the drop-shadow; the card carries the clip-path.
                     A clip on the shadowed element would cut the shadow off.-->

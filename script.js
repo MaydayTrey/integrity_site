@@ -815,6 +815,27 @@ function contactForm() {
     form.addEventListener("input", (e) => e.target.classList.remove("is-invalid"));
 }
 
+/* ---------- CONTACT SLABS: the wedge and the band paint down ----------
+   Each slab's clip-path is tweened from a polygon collapsed onto its
+   top edge to its full shape, so the colour appears to run down the
+   section and over the card. The under and over copies of a shape
+   share one tween, so they move as a single stroke. Plays once, when
+   the section is well into view; reduced motion leaves the CSS state. */
+function contactSlabs() {
+    const section = document.querySelector(".section--contact");
+    if (!section || reduceMotion) return;
+    const ink = section.querySelectorAll(".slab--ink");
+    const red = section.querySelectorAll(".slab--red");
+    gsap.set(ink, { clipPath: "polygon(0% 0%, 66% 0%, 66% 0%, 0% 0%)" });
+    gsap.set(red, { clipPath: "polygon(58% 0%, 100% 0%, 100% 0%, 58% 0%)" });
+    gsap.timeline({
+        scrollTrigger: { trigger: section, start: "top 60%", once: true },
+        defaults: { ease: "power3.inOut" }
+    })
+    .to(ink, { clipPath: "polygon(0% 0%, 66% 0%, 30% 100%, 0% 100%)", duration: 1.3 })
+    .to(red, { clipPath: "polygon(58% 0%, 100% 0%, 100% 100%, 18% 100%)", duration: 1.1 }, "-=0.85");
+}
+
 /* ---------- SECTION FADE-INS (ScrollTrigger) ----------
    Empty shells for now; batch handles however many we add later. */
 function sectionReveals() {
@@ -842,5 +863,6 @@ document.fonts.ready.then(() => {
     reviewCarousel();
     serviceMap();
     contactForm();
+    contactSlabs();
     sectionReveals();
 });
