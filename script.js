@@ -1090,10 +1090,20 @@ function shieldCard() {
        its true proportions, vertically centred in the card's area, with
        the wordmark just under it. Origins sit on the inner edges so
        scaling keeps the halves touching. */
-    gsap.set(left,  { transformOrigin: "100% 50%", x:  shift, scaleX: halfW / cap, scaleY: SHIELD_H / H });
-    gsap.set(right, { transformOrigin: "0% 50%",   x: -shift, scaleX: halfW / cap, scaleY: SHIELD_H / H });
-    gsap.set(panel, { transformOrigin: "50% 50%", scaleX: 0, scaleY: SHIELD_H / H });
-    gsap.set(lockup, { y: SHIELD_H / 2 + 18, autoAlpha: 1 });
+    /* where the shield rests: the card's centre on desktop, but on a phone
+       the card is several screens tall, so it rests about 45vh below the
+       card's top instead. Every transform origin uses this same point, and
+       scaling back to 1 restores the full element whatever the origin. */
+    const restY = Math.min(0.5, (window.innerHeight * 0.45) / H);
+    const oy = (restY * 100).toFixed(2) + "%";
+    gsap.set(left,  { transformOrigin: "100% " + oy, x:  shift, scaleX: halfW / cap, scaleY: SHIELD_H / H });
+    gsap.set(right, { transformOrigin: "0% " + oy,   x: -shift, scaleX: halfW / cap, scaleY: SHIELD_H / H });
+    gsap.set(panel, { transformOrigin: "50% " + oy, scaleX: 0, scaleY: SHIELD_H / H });
+    /* the wordmark hangs 18px under the shield as rendered (measured,
+       not computed: the rest point and the scaled cap do not always
+       agree to the pixel on tall phone cards) */
+    const capBox = left.getBoundingClientRect(), cardBox = card.getBoundingClientRect();
+    gsap.set(lockup, { y: capBox.bottom - cardBox.top + 18 - H / 2, autoAlpha: 1 });
 
     /* THE CONTENT arrives only after the panel is fully open (so it is
        never seen stretched with the panel's scale): every block of the
@@ -1115,7 +1125,7 @@ function shieldCard() {
     gsap.set(tag.chars,  { scale: 0, transformOrigin: "50% 50%" });
 
     gsap.timeline({
-        scrollTrigger: { trigger: card, start: "center 60%", once: true },
+        scrollTrigger: { trigger: card, start: `top+=${Math.round(restY * H)} 60%`, once: true },   /* the rest point reaches 60% of the screen */
         defaults: { ease: "power3.inOut" },
         onComplete() { name.revert(); tag.revert(); }
     })
@@ -1198,7 +1208,8 @@ function qualsIntro() {
     if (!section || reduceMotion) return;
     /* first and third start high (the first highest), second and fourth
        start low (the fourth lowest): each pair a little different */
-    const offsets = [-280, 230, -210, 280];
+    const wide = window.matchMedia("(min-width: 1024px)").matches;
+    const offsets = wide ? [-280, 230, -210, 280] : [-120, 100, -90, 120];   /* two across: shorter columns, shorter sweep */
     const badges = [...section.querySelectorAll(".badge")];
     const slides = badges.map((badge, i) => gsap.fromTo(badge, { y: offsets[i % offsets.length] }, {
         y: 0, ease: "none",

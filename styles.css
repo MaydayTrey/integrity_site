@@ -336,7 +336,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .segment__title, .segment__sub { position: relative; z-index: 1; }
 .segment__title {
-    display: block; font-family: var(--font-display); font-size: 28px; line-height: 1;
+    display: block; font-family: var(--font-display); font-size: clamp(20px, 7vw, 28px); line-height: 1;
     letter-spacing: .02em; text-transform: uppercase;
 }
 .segment__sub { display: block; font-size: 13px; line-height: 1.4; color: var(--grey-300); }
@@ -345,6 +345,11 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .segment.is-active::before { transform: scaleX(1); }
 .segment.is-active .segment__sub { color: var(--white); }
 .segment:focus-visible { outline: 3px solid var(--red); outline-offset: 3px; }
+/* the narrowest phones: the two cards stack, each a wide card */
+@media (max-width: 359px) {
+    .segments { grid-template-columns: 1fr; }
+    .segment { aspect-ratio: 16 / 9; }
+}
 
 .work__intro { max-width: 62ch; margin: 0 auto 28px; font-size: 16px; line-height: 1.6; text-align: center; }
 
@@ -1147,8 +1152,8 @@ body.has-dialog { overflow: hidden; }
     .form__row { grid-template-columns: 1fr 1fr; }
     .form__foot { flex-direction: row; align-items: center; gap: 18px; }
 
-    /* qualifications: four across */
-    .badges { grid-template-columns: repeat(4, 1fr); gap: 32px; }
+    /* qualifications: still two across here (four is cramped at tablet width) */
+    .badges { gap: 36px 32px; }
     .badge { padding: 12px 10px; gap: 14px; }
     .badge__mark { width: 128px; }
     .badge__logo { height: 128px; }
@@ -1168,6 +1173,7 @@ body.has-dialog { overflow: hidden; }
     .check__grid { grid-template-columns: minmax(0, 1fr) 72px 104px; }
 }
 @media (min-width: 1024px) {
+    .badges { grid-template-columns: repeat(4, 1fr); }   /* qualifications: four across */
 
     /* footer: three columns, legal row and credit row inline */
     .site-footer { padding: 90px var(--gutter) 40px; }
