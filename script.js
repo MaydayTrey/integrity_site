@@ -835,7 +835,12 @@ function shieldCard() {
     const SHIELD_H = Math.min(240, H * 0.3);            /* the whole shield's size at rest */
     const halfW = SHIELD_H * (110 / 231);               /* a half's true width at that height */
     const shift = card.offsetWidth / 2 - cap;           /* from the card's edge to the centre line */
-    const GROW = 1.5;                                   /* how much the shield swells before it opens */
+    /* the shield's FULL size: as tall as the card, in true proportions,
+       unless that would be wider than the card (phones), in which case
+       as wide as the card */
+    const fullScale = Math.min(1, card.offsetWidth / (2 * H * (110 / 231)));
+    const fullSY = fullScale;
+    const fullSX = fullScale * (H * (110 / 231)) / cap;
 
     /* rest: the two halves touch at the centre line as one shield in
        its true proportions, vertically centred in the card's area, with
@@ -868,13 +873,15 @@ function shieldCard() {
     .to(tag.chars, { scale: 1, duration: 0.35, ease: "back.out(1.7)", stagger: 0.025 }, 0.5)
     /* 3. a beat with the whole lockup on screen, then the text fades */
     .to(lockup, { autoAlpha: 0, duration: 0.45, ease: "power2.in" }, "+=1")
-    /* 4. the shield swells */
-    .to([left, right], { scaleX: `*=${GROW}`, scaleY: `*=${GROW}`, duration: 0.6 }, "<+=0.1")
-    .to(panel, { scaleY: `*=${GROW}`, duration: 0.6 }, "<")
-    /* 5. it opens: halves to the edges at full height, the panel opens, the content arrives */
-    .to([left, right], { x: 0, scaleX: 1, scaleY: 1, duration: 1.2 }, "+=0.15")
-    .to(panel, { scaleX: 1, scaleY: 1, duration: 1.2 }, "<")
-    .to(content, { autoAlpha: 1, y: 0, duration: 0.7, ease: "power2.out" }, "<0.85");
+    /* 4. one slow, even swell to the shield's full size, still whole */
+    .to([left, right], { scaleX: fullSX, scaleY: fullSY, duration: 1.8, ease: "power2.inOut" }, "<+=0.1")
+    .to(panel, { scaleY: fullSY, duration: 1.8, ease: "power2.inOut" }, "<")
+    /* 5. it sits a moment, then opens sideways: the halves glide to the
+          edges (finishing any height still owed on phones), the panel
+          opens between them, and the content arrives as it settles */
+    .to([left, right], { x: 0, scaleX: 1, scaleY: 1, duration: 1.7, ease: "power2.inOut" }, "+=0.35")
+    .to(panel, { scaleX: 1, scaleY: 1, duration: 1.7, ease: "power2.inOut" }, "<")
+    .to(content, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power2.out" }, "<1.1");
 }
 
 /* ---------- SECTION FADE-INS (ScrollTrigger) ----------
