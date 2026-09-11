@@ -898,8 +898,9 @@ body.has-dialog { overflow: hidden; }
 /* ---------- DIVIDER: the slanted photo band between Services and Our Work ---------- */
 .divider {
     --slant: 9vw;                                   /* the rise of each cut edge */
+    --above: var(--white); --below: var(--grey-100);   /* the neighbours' colours fill the corners */
     position: relative; height: clamp(260px, 46vh, 560px);
-    background: linear-gradient(to bottom, var(--white) 50%, var(--grey-100) 50%);   /* the neighbours' colours fill the corners */
+    background: linear-gradient(to bottom, var(--above) 50%, var(--below) 50%);
 }
 .divider__media {
     position: absolute; inset: 0; overflow: hidden; background: var(--ink);
@@ -917,6 +918,11 @@ body.has-dialog { overflow: hidden; }
     background: var(--red);
     clip-path: polygon(0 0, 100% var(--slant), 100% calc(var(--slant) + 5px), 0 5px);
 }
+/* the mirror: cuts run the other way (high on the right), grey above, white below */
+.divider--mirror { --above: var(--grey-100); --below: var(--white); }
+.divider--mirror .divider__media { clip-path: polygon(0 var(--slant), 100% 0, 100% calc(100% - var(--slant)), 0 100%); }
+.divider--mirror .divider__media::after { background: linear-gradient(90deg, rgba(35,31,32,.45) 0%, rgba(35,31,32,.25) 40%, rgba(35,31,32,.55) 100%); }
+.divider--mirror::before { clip-path: polygon(0 var(--slant), 100% 0, 100% 5px, 0 calc(var(--slant) + 5px)); }
 @media (min-width: 1024px) { .divider { --slant: 6vw; } }
 .section--reviews   { background: var(--white); }
 .section--phil      { background: var(--grey-100); overflow: clip; }   /* clip: the photo's red bar hangs 4px outside it */

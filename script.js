@@ -38,31 +38,39 @@ if (!reduceMotion) {
     const photo = document.querySelector(".hero__photo");
     gsap.set(photo, { height: "130%", yPercent: -11.5 });
     gsap.to(photo, { yPercent: 0, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
-    /* the divider band's photo drifts the same way, harder: it is 190%
-       of the band's height and travels the spare 90% across its whole
-       trip through the viewport, so it moves at about 0.7x the page */
-    const band = document.querySelector(".divider__photo");
-    if (band) {
-        gsap.set(band, { height: "190%", yPercent: -47.4 });
-        gsap.to(band, { yPercent: 0, ease: "none", scrollTrigger: { trigger: ".divider", start: "top bottom", end: "bottom top", scrub: true } });
+    /* the divider bands' photos drift the same way, harder: each is
+       190% of its band's height and travels the spare 90% across its
+       whole trip through the viewport, so it moves at about 0.7x the
+       page. Each band also REVEALS once: the photo wipes in sideways
+       with a vertical front that follows the two slanted cuts, left to
+       right for the first band, right to left for the mirrored one.
+       Timed, not scrubbed, so it never runs back. GSAP would snap a
+       polygon string, so a number drives it. */
+    document.querySelectorAll(".divider").forEach((div) => {
+        const photo = div.querySelector(".divider__photo");
+        const media = div.querySelector(".divider__media");
+        const mirror = div.classList.contains("divider--mirror");
+        gsap.set(photo, { height: "190%", yPercent: -47.4 });
+        gsap.to(photo, { yPercent: 0, ease: "none", scrollTrigger: { trigger: div, start: "top bottom", end: "bottom top", scrub: true } });
 
-        /* THE REVEAL, once: the photo wipes in from the left edge to the
-           right, a vertical front that follows the two slanted cuts.
-           Timed, not scrubbed, so it never runs back. GSAP would snap a
-           polygon string, so a number drives it. */
-        const media = document.querySelector(".divider__media");
         const wipe = { p: 0 };
         const draw = () => {
-            const P = wipe.p, X = (P * 100).toFixed(3) + "%";
-            media.style.clipPath = `polygon(0 0, ${X} calc(var(--slant) * ${P.toFixed(4)}), ${X} calc(100% - var(--slant) * ${(1 - P).toFixed(4)}), 0 calc(100% - var(--slant)))`;
+            const P = wipe.p.toFixed(4), Q = (1 - wipe.p).toFixed(4);
+            if (mirror) {
+                const X = ((1 - wipe.p) * 100).toFixed(3) + "%";      /* the front, coming from the right */
+                media.style.clipPath = `polygon(${X} calc(var(--slant) * ${P}), 100% 0, 100% calc(100% - var(--slant)), ${X} calc(100% - var(--slant) * ${Q}))`;
+            } else {
+                const X = (wipe.p * 100).toFixed(3) + "%";            /* the front, coming from the left */
+                media.style.clipPath = `polygon(0 0, ${X} calc(var(--slant) * ${P}), ${X} calc(100% - var(--slant) * ${Q}), 0 calc(100% - var(--slant)))`;
+            }
         };
         draw();
         gsap.to(wipe, {
             p: 1, duration: 1.3, ease: "power3.inOut", onUpdate: draw,
             onComplete: () => { media.style.clipPath = ""; },   /* back to the stylesheet's polygon */
-            scrollTrigger: { trigger: ".divider", start: "top 78%", once: true }
+            scrollTrigger: { trigger: div, start: "top 78%", once: true }
         });
-    }
+    });
 }
 
 /* ---------- HEADER: the hero crossing ----------
