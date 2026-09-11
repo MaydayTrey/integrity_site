@@ -138,7 +138,7 @@
         <!--GOOGLE FONTS: Bebas Neue (display), Oswald (subheads/UI), Inter (body)-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;500;600&family=Inter:wght@400;500&family=Patrick+Hand&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
     <link rel="stylesheet" href="styles.css">
         <!--HERO PRELOAD: the kitchen photo is the LCP element on every
@@ -855,27 +855,27 @@
                             </div>
                         </div>
 
-                        <fieldset class="paper__group">
-                            <legend class="paper__label">What can Phil help with?</legend>
+                        <div class="paper__group" role="group" aria-labelledby="g-service">
+                            <span class="paper__label" id="g-service">Service</span>
                             <div class="ticks">
                                 <label class="tick"><input type="radio" name="service" value="Kitchen" required><span class="tick__box" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><path pathLength="20" d="M3.6 10.9c1.5 1.1 2.9 2.6 4.1 3.9 2.3-3.3 5-6.5 8.7-9.6"/></svg></span>Kitchen</label>
                                 <label class="tick"><input type="radio" name="service" value="Bathroom"><span class="tick__box" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><path pathLength="20" d="M3.6 10.9c1.5 1.1 2.9 2.6 4.1 3.9 2.3-3.3 5-6.5 8.7-9.6"/></svg></span>Bathroom</label>
                                 <label class="tick"><input type="radio" name="service" value="Basement"><span class="tick__box" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><path pathLength="20" d="M3.6 10.9c1.5 1.1 2.9 2.6 4.1 3.9 2.3-3.3 5-6.5 8.7-9.6"/></svg></span>Basement</label>
                                 <label class="tick"><input type="radio" name="service" value="Other"><span class="tick__box" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><path pathLength="20" d="M3.6 10.9c1.5 1.1 2.9 2.6 4.1 3.9 2.3-3.3 5-6.5 8.7-9.6"/></svg></span>Other</label>
                             </div>
-                        </fieldset>
+                        </div>
 
-                        <fieldset class="paper__group">
-                            <legend class="paper__label">Urgency</legend>
+                        <div class="paper__group" role="group" aria-labelledby="g-urgency">
+                            <span class="paper__label" id="g-urgency">Urgency</span>
                             <div class="ticks">
                                 <label class="tick"><input type="radio" name="urgency" value="Urgent (leak, mold, or damage)" required><span class="tick__box" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><path pathLength="20" d="M3.6 10.9c1.5 1.1 2.9 2.6 4.1 3.9 2.3-3.3 5-6.5 8.7-9.6"/></svg></span>Urgent <small class="tick__hint">leak, mold, or damage</small></label>
                                 <label class="tick"><input type="radio" name="urgency" value="Soon (next few weeks)"><span class="tick__box" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><path pathLength="20" d="M3.6 10.9c1.5 1.1 2.9 2.6 4.1 3.9 2.3-3.3 5-6.5 8.7-9.6"/></svg></span>Soon <small class="tick__hint">next few weeks</small></label>
                                 <label class="tick"><input type="radio" name="urgency" value="Flexible (planning ahead)"><span class="tick__box" aria-hidden="true"><svg viewBox="0 0 20 20" focusable="false"><path pathLength="20" d="M3.6 10.9c1.5 1.1 2.9 2.6 4.1 3.9 2.3-3.3 5-6.5 8.7-9.6"/></svg></span>Flexible <small class="tick__hint">planning ahead</small></label>
                             </div>
-                        </fieldset>
+                        </div>
 
                         <div class="paper__field paper__field--lines">
-                            <label class="paper__label" for="f-message">Tell Phil about the job</label>
+                            <label class="paper__label" for="f-message">Details</label>
                             <textarea class="paper__input paper__lines" id="f-message" name="message" rows="4" required placeholder="The room, what's wrong with it, and what you'd like it to be."></textarea>
                         </div>
 

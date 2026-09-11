@@ -795,8 +795,8 @@ function contactForm() {
         form.querySelectorAll("[required]").forEach((f) => f.classList.remove("is-invalid"));
         /* one pass in document order, so the first thing named is the
            first thing on the page the visitor skipped */
-        form.querySelectorAll(".paper__input[required], fieldset").forEach((f) => {
-            if (f.tagName === "FIELDSET") {
+        form.querySelectorAll(".paper__input[required], .paper__group").forEach((f) => {
+            if (f.classList.contains("paper__group")) {
                 if (!f.querySelector("input:checked")) missing.push(f.querySelector("input"));
                 return;
             }
@@ -806,7 +806,8 @@ function contactForm() {
         if (!missing.length) { error.hidden = true; return; }        /* let the POST go */
         e.preventDefault();
         const first = missing[0];
-        const label = first.closest("fieldset") ? first.closest("fieldset").querySelector("legend").textContent : form.querySelector(`label[for="${first.id}"]`).textContent;
+        const group = first.closest(".paper__group");
+        const label = group ? group.querySelector(".paper__label").textContent : form.querySelector(`label[for="${first.id}"]`).textContent;
         error.textContent = first.type === "email" && first.value.trim() ? "That email address doesn't look right." : `Please fill in: ${label.toLowerCase()}.`;
         error.hidden = false;
         first.focus();
