@@ -838,11 +838,11 @@
                             <input type="hidden" name="form-name" value="estimate">
                             <p class="form__hp"><label>Leave this field empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
 
-                            <div class="form__field">
-                                <label class="form__label" for="f-name">Your name</label>
-                                <input class="form__input" id="f-name" name="name" type="text" autocomplete="name" required>
-                            </div>
                             <div class="form__row">
+                                <div class="form__field">
+                                    <label class="form__label" for="f-name">Your name</label>
+                                    <input class="form__input" id="f-name" name="name" type="text" autocomplete="name" required>
+                                </div>
                                 <div class="form__field">
                                     <label class="form__label" for="f-phone">Phone</label>
                                     <input class="form__input" id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required>
@@ -875,7 +875,7 @@
 
                             <div class="form__field">
                                 <label class="form__label" for="f-message">Your message</label>
-                                <textarea class="form__input form__textarea" id="f-message" name="message" rows="5" required placeholder="The room, what's wrong with it, and what you'd like it to be."></textarea>
+                                <textarea class="form__input form__textarea" id="f-message" name="message" rows="3" required placeholder="The room, what's wrong with it, and what you'd like it to be."></textarea>
                             </div>
 
                             <p class="form__error" id="f-error" role="alert" hidden></p>

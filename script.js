@@ -22,6 +22,10 @@ function setMenu(open) {
 toggle.addEventListener("click", () => setMenu(toggle.getAttribute("aria-expanded") !== "true"));
 menu.addEventListener("click", (e) => { if (e.target.closest("a")) setMenu(false); });
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") setMenu(false); });
+/* a click outside the header (the page behind the drawer) closes it */
+document.addEventListener("click", (e) => {
+    if (toggle.getAttribute("aria-expanded") === "true" && !e.target.closest(".site-header")) setMenu(false);
+});
 
 /* the header is transparent over the hero; once the hero's bottom passes
    the top of the viewport, it gets the grey bar. ScrollTrigger owns the
