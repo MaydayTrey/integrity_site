@@ -333,13 +333,30 @@ function ourWork() {
 /* tap / keyboard flip for one before/after card; hover is pure CSS.
    Shared with the job dialog, which wires the clone it shows. */
 function wirePair(pair) {
-    const flip = pair.querySelector(".pair__flip");
-    const set = (on) => {
-        pair.classList.toggle("is-after", on);
-        flip.setAttribute("aria-pressed", String(on));
-        flip.textContent = on ? "Show the before" : "Show the after";
+    const after  = pair.querySelector(".pair__after");
+    const fill   = pair.querySelector(".pair__rail-fill");
+    const before = pair.querySelector(".pair__opt--before");
+    const toggle = pair.querySelector(".pair__opt--after");
+    /* one number drives the photo's wipe and the rail's fill together;
+       a dialog clone starts wherever its source was */
+    const w = { p: pair.classList.contains("is-after") ? 1 : 0 };
+    const render = () => {
+        const cut = `inset(0 ${((1 - w.p) * 100).toFixed(3)}% 0 0)`;
+        after.style.clipPath = cut;
+        fill.style.clipPath = cut;
     };
-    flip.addEventListener("click", () => set(!pair.classList.contains("is-after")));
+    const mark = (on) => {
+        pair.classList.toggle("is-after", on);
+        before.classList.toggle("is-on", !on); before.setAttribute("aria-pressed", String(!on));
+        toggle.classList.toggle("is-on", on);  toggle.setAttribute("aria-pressed", String(on));
+    };
+    const set = (on) => {
+        mark(on);
+        gsap.to(w, { p: on ? 1 : 0, duration: reduceMotion ? 0 : 0.8, ease: "power2.inOut", overwrite: true, onUpdate: render });
+    };
+    render();
+    before.addEventListener("click", (e) => { e.stopPropagation(); set(false); });
+    toggle.addEventListener("click", (e) => { e.stopPropagation(); set(true); });
     pair.querySelector(".pair__media").addEventListener("click", () => set(!pair.classList.contains("is-after")));
 }
 
