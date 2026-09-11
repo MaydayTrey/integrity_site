@@ -27,6 +27,19 @@ document.addEventListener("click", (e) => {
     if (toggle.getAttribute("aria-expanded") === "true" && !e.target.closest(".site-header")) setMenu(false);
 });
 
+/* ---------- HERO PARALLAX ----------
+   The photo is 30% taller than its frame and starts centred in it, so
+   the crop at rest is the same as before. As the hero scrolls out the
+   photo drifts down relative to the frame (scrubbed, so it tracks the
+   scroll exactly), which on screen reads as the photo moving up more
+   slowly than the page: the section passes over it. The extra height
+   is set here, not in CSS, so reduced motion keeps a plain photo. */
+if (!reduceMotion) {
+    const photo = document.querySelector(".hero__photo");
+    gsap.set(photo, { height: "130%", yPercent: -11.5 });
+    gsap.to(photo, { yPercent: 0, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
+}
+
 /* ---------- HEADER: the hero crossing ----------
    Over the hero the header is the full centred nav; past the hero it is
    the 64px bar. The crossing is when the hero's bottom passes 30% of the
