@@ -977,8 +977,16 @@ function shieldCard() {
     gsap.set(left,  { transformOrigin: "100% 50%", x:  shift, scaleX: halfW / cap, scaleY: SHIELD_H / H });
     gsap.set(right, { transformOrigin: "0% 50%",   x: -shift, scaleX: halfW / cap, scaleY: SHIELD_H / H });
     gsap.set(panel, { transformOrigin: "50% 50%", scaleX: 0, scaleY: SHIELD_H / H });
-    gsap.set(content, { autoAlpha: 0, y: 16 });
     gsap.set(lockup, { y: SHIELD_H / 2 + 18, autoAlpha: 1 });
+
+    /* THE CONTENT arrives only after the panel is fully open (so it is
+       never seen stretched with the panel's scale): every block of the
+       form and the side column, in top-to-bottom order across both
+       columns, fades in with a short stagger. */
+    const items = [...content.querySelectorAll(
+        ".contact-card__main > :not(form), .form > :not(input):not(.form__hp), .contact-card__side > *"
+    )].sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top);
+    gsap.set(items, { autoAlpha: 0, y: 10 });
 
     /* THE WORDMARK. INTEGRITY: each letter sits in a mask exactly its
        own height and drops into it from above, so it appears out of
@@ -996,20 +1004,21 @@ function shieldCard() {
         onComplete() { name.revert(); tag.revert(); }
     })
     /* 1. INTEGRITY drops in, letter by letter */
-    .to(name.chars, { yPercent: 0, duration: 0.55, ease: "power2.out", stagger: 0.07 }, 0)
+    .to(name.chars, { yPercent: 0, duration: 0.4, ease: "power2.out", stagger: 0.035 }, 0)
     /* 2. the tagline scales in, letter by letter */
-    .to(tag.chars, { scale: 1, duration: 0.35, ease: "back.out(1.7)", stagger: 0.025 }, 0.5)
+    .to(tag.chars, { scale: 1, duration: 0.25, ease: "back.out(1.7)", stagger: 0.012 }, 0.3)
     /* 3. a beat with the whole lockup on screen, then the text fades */
-    .to(lockup, { autoAlpha: 0, duration: 0.45, ease: "power2.in" }, "+=1")
-    /* 4. one slow, even swell to the shield's full size, still whole */
-    .to([left, right], { scaleX: fullSX, scaleY: fullSY, duration: 1.8, ease: "power2.inOut" }, "<+=0.1")
-    .to(panel, { scaleY: fullSY, duration: 1.8, ease: "power2.inOut" }, "<")
+    .to(lockup, { autoAlpha: 0, duration: 0.3, ease: "power2.in" }, "+=0.5")
+    /* 4. one even swell to the shield's full size, still whole */
+    .to([left, right], { scaleX: fullSX, scaleY: fullSY, duration: 0.9, ease: "power2.inOut" }, "<+=0.05")
+    .to(panel, { scaleY: fullSY, duration: 0.9, ease: "power2.inOut" }, "<")
     /* 5. it sits a moment, then opens sideways: the halves glide to the
-          edges (finishing any height still owed on phones), the panel
-          opens between them, and the content arrives as it settles */
-    .to([left, right], { x: 0, scaleX: 1, scaleY: 1, duration: 1.7, ease: "power2.inOut" }, "+=0.35")
-    .to(panel, { scaleX: 1, scaleY: 1, duration: 1.7, ease: "power2.inOut" }, "<")
-    .to(content, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power2.out" }, "<1.1");
+          edges (finishing any height still owed on phones) and the
+          white panel opens between them, empty */
+    .to([left, right], { x: 0, scaleX: 1, scaleY: 1, duration: 0.85, ease: "power2.inOut" }, "+=0.2")
+    .to(panel, { scaleX: 1, scaleY: 1, duration: 0.85, ease: "power2.inOut" }, "<")
+    /* 6. the fields fill the white space, top to bottom */
+    .to(items, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out", stagger: 0.045, clearProps: "transform" }, "+=0.05");
 }
 
 /* ---------- SECTION FADE-INS (ScrollTrigger) ----------
