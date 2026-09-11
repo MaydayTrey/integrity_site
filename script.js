@@ -313,6 +313,9 @@ function ourWork() {
         });
         if (focus) tabs[index].focus();
         fadeIn(panels[index]);
+        /* the commercial list: each row slides in from the right, top first */
+        const rows = panels[index].querySelectorAll(".commercial__item");
+        if (rows.length && !reduceMotion) gsap.fromTo(rows, { x: 72, autoAlpha: 0 }, { x: 0, autoAlpha: 1, duration: 0.6, ease: "power3.out", stagger: 0.09, delay: 0.1, clearProps: "transform" });
         ScrollTrigger.refresh();                 /* the section changed height */
     }
     tabs.forEach((tab, i) => {
