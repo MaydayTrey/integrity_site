@@ -787,16 +787,16 @@ function addressCheck(map, fit) {
    empty required field, focuses it, and says what is missing in a
    live region. Netlify receives the plain POST when everything is in. */
 function contactForm() {
-    const form = document.querySelector(".paper");
+    const form = document.querySelector(".form");
     if (!form) return;
-    const error = form.querySelector(".paper__error");
+    const error = form.querySelector(".form__error");
     form.addEventListener("submit", (e) => {
         const missing = [];
         form.querySelectorAll("[required]").forEach((f) => f.classList.remove("is-invalid"));
         /* one pass in document order, so the first thing named is the
            first thing on the page the visitor skipped */
-        form.querySelectorAll(".paper__input[required], .paper__group").forEach((f) => {
-            if (f.classList.contains("paper__group")) {
+        form.querySelectorAll(".form__input[required], .form__group").forEach((f) => {
+            if (f.classList.contains("form__group")) {
                 if (!f.querySelector("input:checked")) missing.push(f.querySelector("input"));
                 return;
             }
@@ -806,8 +806,8 @@ function contactForm() {
         if (!missing.length) { error.hidden = true; return; }        /* let the POST go */
         e.preventDefault();
         const first = missing[0];
-        const group = first.closest(".paper__group");
-        const label = group ? group.querySelector(".paper__label").textContent : form.querySelector(`label[for="${first.id}"]`).textContent;
+        const group = first.closest(".form__group");
+        const label = group ? group.querySelector(".form__label").textContent : form.querySelector(`label[for="${first.id}"]`).textContent;
         error.textContent = first.type === "email" && first.value.trim() ? "That email address doesn't look right." : `Please fill in: ${label.toLowerCase()}.`;
         error.hidden = false;
         first.focus();
@@ -824,7 +824,7 @@ function sectionReveals() {
     /* the reviews section is excluded: its cards live inside the pinned,
        transformed column and its head must be visible the moment the
        pin engages */
-    const targets = ".section__head:not(.reviews-head), .placeholder .section__inner, .service, .segments, .panel:not([hidden]), .beat__media, .beat__body, .about__facts, .about__cta-row, .areas__body, .check__panel, .badge, .contact__intro, .clipboard";
+    const targets = ".section__head:not(.reviews-head), .placeholder .section__inner, .service, .segments, .panel:not([hidden]), .beat__media, .beat__body, .about__facts, .about__cta-row, .areas__body, .check__panel, .badge, .contact__intro, .form";
     gsap.set(targets, { autoAlpha: 0, y: 24 });
     ScrollTrigger.batch(targets, {
         start: "top 85%",
