@@ -391,20 +391,26 @@ function pairHint() {
     const NS = "http://www.w3.org/2000/svg";
     const svg = document.createElementNS(NS, "svg");
     svg.setAttribute("class", "pair__hint"); svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("aria-hidden", "true");
-    const path = document.createElementNS(NS, "path");
-    path.setAttribute("d", "M7 7L5.5 5.5M15 7L16.5 5.5M5.5 16.5L7 15M11 5L11 3M5 11L3 11M17.1603 16.9887L21.0519 15.4659C21.4758 15.3001 21.4756 14.7003 21.0517 14.5346L11.6992 10.8799C11.2933 10.7213 10.8929 11.1217 11.0515 11.5276L14.7062 20.8801C14.8719 21.304 15.4717 21.3042 15.6375 20.8803L17.1603 16.9887Z");
-    svg.appendChild(path);
+    /* the arrow, then the five rays as their own paths, each drawn from
+       the end nearest the arrow outward (their d runs inner to outer) */
+    const mk = (d) => { const el = document.createElementNS(NS, "path"); el.setAttribute("d", d); svg.appendChild(el); return el; };
+    const path = mk("M17.1603 16.9887L21.0519 15.4659C21.4758 15.3001 21.4756 14.7003 21.0517 14.5346L11.6992 10.8799C11.2933 10.7213 10.8929 11.1217 11.0515 11.5276L14.7062 20.8801C14.8719 21.304 15.4717 21.3042 15.6375 20.8803L17.1603 16.9887Z");
+    const rays = ["M7 7L5.5 5.5", "M11 5L11 3", "M15 7L16.5 5.5", "M5 11L3 11", "M7 15L5.5 16.5"].map(mk);
 
     /* the outline draws along its own length: dash the stroke to that
        length and slide the dash into view */
     const place = () => { const first = [...gallery.querySelectorAll(".pair")].find((p) => p.offsetParent !== null); if (first) first.appendChild(svg); };
     place();
     const L = path.getTotalLength();
+    const R = rays.map((r) => r.getTotalLength());
     gsap.set(path, { strokeDasharray: L, strokeDashoffset: L });
+    rays.forEach((r, k) => gsap.set(r, { strokeDasharray: R[k], strokeDashoffset: R[k] + 2 }));   /* +2: the round cap would show as a dot */
     const loop = gsap.timeline({ repeat: -1, repeatDelay: 0.6, defaults: { ease: "power2.inOut" } })
         .set(svg, { opacity: 1 })
-        .fromTo(path, { strokeDashoffset: L }, { strokeDashoffset: 0, duration: 1.2 })
-        .fromTo(svg, { scale: 1, transformOrigin: "60% 60%" }, { scale: 0.86, duration: 0.18, yoyo: true, repeat: 1 }, "+=0.2")   /* the tap */
+        .fromTo(path, { strokeDashoffset: L }, { strokeDashoffset: 0, duration: 1.0 })
+        /* the rays shoot outward from the arrow, one after another: the click */
+        .fromTo(rays, { strokeDashoffset: (k) => R[k] + 2 }, { strokeDashoffset: 0, duration: 0.28, ease: "power2.out", stagger: 0.07 }, "-=0.1")
+        .fromTo(svg, { scale: 1, transformOrigin: "60% 60%" }, { scale: 0.86, duration: 0.18, yoyo: true, repeat: 1 }, "-=0.15")   /* the tap */
         .to(svg, { opacity: 0, duration: 0.5 }, "+=0.5");
 
     /* follow the first photo showing when the filters change */
