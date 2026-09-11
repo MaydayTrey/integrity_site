@@ -747,7 +747,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .badge__mark--ohio  { --icon: url("assets/icon-ohio.svg"); }
 .badge__mark--water { --icon: url("assets/icon-water.svg"); }
 .badge__mark--plank { --icon: url("assets/icon-plank.svg"); }
-.badge__mark--claim { --icon: url("assets/icon-claim.svg"); }
+.badge__mark--claim { --icon: url("assets/icon-insurance.svg"); }   /* shield with a house: outline shapes, painted with the gradient */
 /* the issuer logos are the point of the card: big, with the title and
    the description under them; the wide IICRC lockup is shorter so its
    width fits the card */
