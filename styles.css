@@ -305,7 +305,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .segments { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 32px; }
 .segment {
     position: relative; overflow: hidden; isolation: isolate;
-    border-radius: 16px; aspect-ratio: 4 / 3; padding: 14px;
+    border-radius: 16px; aspect-ratio: 3 / 4; padding: 14px;   /* tall on phones so the words have room */
     display: flex; flex-direction: column; justify-content: flex-end; gap: 6px;   /* the words stack at the foot */
     text-align: left; color: var(--white); background: var(--ink);
     box-shadow: 0 10px 26px rgba(35, 31, 32, .22);
