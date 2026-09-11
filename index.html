@@ -152,6 +152,7 @@
             order, so GSAP and its plugins are ready before script.js-->
     <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/gsap.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/ScrollTrigger.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/Flip.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/SplitText.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     <script defer src="script.js"></script>
@@ -180,6 +181,9 @@
     <!--HEADER / NAV: fixed over the hero photo, transparent until the
         page scrolls past the hero (script.js toggles .is-scrolled)-->
     <header class="site-header" id="top">
+        <!--the grey bar's background, wiped in left to right by script.js
+            when the page scrolls past the hero-->
+        <div class="site-header__bg" aria-hidden="true"></div>
         <nav class="nav" aria-label="Primary">
             <a class="nav__brand" href="#top" aria-label="Integrity Restorations and Remodeling, back to top">
                 <img class="nav__shield" src="assets/logo-shield.svg" alt="" width="219" height="231" decoding="async">

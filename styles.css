@@ -89,7 +89,6 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .site-header {
     position: fixed; inset: 0 0 auto 0; z-index: 50;
     height: var(--nav-h);
-    transition: background-color .35s var(--ease-out);
 }
 /* readability gradient under the nav: intentionally light so the black
    half of the wordmark still reads without a glow on the logo */
@@ -97,9 +96,19 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
     content: ""; position: absolute; inset: 0 0 auto 0; height: 110px; z-index: -1;
     background: linear-gradient(to bottom, rgba(35,31,32,.35) 0%, rgba(35,31,32,.18) 55%, transparent 100%);
     pointer-events: none;
+    transition: opacity .5s;
 }
-.site-header.is-scrolled { background-color: var(--grey-900); }
 .site-header.is-scrolled::before { opacity: 0; }
+/* the grey bar itself: a child, not a background, so it can wipe in
+   from the left (script.js scales it; reduced motion just shows it) */
+.site-header__bg {
+    position: absolute; inset: 0; z-index: -1;
+    background: var(--grey-900);
+    transform: scaleX(0); transform-origin: 0 50%;
+}
+@media (prefers-reduced-motion: reduce) {
+    .site-header.is-scrolled .site-header__bg { transform: none; }
+}
 
 .nav {
     height: 100%; padding: 0 var(--gutter);
@@ -132,6 +141,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
     transition: transform .4s var(--ease-out), visibility 0s .4s;
 }
 .nav__menu.is-open { transform: none; visibility: visible; transition: transform .4s var(--ease-out); }
+.nav__menu--snap { transition: none !important; }   /* while the header switches layouts */
 .nav__list { display: flex; flex-direction: column; }
 .nav__link {
     display: block; padding: 14px 0;
@@ -1145,8 +1155,13 @@ body.has-dialog { overflow: hidden; }
     .site-header:not(.is-scrolled) .nav__shield { width: 80px; }
     .site-header:not(.is-scrolled) .nav__wordmark { width: 170px; }
     .site-header:not(.is-scrolled) .nav__link { font-size: clamp(14px, 1.15vw, 16px); padding: 8px 0; }
-    /* the compact bar: same height and menu top as on phones */
+    /* the compact bar: same height and menu top as on phones. The logo
+       sizes are pinned here so the scroll-driven shrink (script.js sets
+       inline widths) cannot regrow the logo inside the bar before the
+       glide back to the centre starts. */
     .site-header.is-scrolled { height: 64px; }
+    .site-header.is-scrolled .nav__shield { width: 48px !important; }
+    .site-header.is-scrolled .nav__wordmark { width: 132px !important; }
     /* on a wide screen the sheet is a drawer off the right edge, not a
        full-screen curtain */
     .site-header.is-scrolled .nav__menu {

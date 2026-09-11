@@ -4,7 +4,7 @@
    Order: plugins -> helpers -> nav -> hero intro -> rolling text -> scroll
    ===================================================================== */
 
-gsap.registerPlugin(ScrollTrigger, SplitText);
+gsap.registerPlugin(ScrollTrigger, SplitText, Flip);
 
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -27,15 +27,95 @@ document.addEventListener("click", (e) => {
     if (toggle.getAttribute("aria-expanded") === "true" && !e.target.closest(".site-header")) setMenu(false);
 });
 
-/* the header is transparent over the hero; once the hero's bottom passes
-   the top of the viewport, it gets the grey bar. ScrollTrigger owns the
-   crossing point so it stays correct on resize and re-layout */
-ScrollTrigger.create({
-    trigger: ".hero",
-    start: "bottom top+=1",
-    onEnter: () => header.classList.add("is-scrolled"),
-    onLeaveBack: () => header.classList.remove("is-scrolled")
-});
+/* ---------- HEADER: the hero crossing ----------
+   Over the hero the header is the full centred nav; past the hero it is
+   the 64px bar. The two are different layouts (.is-scrolled), so instead
+   of snapping between them: as the hero's bottom nears the top the logo
+   shrinks with the scroll to its bar size; at the crossing the links
+   fade, the shield and wordmark glide left into their bar positions
+   (GSAP Flip across the class change), the grey bar wipes in left to
+   right, then the hamburger fades in. Scrolling back up runs it in
+   reverse. Reduced motion: the plain class toggle. */
+const headerBg = header.querySelector(".site-header__bg");
+const shield   = header.querySelector(".nav__shield");
+const wordmark = header.querySelector(".nav__wordmark");
+const lists    = header.querySelectorAll(".nav__list");
+const desktopNav = () => window.matchMedia("(min-width: 1024px)").matches;   /* only there do the layouts differ */
+let crossing = null, flipping = null, shrink = null, shrinkAt = null;
+
+function setScrolled(on) {
+    /* the sheet must not play its slide transition while the layout switches */
+    menu.classList.add("nav__menu--snap");
+    header.classList.toggle("is-scrolled", on);
+    requestAnimationFrame(() => requestAnimationFrame(() => menu.classList.remove("nav__menu--snap")));
+}
+
+function cross(on) {
+    if (crossing) crossing.progress(1).kill();
+    if (flipping) flipping.progress(1).kill();
+    const swapToggle = desktopNav();
+    const tl = crossing = gsap.timeline({ onComplete() { crossing = null; } });
+    /* the Flip glides position only, so the logo must already be at its
+       bar size when the layout switches (it is, unless the page jumped) */
+    const settleShrink = () => { if (shrink) shrink.progress(1).pause(); };
+    if (on) {
+        tl.to(lists, { autoAlpha: 0, duration: 0.2, ease: "power1.in" })
+          .add(() => {
+              settleShrink();
+              /* the shield leads and the wordmark follows, so their paths
+                 (left along the top; left and up from underneath) never overlap */
+              const state = Flip.getState([shield, wordmark]);
+              if (swapToggle) gsap.set(toggle, { autoAlpha: 0 });
+              setScrolled(true);
+              gsap.set(lists, { clearProps: "opacity,visibility" });   /* they live in the drawer now */
+              flipping = Flip.from(state, { duration: 0.65, ease: "power3.inOut", scale: true, stagger: 0.12, onComplete() { flipping = null; } });
+          })
+          .to(headerBg, { scaleX: 1, duration: 0.55, ease: "power2.inOut" }, "+=0.25");
+        if (swapToggle) tl.to(toggle, { autoAlpha: 1, duration: 0.3, ease: "power2.out" }, "-=0.1");
+    } else {
+        if (swapToggle) tl.to(toggle, { autoAlpha: 0, duration: 0.2, ease: "power1.in" });
+        tl.to(headerBg, { scaleX: 0, duration: 0.45, ease: "power2.inOut" }, "<")
+          .add(() => {
+              settleShrink();
+              const state = Flip.getState([wordmark, shield]);   /* wordmark leads on the way back */
+              setScrolled(false);
+              if (swapToggle) gsap.set(toggle, { clearProps: "opacity,visibility" });
+              gsap.set(lists, { autoAlpha: 0 });
+              flipping = Flip.from(state, { duration: 0.6, ease: "power3.inOut", scale: true, stagger: 0.12, onComplete() {
+                  flipping = null;
+                  /* back at the centre: regrow now if the page is already above the shrink line */
+                  if (shrink && shrinkAt && !shrinkAt.isActive) shrink.reverse();
+              } });
+          })
+          .to(lists, { autoAlpha: 1, duration: 0.35, ease: "power2.out" }, "+=0.4");
+    }
+}
+
+if (reduceMotion) {
+    ScrollTrigger.create({
+        trigger: ".hero", start: "bottom top+=1",
+        onEnter: () => setScrolled(true), onLeaveBack: () => setScrolled(false)
+    });
+} else {
+    ScrollTrigger.create({
+        trigger: ".hero", start: "bottom top+=1",
+        onEnter: () => cross(true), onLeaveBack: () => cross(false)
+    });
+    /* the shrink: as the hero's bottom passes 45% of the viewport the
+       logo eases down to the bar's sizes (48px shield, 132px wordmark:
+       the same numbers the bar's CSS uses), and grows back when that
+       line is crossed upward. Desktop only: elsewhere the layouts match. */
+    gsap.matchMedia().add("(min-width: 1024px)", () => {
+        shrink = gsap.timeline({ paused: true, defaults: { duration: 0.5, ease: "power2.inOut" } })
+            .to(shield,   { width: 48 },  0)
+            .to(wordmark, { width: 132 }, 0);
+        shrinkAt = ScrollTrigger.create({
+            trigger: ".hero", start: "bottom 45%",
+            onEnter: () => shrink.play(), onLeaveBack: () => { if (!flipping) shrink.reverse(); }
+        });
+        return () => { shrinkAt.kill(); shrink.kill(); shrink = shrinkAt = null; gsap.set([shield, wordmark], { clearProps: "width" }); };
+    });
+}
 
 /* ---------- MENU LINKS: sections fade in, no scroll jump ----------
    A menu link doesn't scroll the page to its section. The page dips to
