@@ -721,32 +721,48 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .badge__title { font-family: var(--font-ui); font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; line-height: 1.25; }
 .badge__text { font-size: 13px; line-height: 1.5; color: var(--ink); max-width: 26ch; }
 
-/* ---------- CONTACT: intro + the estimate form ---------- */
-/* two classes: outranks the single-class surface rules and the later
-   desktop .section padding block */
-.section.section--contact { background: var(--grey-900); color: var(--white); }
-.contact { display: grid; gap: 40px; }
-.contact__mark { width: 64px; height: auto; margin-bottom: 18px; filter: drop-shadow(0 4px 10px rgba(35, 31, 32, .35)); }
-.contact__intro .section__eyebrow { color: var(--white); opacity: .85; }
-.contact__copy { font-size: 16px; line-height: 1.65; margin-top: 14px; max-width: 46ch; color: var(--white); }
-.contact__details { display: grid; gap: 10px; margin-top: 26px; }
-.contact__detail { display: grid; grid-template-columns: 84px 1fr; gap: 12px; align-items: baseline; font-size: 15px; }
-.contact__label { font-family: var(--font-ui); font-weight: 600; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; opacity: .85; }
-.contact__link { color: var(--white); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--red); }
-
-/* THE FORM: a white panel with the brand rule on top, boxed fields,
-   and the choice groups as chips (the gallery filter pattern) */
-.form {
-    position: relative;
-    padding: 26px 20px 22px;
+/* ---------- CONTACT: one white card on the grey section ----------
+   Left: heading, copy, the form. Right: what happens next, details,
+   social. Stacked on phones; two columns from desktop widths. */
+.section.section--contact { background: var(--grey-900); }
+.contact-card {
+    display: grid; gap: 36px;
+    padding: 30px 22px 28px;
     background: var(--white); color: var(--ink);
     border-top: 4px solid; border-image: var(--grad-brand) 1;
-    box-shadow: 0 20px 50px rgba(35, 31, 32, .28);
+    box-shadow: 0 24px 60px rgba(35, 31, 32, .3);
 }
+.contact-card__title { margin-top: 4px; }
+.contact-card__copy { font-size: 16px; line-height: 1.65; margin: 14px 0 26px; max-width: 52ch; }
+.contact-card__side { border-top: 1px solid var(--grey-300); padding-top: 30px; }
+.contact-card__mark { width: 56px; height: auto; margin-bottom: 18px; }
+.contact-card__sub {
+    font-family: var(--font-display); font-weight: 400; font-size: 28px; line-height: 1;
+    letter-spacing: .02em; text-transform: uppercase; margin-bottom: 16px;
+}
+.steps { display: grid; gap: 14px; margin-bottom: 30px; }
+.step { display: grid; grid-template-columns: 34px 1fr; gap: 12px; align-items: start; }
+.step__num { font-family: var(--font-display); font-size: 26px; line-height: 1; color: var(--red); padding-top: 2px; }
+.step p { font-size: 15px; line-height: 1.55; }
+.step strong { font-weight: 600; }
+.contact__details { display: grid; gap: 12px; margin-bottom: 26px; }
+.contact__detail { display: grid; grid-template-columns: 20px 1fr; gap: 12px; align-items: start; font-size: 15px; line-height: 1.4; }
+.contact__icon { width: 20px; height: 20px; color: var(--red-dark); margin-top: 1px; }
+.contact__link { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--red); }
+.socials { display: flex; gap: 12px; }
+.social {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 46px; height: 46px; border-radius: 50%;
+    background: var(--ink); color: var(--white);
+    transition: background-color .2s, transform .2s var(--ease-out);
+}
+.social svg { width: 22px; height: 22px; }
+.social:hover, .social:focus-visible { background: var(--red-dark); transform: translateY(-2px); }
+
+/* THE FORM: boxed fields and the choice groups as chips (the gallery
+   filter pattern), sitting inside the contact card */
+.form { position: relative; }
 .form__hp { position: absolute; left: -9999px; top: auto; width: 1px; height: 1px; overflow: hidden; }   /* the honeypot, off-screen for people */
-.form__head { margin-bottom: 22px; padding-bottom: 16px; border-bottom: 1px solid var(--grey-300); }
-.form__title { font-family: var(--font-display); font-size: 30px; line-height: 1; letter-spacing: .02em; text-transform: uppercase; }
-.form__sub { font-family: var(--font-ui); font-weight: 500; font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--grey-700); margin-top: 6px; }
 .form__field, .form__group { margin-bottom: 18px; }
 .form__row { display: grid; gap: 0 16px; }
 .form__label {
@@ -944,9 +960,9 @@ body.has-dialog { overflow: hidden; }
     .beat__body p:not(.beat__step) { font-size: 17px; }
     .about__facts { max-width: 900px; margin-inline: auto; }
 
-    /* contact: on tablets the form stays under the intro, centred */
-    .contact__copy { font-size: 17px; }
-    .form { max-width: 640px; margin-inline: auto; padding: 32px 30px 26px; }
+    /* contact card: roomier padding, two-up phone/email */
+    .contact-card { padding: 44px 40px 40px; }
+    .contact-card__copy { font-size: 17px; }
     .form__row { grid-template-columns: 1fr 1fr; }
     .form__foot { flex-direction: row; align-items: center; gap: 18px; }
 
@@ -974,10 +990,9 @@ body.has-dialog { overflow: hidden; }
 @media (min-width: 1024px) {
     .about__facts { grid-template-columns: repeat(3, 1fr); }   /* three-up only once each card has ~180px */
 
-    /* contact: intro beside the form from desktop widths */
-    .contact { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 56px; align-items: start; }
-    .contact__intro { position: sticky; top: calc(var(--nav-h) + 24px); }
-    .form { max-width: none; margin-inline: 0; }
+    /* contact card: form left, next steps right, a hairline between */
+    .contact-card { grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: 56px; padding: 52px 56px 48px; }
+    .contact-card__side { border-top: 0; border-left: 1px solid var(--grey-300); padding: 6px 0 0 48px; }
 }
 @media (min-width: 1024px) {
     .is-carousel .reviews-layout { gap: 80px; }
