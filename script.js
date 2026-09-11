@@ -653,6 +653,7 @@ function serviceMap() {
         touchZoom: false, boxZoom: false, keyboard: false, zoomSnap: 0.1,
         attributionControl: true
     }).setView(SERVICE_HOME, 9);
+    map.attributionControl.setPrefix(false);             /* the OSM credit stays (licence); Leaflet's own badge goes */
 
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,

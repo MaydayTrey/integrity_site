@@ -590,10 +590,10 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
    the section's own stacking context so they can never sit over the
    fixed nav (z-index 50 in the root context) */
 .check { position: relative; height: 100%; isolation: isolate; }
-/* a thin brand-gradient frame around the whole map, above Leaflet's panes and the panel */
+/* thin brand-gradient rules along the map's top and bottom edges, above Leaflet's panes and the panel */
 .check::after {
     content: ""; position: absolute; inset: 0; z-index: 600; pointer-events: none;
-    border: 4px solid transparent; border-image: var(--grad-brand) 1;
+    border-style: solid; border-width: 4px 0; border-image: var(--grad-brand) 1;
 }
 .check__map { position: absolute; inset: 0; background: var(--grey-100); }
 .check__map .areas__svg { width: 100%; height: 100%; }
@@ -681,7 +681,11 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .leaflet-container { font-family: var(--font-body); background: var(--white); cursor: default; }
 .leaflet-tile-pane { filter: grayscale(1) contrast(.9) brightness(1.06); }
 .map-clip { position: absolute; width: 0; height: 0; }
-.leaflet-control-attribution { font-size: 10px; background: rgba(255, 255, 255, .85); color: var(--grey-700); }
+.leaflet-control-attribution {
+    margin: 0 8px 8px 0 !important; padding: 2px 8px;
+    font-family: var(--font-body, inherit); font-size: 10px; line-height: 1.6;
+    background: rgba(255, 255, 255, .85); color: var(--grey-700);
+}
 .leaflet-control-attribution a { color: var(--grey-700); }
 .map-tip {
     font-family: var(--font-ui); font-weight: 500; font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
@@ -727,14 +731,11 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .areas__link { color: var(--red-dark); text-decoration: underline; text-underline-offset: 3px; }
 
 /* ---------- QUALIFICATIONS: badge row ---------- */
-.badges { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.badges { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 12px; }
 .badge {
     display: grid; justify-items: center; text-align: center; gap: 10px;
-    padding: 22px 14px 18px;
-    background: var(--white); border: 1px solid var(--grey-300);
-    position: relative;
+    padding: 8px 6px;
 }
-.badge::before { content: ""; position: absolute; inset: -1px -1px auto -1px; height: 4px; background: var(--grad-brand); }
 /* same mask trick as the service icons: the SVG is the stencil, the
    brand gradient is the paint */
 .badge__mark {
@@ -1111,8 +1112,8 @@ body.has-dialog { overflow: hidden; }
     .form__foot { flex-direction: row; align-items: center; gap: 18px; }
 
     /* qualifications: four across */
-    .badges { grid-template-columns: repeat(4, 1fr); gap: 20px; }
-    .badge { padding: 32px 20px 26px; gap: 14px; }
+    .badges { grid-template-columns: repeat(4, 1fr); gap: 32px; }
+    .badge { padding: 12px 10px; gap: 14px; }
     .badge__mark { width: 128px; }
     .badge__logo { height: 128px; }
     .badge__logo--wide { height: 84px; margin-block: 22px; }
