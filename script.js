@@ -37,6 +37,48 @@ ScrollTrigger.create({
     onLeaveBack: () => header.classList.remove("is-scrolled")
 });
 
+/* ---------- MENU LINKS: sections fade in, no scroll jump ----------
+   A menu link doesn't scroll the page to its section. The page dips to
+   the ink ground (a fixed veil), the scroll position changes underneath
+   with the veil up, then the veil lifts and the target section's content
+   rises out of it. The hash still updates so the URL and back button
+   behave. Reduced motion keeps the browser's plain jump. */
+function sectionFades() {
+    if (reduceMotion) return;
+    const veil = document.createElement("div");
+    veil.className = "veil";
+    veil.setAttribute("aria-hidden", "true");
+    document.body.appendChild(veil);
+    let busy = false;
+
+    menu.addEventListener("click", (e) => {
+        const link = e.target.closest('a[href^="#"]');
+        if (!link) return;
+        const target = document.querySelector(link.getAttribute("href"));
+        if (!target) return;
+        e.preventDefault();
+        if (busy) return;
+        busy = true;
+        const inner = target.querySelector(":scope > .section__inner") || target;
+
+        gsap.timeline({
+            onComplete() { busy = false; gsap.set(inner, { clearProps: "opacity,visibility,transform" }); }
+        })
+        .to(veil, { autoAlpha: 1, duration: 0.28, ease: "power2.in" })
+        .add(() => {
+            /* land where the browser would: the section's top under the bar */
+            const margin = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+            const top = target.getBoundingClientRect().top + window.scrollY - margin;
+            window.scrollTo({ top, behavior: "instant" });
+            history.pushState(null, "", link.getAttribute("href"));
+            ScrollTrigger.update();
+            gsap.set(inner, { autoAlpha: 0, y: 28 });
+        })
+        .to(veil,  { autoAlpha: 0, duration: 0.55, ease: "power2.out" }, "+=0.05")
+        .to(inner, { autoAlpha: 1, y: 0, duration: 0.75, ease: "power3.out" }, "<");
+    });
+}
+
 /* ---------- ROLLING TEXT (Trey's hover roll) ----------
    Each character becomes a 1lh window with a 2-copy track inside.
    Hover rolls the track up by half its height, left-first; leaving
@@ -917,4 +959,5 @@ document.fonts.ready.then(() => {
     contactForm();
     shieldCard();
     sectionReveals();
+    sectionFades();
 });

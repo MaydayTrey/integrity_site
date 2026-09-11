@@ -916,6 +916,13 @@ body.has-dialog { overflow: hidden; }
    box to the line's top puts the glyphs back on the line's baseline */
 .site-footer a[data-roll] { vertical-align: top; }
 
+/* ---------- VEIL: the dip between sections on a menu click (script.js) ---------- */
+.veil {
+    position: fixed; inset: 0; z-index: 60;     /* over the header (50) */
+    background: var(--ink);
+    opacity: 0; visibility: hidden; pointer-events: none;
+}
+
 /* ---------- ROLLING TEXT (letter windows built by script.js) ---------- */
 [data-roll] { overflow: hidden; }
 [data-roll] .word { display: inline-flex; }       /* keeps the space between words */
