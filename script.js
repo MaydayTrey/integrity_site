@@ -1129,8 +1129,8 @@ function shieldCard() {
 }
 
 /* ---------- QUALIFICATIONS: the badges converge, then the words ----------
-   Each badge column starts out of line, the first high, the second low,
-   the third and fourth at their own offsets, and slides into line as
+   Each badge column starts out of line, the first and third high, the
+   second and fourth low, each by its own amount, and slides into line as
    the section scrolls to the centre of the screen (scrubbed, so it
    tracks the scroll exactly). The moment they line up, the head
    arrives once: the eyebrow, the title's words rising out of their
@@ -1138,7 +1138,9 @@ function shieldCard() {
 function qualsIntro() {
     const section = document.querySelector(".section--quals");
     if (!section || reduceMotion) return;
-    const offsets = [-120, 140, -70, 100];
+    /* first and third start high (the first highest), second and fourth
+       start low (the fourth lowest): each pair a little different */
+    const offsets = [-280, 230, -210, 280];
     section.querySelectorAll(".badge").forEach((badge, i) => {
         gsap.fromTo(badge, { y: offsets[i % offsets.length] }, {
             y: 0, ease: "none",
