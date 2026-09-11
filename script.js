@@ -1137,6 +1137,39 @@ function shieldCard() {
     .to(items, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out", stagger: 0.045, clearProps: "transform" }, "+=0.05");
 }
 
+/* ---------- MEET PHIL: the two-column story ----------
+   Each beat arrives once: the photo wipes in from its outer edge while
+   it settles from a slight zoom, and the copy slides in from the other
+   side, line by line. From tablet up the two columns also drift past
+   each other with the scroll (the photo down-to-up, the copy the other
+   way), so the pair reads as two planes. Reduced motion: static. */
+function philStory() {
+    const beats = [...document.querySelectorAll(".beat")];
+    if (!beats.length || reduceMotion) return;
+    beats.forEach((beat, i) => {
+        const media = beat.querySelector(".beat__media");
+        const photo = beat.querySelector(".beat__photo");
+        const parts = beat.querySelectorAll(".beat__body > *");
+        const photoRight = i % 2 === 1;                      /* even beats: photo left; odd: photo right */
+        const wipe = { p: 0 };
+        const draw = () => { const hid = ((1 - wipe.p) * 100).toFixed(3) + "%"; media.style.clipPath = photoRight ? `inset(0 0 0 ${hid})` : `inset(0 ${hid} 0 0)`; };
+        draw();
+        gsap.set(photo, { scale: 1.12, transformOrigin: "50% 50%" });
+        gsap.set(parts, { autoAlpha: 0, x: photoRight ? -56 : 56 });
+        gsap.timeline({ scrollTrigger: { trigger: beat, start: "top 72%", once: true } })
+            .to(wipe, { p: 1, duration: 1.0, ease: "power3.inOut", onUpdate: draw, onComplete: () => { media.style.clipPath = ""; } })   /* the clip would cut the red bar off */
+            .to(photo, { scale: 1, duration: 1.4, ease: "power2.out", clearProps: "transform" }, 0)
+            .to(parts, { autoAlpha: 1, x: 0, duration: 0.7, ease: "power3.out", stagger: 0.1, clearProps: "transform" }, 0.35);
+    });
+    gsap.matchMedia().add("(min-width: 768px)", () => {
+        beats.forEach((beat) => {
+            const st = { trigger: beat, start: "top bottom", end: "bottom top", scrub: true };
+            gsap.fromTo(beat.querySelector(".beat__media"), { y: 56 }, { y: -56, ease: "none", scrollTrigger: st });
+            gsap.fromTo(beat.querySelector(".beat__body"),  { y: -36 }, { y: 36, ease: "none", scrollTrigger: st });
+        });
+    });
+}
+
 /* ---------- QUALIFICATIONS: the badges converge, then the words ----------
    Each badge column starts out of line, the first and third high, the
    second and fourth low, each by its own amount, and slides into line as
@@ -1187,7 +1220,7 @@ function sectionReveals() {
     /* the reviews section is excluded: its cards live inside the pinned,
        transformed column and its head must be visible the moment the
        pin engages */
-    const targets = ".section__head:not(.reviews-head):not(.quals-head), .placeholder .section__inner, .service, .segments, .panel:not([hidden]), .beat__media, .beat__body, .about__facts, .about__cta-row, .areas__body, .check__panel";   /* qualifications run their own entrance (qualsIntro) */   /* the contact card is excluded: the pour is its entrance, and a translated card would throw the tint projection off */
+    const targets = ".section__head:not(.reviews-head):not(.quals-head), .placeholder .section__inner, .service, .segments, .panel:not([hidden]), .about__facts, .about__cta-row, .areas__body, .check__panel";   /* qualifications run their own entrance (qualsIntro) */   /* the contact card is excluded: the pour is its entrance, and a translated card would throw the tint projection off */
     gsap.set(targets, { autoAlpha: 0, y: 24 });
     ScrollTrigger.batch(targets, {
         start: "top 85%",
@@ -1207,6 +1240,7 @@ document.fonts.ready.then(() => {
     serviceMap();
     contactForm();
     shieldCard();
+    philStory();
     qualsIntro();
     sectionReveals();
     sectionFades();
