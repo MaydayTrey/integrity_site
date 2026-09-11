@@ -1149,17 +1149,33 @@ function philStory() {
     beats.forEach((beat, i) => {
         const media = beat.querySelector(".beat__media");
         const photo = beat.querySelector(".beat__photo");
-        const parts = beat.querySelectorAll(".beat__body > *");
+        const step  = beat.querySelector(".beat__step");
+        const title = beat.querySelector(".beat__title");
+        const paras = beat.querySelectorAll(".beat__body > p:not(.beat__step)");
         const photoRight = i % 2 === 1;                      /* even beats: photo left; odd: photo right */
         const wipe = { p: 0 };
         const draw = () => { const hid = ((1 - wipe.p) * 100).toFixed(3) + "%"; media.style.clipPath = photoRight ? `inset(0 0 0 ${hid})` : `inset(0 ${hid} 0 0)`; };
         draw();
         gsap.set(photo, { scale: 1.12, transformOrigin: "50% 50%" });
-        gsap.set(parts, { autoAlpha: 0, x: photoRight ? -56 : 56 });
-        gsap.timeline({ scrollTrigger: { trigger: beat, start: "top 72%", once: true } })
-            .to(wipe, { p: 1, duration: 1.0, ease: "power3.inOut", onUpdate: draw, onComplete: () => { media.style.clipPath = ""; } })   /* the clip would cut the red bar off */
-            .to(photo, { scale: 1, duration: 1.4, ease: "power2.out", clearProps: "transform" }, 0)
-            .to(parts, { autoAlpha: 1, x: 0, duration: 0.7, ease: "power3.out", stagger: 0.1, clearProps: "transform" }, 0.35);
+
+        /* THE COPY TYPES ITSELF OUT: the title letter by letter, then each
+           paragraph word by word in reading order. No motion, just each
+           piece switching on, so it reads as typing. Reverted after. */
+        const titleSplit = SplitText.create(title, { type: "chars", charsClass: "tchar" });
+        const paraSplits = [...paras].map((p) => SplitText.create(p, { type: "words", wordsClass: "tword" }));
+        gsap.set(step, { autoAlpha: 0 });
+        gsap.set(titleSplit.chars, { autoAlpha: 0 });
+        paraSplits.forEach((s) => gsap.set(s.words, { autoAlpha: 0 }));
+
+        const tl = gsap.timeline({
+            scrollTrigger: { trigger: beat, start: "top 72%", once: true },
+            onComplete() { titleSplit.revert(); paraSplits.forEach((s) => s.revert()); }
+        });
+        tl.to(wipe, { p: 1, duration: 1.0, ease: "power3.inOut", onUpdate: draw, onComplete: () => { media.style.clipPath = ""; } })
+          .to(photo, { scale: 1, duration: 1.4, ease: "power2.out", clearProps: "transform" }, 0)
+          .to(step, { autoAlpha: 1, duration: 0.3 }, 0.3)
+          .to(titleSplit.chars, { autoAlpha: 1, duration: 0.01, stagger: 0.035 }, 0.45);
+        paraSplits.forEach((s) => tl.to(s.words, { autoAlpha: 1, duration: 0.01, stagger: 0.022 }, "+=0.15"));
     });
     gsap.matchMedia().add("(min-width: 768px)", () => {
         beats.forEach((beat) => {

@@ -588,11 +588,6 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .beat { display: grid; gap: 20px; }
 .beat__media { position: relative; }
 .beat__photo { width: 100%; height: auto; display: block; }
-/* the business-card red bar, hung on the photo's left edge */
-.beat__media::before {
-    content: ""; position: absolute; top: 18px; bottom: 18px; left: -4px; width: 4px;
-    background: var(--grad-brand-smooth);
-}
 .beat__caption {
     margin-top: 10px; font-family: var(--font-ui); font-weight: 500; font-size: 13px;
     letter-spacing: .1em; text-transform: uppercase; color: var(--grey-700);
