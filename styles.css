@@ -1149,19 +1149,21 @@ body.has-dialog { overflow: hidden; }
 .divider--mirror::before { clip-path: polygon(0 var(--slant), 100% 0, 100% 5px, 0 calc(var(--slant) + 5px)); }
 @media (min-width: 1024px) { .divider { --slant: 6vw; } }
 .section--reviews   { background: var(--white); position: relative; isolation: isolate; }
-/* A WHISPER OF TILE behind the words: a photo of white tile at a few percent,
-   fading out before it reaches the photo column (whole section on phones,
-   where the words sit above the photos). */
+/* A WHISPER OF TILE behind the words: white subway tile laid on the
+   diagonal, drawn as an SVG pattern (thin grey grout lines, nothing else, so
+   it is crisp at any size and never shows a seam), at low strength. It fades
+   out before it reaches the photo column (on phones, where the words sit
+   above the photos, it fades out downwards instead). */
 .section--reviews::before {
     content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-    background: url("assets/tile-accent-800.webp") center / 520px auto;
-    opacity: .1;
+    background: url("assets/tile-accent.svg");
+    opacity: .42;
     -webkit-mask-image: linear-gradient(to bottom, #000 25%, transparent 58%);
             mask-image: linear-gradient(to bottom, #000 25%, transparent 58%);
 }
 @media (min-width: 1024px) {
     .section--reviews::before {
-        right: 46%; background: url("assets/tile-accent-1400.webp") left center / 900px auto;
+        right: 46%;
         -webkit-mask-image: linear-gradient(to right, #000 62%, transparent 100%);
                 mask-image: linear-gradient(to right, #000 62%, transparent 100%);
     }
