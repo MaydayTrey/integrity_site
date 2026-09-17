@@ -323,16 +323,19 @@ body.has-dialog .home-btn { visibility: hidden; }
 /* ---------- FOLLOW BAND: a second strip under the credentials ---------- */
 .follow {
     display: flex; flex-direction: column; align-items: center; gap: 14px;
-    background: var(--white); border-top: 1px solid var(--grey-300); padding: 26px var(--gutter);
+    background: var(--white); border-top: 1px solid var(--grey-300); border-bottom: 1px solid var(--grey-300); padding: 26px var(--gutter);
 }
 .follow__item { display: flex; align-items: center; gap: 12px; font-size: 15px; letter-spacing: .02em; color: var(--ink); }
 .follow__link { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; color: var(--red-dark); padding-bottom: 2px; border-bottom: 2px solid transparent; transition: border-color .25s; }
 .follow__link:hover, .follow__link:focus-visible { border-bottom-color: currentColor; }
 .follow__icon { width: 24px; height: 24px; flex: none; }
 @media (min-width: 768px) {
-    .follow { flex-direction: row; justify-content: center; gap: 0; padding: 34px var(--gutter); }
+    /* two equal halves, so the hairline between the phrases stands exactly on the
+       page's centre line: plumb with the point of the V and the middle credential */
+    .follow { display: grid; grid-template-columns: 1fr 1fr; gap: 0; padding: 34px var(--gutter); }
     .follow__item { font-size: 16px; padding: 4px 56px; }
-    .follow__item + .follow__item { border-left: 1px solid var(--grey-300); }
+    .follow__item:first-child { justify-self: end; }
+    .follow__item + .follow__item { justify-self: stretch; border-left: 1px solid var(--grey-300); }
     .follow__icon { width: 26px; height: 26px; }
 }
 
