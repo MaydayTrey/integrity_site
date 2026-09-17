@@ -1059,29 +1059,20 @@ body.has-dialog .home-btn { visibility: hidden; }
 /* A TRIAL: an architect's drawing, faint, behind the words */
 .claim__panel::before {
     content: ""; position: absolute; z-index: -1; pointer-events: none; inset: -70px -90px -70px -140px;
-    background: url("assets/blueprint.webp") center / 135% auto no-repeat; opacity: .5;
+    background: url("assets/blueprint.webp") center / 135% auto no-repeat; opacity: .2;      /* faint: a texture, not a picture */
     -webkit-mask-image: linear-gradient(to right, transparent 0, #000 18%, #000 78%, transparent 100%);      /* the drawing is cropped hard at its sides: fade them */
             mask-image: linear-gradient(to right, transparent 0, #000 18%, #000 78%, transparent 100%);
 }
 .claim__mark { display: block; width: 64px; margin-bottom: 16px; }
 .claim__title { font-family: var(--font-display); font-weight: 400; font-size: clamp(36px, 4.4vw, 64px); line-height: .98; letter-spacing: .02em; text-transform: uppercase; margin: 6px 0 16px; }
 .claim__lede { font-size: 16px; line-height: 1.65; max-width: 48ch; }
-/* THE PHOTO'S SHAPE: a rectangle with its top left and bottom right corners
-   cut off at 45 degrees, in a red frame. The figure is the red shape; the
-   frame inside it is the same shape, 6px smaller all round, holding the photos. */
-.claim__media {
-    --cut: 30px; --rim: 5px;
-    position: relative; margin: 0 16px; aspect-ratio: 4 / 3; background: var(--grad-brand);
-    clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
-}
-.claim__frame {
-    --c: calc(var(--cut) - var(--rim) * .42);          /* keeps the rim the same width along the diagonals */
-    position: absolute; inset: var(--rim); background: var(--ink);
-    clip-path: polygon(var(--c) 0, 100% 0, 100% calc(100% - var(--c)), calc(100% - var(--c)) 100%, 0 100%, 0 var(--c));
-}
-.claim__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+/* THE PHOTO'S SHAPE: the same clip as the Meet Phil photos, top left and
+   bottom right corners rounded, the other two square. No frame. */
+.claim__media { position: relative; margin: 0 16px; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 56px 0 56px 0; background: var(--ink); }
+.claim__frame { position: absolute; inset: 0; }
+.claim__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 64% 50%; }   /* the tall crop leans right: the column in the damage shot and the sign in the repair both sit right of centre */
 .claim__tag {
-    position: absolute; right: var(--rim); top: var(--rim); z-index: 1; display: grid; padding: 8px 14px;
+    position: absolute; right: 0; top: 0; z-index: 1; display: grid; padding: 8px 14px;
     font-family: var(--font-ui); font-weight: 600; font-size: 12px; letter-spacing: .16em; text-transform: uppercase;
     color: var(--white); background: rgba(35, 31, 32, .78); transition: background-color .4s;
 }
@@ -1109,7 +1100,7 @@ body.has-dialog .home-btn { visibility: hidden; }
     /* the shield and its label stand centred at the head of the panel; the heading and the words stay flush left under them */
     .claim__mark { margin-inline: auto; width: 84px; }
     .claim__panel .section__eyebrow { text-align: center; margin-bottom: 28px; }
-    .claim__media { grid-column: 2; grid-row: 1; margin: 0; aspect-ratio: 1 / 1; --cut: 52px; --rim: 6px; }      /* a tall, square-ish window */
+    .claim__media { grid-column: 2; grid-row: 1; margin: 0; aspect-ratio: 4 / 5; border-radius: 88px 0 88px 0; }      /* a tall window */
     .claim__card {
         grid-column: 2; grid-row: 1; align-self: end; justify-self: start; width: 84%; margin: 0 0 28px -56px;   /* over the photo's lower left, hanging out to the left */
         padding: 20px 24px; font-size: 15px;
