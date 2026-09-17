@@ -167,8 +167,10 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .nav__bar {
     width: 22px; height: 2.5px; background: var(--white); border-radius: 2px;
-    transition: transform .3s var(--ease-out), opacity .2s;
+    transition: transform .3s var(--ease-out), opacity .2s, background-color .2s;
 }
+/* the X (menu open) turns Integrity red under the finger or the pointer */
+.nav__toggle[aria-expanded="true"]:hover .nav__bar, .nav__toggle[aria-expanded="true"]:active .nav__bar, .nav__toggle[aria-expanded="true"]:focus-visible .nav__bar { background: var(--red); }
 .nav__toggle[aria-expanded="true"] .nav__bar:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
 .nav__toggle[aria-expanded="true"] .nav__bar:nth-child(2) { opacity: 0; }
 .nav__toggle[aria-expanded="true"] .nav__bar:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
@@ -182,7 +184,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
     overflow-y: auto; overscroll-behavior: contain;                                                  /* a short phone in landscape can still reach every link */
     transform: translateX(100%);
     visibility: hidden;
-    transition: transform .4s var(--ease-out), visibility 0s .4s;
+    transition: transform .6s cubic-bezier(.65, 0, .35, 1), visibility 0s .6s;      /* this is the CLOSE: slower, easing away rather than snapping shut */
 }
 .nav__menu.is-open { transform: none; visibility: visible; transition: transform .4s var(--ease-out); }
 .nav__menu--snap { transition: none !important; }   /* while the header switches layouts */
@@ -1274,7 +1276,8 @@ body.has-dialog .home-btn { visibility: hidden; }
 @keyframes job-in { from { opacity: 0; transform: translateY(16px) scale(.98); } }
 .job__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 16px 12px 20px; }
 .job__title { font-family: var(--font-display); font-weight: 400; font-size: 28px; line-height: 1; letter-spacing: .02em; text-transform: uppercase; }
-.job__close { width: 44px; height: 44px; font-size: 32px; line-height: 1; color: var(--ink); }
+.job__close { width: 44px; height: 44px; font-size: 32px; line-height: 1; color: var(--ink); transition: color .2s; }
+.job__close:hover, .job__close:active, .job__close:focus-visible { color: var(--red); }
 .job__body .pair__figure { border: 0; }
 .job__more {
     display: block; padding: 14px 20px 18px;
@@ -1739,15 +1742,17 @@ body.has-dialog { overflow: hidden; }
     transition: opacity .25s, transform .25s var(--ease-out), box-shadow .25s var(--ease-out);
 }
 .check.is-sheet.is-open .check__open { opacity: 0; pointer-events: none; }
+.check.is-sheet:not(.is-open) .check__open { transition-delay: .35s; }      /* the button waits for the sheet to be most of the way down */
 .check.is-sheet .check__panel {
     transform: translateY(calc(100% + 40px)); visibility: hidden;
-    transition: transform .45s var(--ease-out), visibility 0s .45s;
+    transition: transform .65s cubic-bezier(.65, 0, .35, 1), visibility 0s .65s;      /* the CLOSE: eased and unhurried; the open (below) stays quick */
 }
 .check.is-sheet.is-open .check__panel { transform: none; visibility: visible; transition: transform .45s var(--ease-out); }
 .check.is-sheet .check__close {
     display: grid; place-items: center; position: absolute; top: 4px; right: 4px;
-    width: 44px; height: 44px; font-size: 28px; line-height: 1; color: var(--ink);
+    width: 44px; height: 44px; font-size: 28px; line-height: 1; color: var(--ink); transition: color .2s;
 }
+.check.is-sheet .check__close:hover, .check.is-sheet .check__close:active, .check.is-sheet .check__close:focus-visible { color: var(--red); }
 @media (prefers-reduced-motion: reduce) {
     .check.is-sheet .check__panel, .check.is-sheet.is-open .check__panel { transition: none; }
 }
