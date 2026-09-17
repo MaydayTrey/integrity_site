@@ -42,6 +42,12 @@
 /* ---------- RESET ---------- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+/* NOTHING MAY WIDEN THE PAGE. Things parked off to the side waiting for their
+   entrance (rows that slide in from the right, a rotated photo stack) would
+   otherwise stretch the layout on a phone: the whole site shrinks to fit and
+   the hamburger lands off screen. clip, not hidden: no scroll container, so
+   pinning and anchors behave. */
+main, .site-footer { overflow-x: clip; }
 body {
     font-family: var(--font-body);
     color: var(--ink);
@@ -171,29 +177,32 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .nav__menu {
     position: fixed; inset: var(--nav-h) 0 0 0;
     background: rgba(35, 31, 32, .96);
-    padding: 32px var(--gutter);
-    display: flex; flex-direction: column; gap: 8px;
+    padding: 32px var(--gutter) 48px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px;      /* everything centred, across and down */
+    overflow-y: auto; overscroll-behavior: contain;                                                  /* a short phone in landscape can still reach every link */
     transform: translateX(100%);
     visibility: hidden;
     transition: transform .4s var(--ease-out), visibility 0s .4s;
 }
 .nav__menu.is-open { transform: none; visibility: visible; transition: transform .4s var(--ease-out); }
 .nav__menu--snap { transition: none !important; }   /* while the header switches layouts */
-.nav__list { display: flex; flex-direction: column; }
+.nav__list { display: flex; flex-direction: column; align-items: center; gap: 8px; }
 .nav__link {
     display: block; padding: 14px 0;
     font-family: var(--font-ui); font-weight: 500; font-size: 22px;
-    letter-spacing: .12em; text-transform: uppercase; color: var(--white);
+    letter-spacing: .12em; text-transform: uppercase; color: var(--white); text-align: center;
     text-shadow: 0 1px 3px rgba(35, 31, 32, .5);
+    transition: color .2s;
 }
-.nav__cta { margin-top: 24px; align-self: flex-start; }
+.nav__link:hover, .nav__link:focus-visible { color: var(--red); }      /* no rolling letters here: just the Integrity red */
+.nav__cta { margin-top: 24px; align-self: center; width: min(100%, 340px); }
 
 /* ---------- HOME CONTROL ----------
    Fixed bottom right. Hidden over the hero (.visible comes from script.js);
    its colour follows the background under it: white over dark sections and
    photos, Integrity red (.on-light) over white and grey ones. */
 .home-btn {
-    position: fixed; right: -6px; bottom: 12px; z-index: 45;      /* bottom right, tucked into the page gutter so it stays clear of the text column */      /* under the header and its menu (50) */
+    position: fixed; right: 0; bottom: 12px; z-index: 45;      /* bottom right, tucked into the page gutter so it stays clear of the text column */      /* under the header and its menu (50) */
     width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
     color: var(--white); opacity: 0; visibility: hidden;
     filter: drop-shadow(0 1px 2px rgba(35, 31, 32, .45));
@@ -219,10 +228,9 @@ body.has-dialog .home-btn { visibility: hidden; }
 }
 .hero__media { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
 /* THE SHIELD'S POINT. The hero's base is a shallow V, like the bottom of
-   the shield, not a flat edge. --vee is its depth. On phones the hero
-   itself is clipped (white page shows in the corners); from 768px the V
-   sits where the photo meets the white credentials strip instead. */
-.hero { --vee: clamp(22px, 3.4vw, 62px); clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--vee)), 50% 100%, 0 calc(100% - var(--vee))); }
+   the shield, not a flat edge. --vee is its depth. The V sits where the
+   photo meets the white credentials strip (see .trust), at every size. */
+.hero { --vee: clamp(22px, 3.4vw, 62px); }
 /* THE REVEAL. --rv runs 0 (before photo, no "a success") to 1 (finished
    kitchen, "a success" in full). Both the after photo and the red words
    wear the same soft-edged mask, so they arrive left to right in step.
@@ -305,27 +313,41 @@ body.has-dialog .home-btn { visibility: hidden; }
    ends at the bottom of the first screen). The headline and buttons fill
    the first full screen; the kitchen photo then carries on for another 30%
    of a screen before the shield-point edge and the credentials strip. */
-.hero { grid-template-rows: minmax(100vh, auto) 30vh auto; grid-template-rows: minmax(100svh, auto) 30svh auto; }
-.hero > .trust { grid-row: 3; }
+@media (min-width: 768px) {      /* not on phones: a landscape photo stretched over 130% of a tall narrow screen is zoomed to mush */
+    .hero { grid-template-rows: minmax(100vh, auto) 30vh auto; grid-template-rows: minmax(100svh, auto) 30svh auto; }
+    .hero > .trust { grid-row: 3; }
+}
 /* the buttons ride down with the scroll (script.js, heroScroll, feeds --drop)
    from the foot of the first screen to the foot of the photo, so they stay
    in view through the extra stretch. On the buttons, not their row: GSAP's
    intro moves the row and, once it has, pins the row's own translate to none. */
 .hero__actions .btn { translate: 0 var(--drop, 0px); }
 
-/* trust: text lines on phones, icon bar on desktop */
+/* TRUST: the white credentials strip under the hero photo, at every size.
+   Its top edge dips to a point in the middle (the shield's V): the photo
+   behind fills the dip and a red rule follows it. Phones stack the three
+   credentials, centred; from 768px they sit left, centre and right. */
 .trust {
-    display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 12px;
-    padding: 0 var(--gutter) calc(var(--vee) + 14px);   /* clear of the V */
-    font-family: var(--font-body); font-size: 12.5px; letter-spacing: .04em;
-    color: var(--grey-300);
+    position: relative; isolation: isolate;
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    padding: calc(var(--vee) + 20px) var(--gutter) 18px;
+    font-family: var(--font-body); font-size: 14px; font-weight: 500; letter-spacing: .04em;
+    color: var(--ink);
+}
+/* the white is its own layer and starts 2px BELOW the red rule's top edge,
+   tucked under it. When the white and the red were cut along the very same
+   diagonal, anti-aliasing let a hairline of white show above the red. */
+.trust::after {
+    content: ""; position: absolute; inset: 0; z-index: -1; background: var(--white);
+    clip-path: polygon(0 2px, 50% calc(var(--vee) + 2px), 100% 2px, 100% 100%, 0 100%);
+}
+.trust::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: calc(var(--vee) + 5px);
+    background: var(--grad-brand-smooth);
+    clip-path: polygon(0 0, 50% var(--vee), 100% 0, 100% 5px, 50% calc(var(--vee) + 5px), 0 5px);
 }
 .trust__item { display: flex; align-items: center; gap: 8px; }
-.trust__item:nth-child(2)::before { content: "\00B7"; margin-right: 4px; }
-/* third item gets its own centred line on phones (comp shows two lines),
-   so it carries no leading dot */
-.trust__item:nth-child(3) { flex-basis: 100%; justify-content: center; }
-.trust__icon { display: none; width: 20px; height: 20px; flex: none; }
+.trust__icon { display: block; width: 20px; height: 20px; flex: none; }
 
 /* ---------- FOLLOW BAND: a second strip under the credentials ---------- */
 .follow {
@@ -336,6 +358,7 @@ body.has-dialog .home-btn { visibility: hidden; }
 .follow__link { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; color: var(--red-dark); padding-bottom: 2px; border-bottom: 2px solid transparent; transition: border-color .25s; }
 .follow__link:hover, .follow__link:focus-visible { border-bottom-color: currentColor; }
 .follow__icon { width: 24px; height: 24px; flex: none; }
+@media (max-width: 359px) { .follow__item { font-size: 13.5px; gap: 8px; white-space: nowrap; } .follow__link { gap: 7px; } .follow__icon { width: 20px; height: 20px; } }   /* the smallest phones: keep each phrase on one line */
 @media (min-width: 768px) {
     /* two equal halves, so the hairline between the phrases stands exactly on the
        page's centre line: plumb with the point of the V and the middle credential */
@@ -984,7 +1007,7 @@ body.has-dialog .home-btn { visibility: hidden; }
 .map-tip--pin::before { display: none; }
 .map-tip--home { color: var(--red-dark); font-weight: 600; border-color: var(--red); }
 @media (max-width: 767px) { .map-tip--pin { display: none; } }   /* phones: dots and the home label only; hover/tap still names a town */
-.map-home img { display: block; filter: drop-shadow(0 2px 4px rgba(35, 31, 32, .4)); }
+.map-home img { display: block; width: 100%; height: 100%; max-width: none; filter: drop-shadow(0 0 1.5px #fff) drop-shadow(0 2px 3px rgba(35, 31, 32, .45)); }   /* fixed size (the global img rule must not squash it); a white halo lifts it off the place names under it */
 /* the map's own styling (SVG fallback): red service counties, ink cities */
 .map__neighbor { fill: var(--grey-100); stroke: var(--grey-500); stroke-width: 1.2; stroke-linejoin: round; }
 .map__neighbor-label {
@@ -1019,8 +1042,8 @@ body.has-dialog .home-btn { visibility: hidden; }
 .areas__link { color: var(--red-dark); text-decoration: underline; text-underline-offset: 3px; }
 
 /* ---------- QUALIFICATIONS: badge row ---------- */
-.badges { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 12px; }
-.badges .badge:last-child:nth-child(odd) { grid-column: 1 / -1; }   /* two across: an odd one out sits centred under the pair */
+.badges { display: grid; grid-template-columns: 1fr; gap: 36px; }      /* phones: one badge per row, each whole and centred (two across left an odd one out and ragged titles) */
+@media (min-width: 600px) { .badges { grid-template-columns: repeat(3, 1fr); gap: 28px 16px; } }
 .badge {
     display: grid; justify-items: center; align-content: start; text-align: center; gap: 10px;
     padding: 8px 6px;
@@ -1043,15 +1066,16 @@ body.has-dialog .home-btn { visibility: hidden; }
    the description under them; the wide IICRC lockup is shorter so its
    width fits the card */
 .badge__logo { height: 96px; width: 100%; object-fit: contain; }   /* every logo gets the same slot, so the titles line up */
-.badge__logo--wide { object-fit: contain; }                          /* the wide IICRC lockup just letterboxes inside it */
+.badge__logo--wide { object-fit: contain; max-width: 250px; }                          /* the wide IICRC lockup just letterboxes inside it */
 /* INSURANCE: a full-width split block after the qualifications. A white
    information panel on the left, the claim job's photo on the right (it
    plays damage to repair by itself), a red card straddling the two. THE FOOT
    IS THE HERO'S SHIELD POINT: .claim__inner is clipped to a shallow V and a
-   red rule runs along the cut; .claim itself only paints the two corners
-   under the V with the colour of the section that follows. */
-.claim { --vee: clamp(22px, 3.4vw, 62px); --below: var(--white); background: var(--below); }
-.claim:has(+ .section--contact.is-intro) { --below: var(--grey-900); }
+   red rule runs along the cut; the block rides down over the top of the
+   contact section by the depth of the V, so whatever that section's
+   background is doing (it changes on phones) shows in the two corners. */
+.claim { --vee: clamp(22px, 3.4vw, 62px); position: relative; z-index: 2; margin-bottom: calc(-1 * var(--vee) - 1px); overflow: clip; pointer-events: none; }
+.claim__inner { pointer-events: auto; }   /* clip: the drawing behind the words hangs past the panel, and clip-path alone does not stop that widening the page (on phones it shrank the whole site and pushed the hamburger off screen) */
 .claim__inner {
     position: relative; display: grid; background: var(--white);
     padding-bottom: calc(var(--vee) + 28px);
@@ -1098,7 +1122,6 @@ body.has-dialog .home-btn { visibility: hidden; }
    on the left, a modest 4:3 photo on the right with the red card lapping its
    lower left corner. The V foot still runs the full width. */
 @media (min-width: 1024px) {
-    .claim { --below: var(--grey-900); }                       /* the contact section is grey from here up */
     .claim__inner {
         grid-template-columns: minmax(0, 1fr) minmax(0, 460px); column-gap: 72px; align-items: center;
         padding: 88px max(var(--gutter), calc((100% - 1080px) / 2)) calc(var(--vee) + 96px);
@@ -1115,7 +1138,7 @@ body.has-dialog .home-btn { visibility: hidden; }
     .claim__lede { font-size: 17px; }
 }
 .badge__title { font-family: var(--font-ui); font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; line-height: 1.25; }
-.badge__text { font-size: 13px; line-height: 1.5; color: var(--ink); max-width: 26ch; }
+.badge__text { font-size: 14px; line-height: 1.5; color: var(--ink); max-width: 30ch; }
 
 /* ---------- CONTACT: the split shield ----------
    Grid of three: the shield's left half, the white panel, the shield's
@@ -1423,28 +1446,7 @@ body.has-dialog { overflow: hidden; }
     .btn { font-size: 16px; padding: 18px 40px; }
     .btn--primary { font-size: 18px; padding: 19px 42px; }
 
-    /* the V moves to the top of the white strip: its top edge dips to a point
-       in the middle, the photo behind fills the dip, and the red rule follows it */
-    .hero { clip-path: none; }
-    .trust {
-        position: relative; isolation: isolate;
-        color: var(--ink);
-        padding: calc(var(--vee) + 18px) var(--gutter) 16px;
-        font-size: 14px; font-weight: 500; gap: 8px 14px;
-    }
-    /* the white is its own layer and starts 2px BELOW the red rule's top edge,
-       tucked under it. When the white and the red were cut along the very same
-       diagonal, anti-aliasing let a hairline of white show above the red. */
-    .trust::after {
-        content: ""; position: absolute; inset: 0; z-index: -1; background: var(--white);
-        clip-path: polygon(0 2px, 50% calc(var(--vee) + 2px), 100% 2px, 100% 100%, 0 100%);
-    }
-    .trust::before {
-        content: ""; position: absolute; left: 0; right: 0; top: 0; height: calc(var(--vee) + 5px);
-        background: var(--grad-brand-smooth);
-        clip-path: polygon(0 0, 50% var(--vee), 100% 0, 100% 5px, 50% calc(var(--vee) + 5px), 0 5px);
-    }
-    .trust__icon { display: block; }
+    .trust { padding: calc(var(--vee) + 18px) var(--gutter) 16px; gap: 8px 14px; }
     /* THREE PLACES on one line: the first flush left and the third flush right
        (the same gutters as the two buttons above), the middle one centred
        exactly on the page's centre line, which is the shield's axis and the
@@ -1453,8 +1455,7 @@ body.has-dialog { overflow: hidden; }
     .trust { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; column-gap: 16px; }
     .trust__item:nth-child(1) { justify-self: start; }
     .trust__item:nth-child(2) { justify-self: center; }
-    .trust__item:nth-child(3) { justify-self: end; flex-basis: auto; }
-    .trust__item:nth-child(2)::before { content: none; }
+    .trust__item:nth-child(3) { justify-self: end; }
 }
 
 /* services: one wider column on tablets (two columns at 768 leave only
@@ -1550,8 +1551,7 @@ body.has-dialog { overflow: hidden; }
     .check__grid { grid-template-columns: minmax(0, 1fr) 72px 104px; }
 }
 @media (min-width: 1024px) {
-    .badges { grid-template-columns: repeat(3, 1fr); max-width: 1040px; margin-inline: auto; }
-    .badges .badge:last-child:nth-child(odd) { grid-column: auto; }   /* qualifications: three across, centred */
+    .badges { grid-template-columns: repeat(3, 1fr); max-width: 1040px; margin-inline: auto; }   /* qualifications: three across, centred */
 
     /* footer: three columns, legal row and credit row inline */
     .site-footer { padding: 90px var(--gutter) 40px; }
@@ -1708,6 +1708,24 @@ body.has-dialog { overflow: hidden; }
     .reviews-current { margin-top: 6px; }
     .reviews-current .review__quote p { font-size: 14px; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     .reviews-current .review__name { font-size: 14px; }
+}
+
+/* a phone on its side (wide but very short): the side-by-side reviews layout
+   applies, so the left column has to slim down to fit the height */
+@media (min-width: 768px) and (max-height: 520px) {
+    .section--reviews.is-carousel { padding-top: calc(var(--nav-h) + 8px); }
+    .is-carousel .reviews-head { padding-top: 0; }
+    .is-carousel .reviews-head .section__eyebrow, .is-carousel .section__lede, .is-carousel .reviews-hint { display: none; }
+    .is-carousel .section__title { font-size: 28px; }
+    .is-carousel .reviews-progress { margin-top: 8px; }
+    .reviews-current { margin-top: 10px; }
+    .reviews-current .review__glass { padding: 12px 14px 6px; gap: 2px 12px; }
+    .reviews-current .review__name { font-size: 14px; }
+    .reviews-current .review__source { width: 26px; height: 26px; }
+    .reviews-current .review__quote { margin-top: 6px; padding-bottom: 2px; }
+    .reviews-current .review__quote p { font-size: 13.5px; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+    .reviews-current .review__job { min-height: 36px; padding: 4px 0; }
+    .is-carousel .review { min-height: 230px; }
 }
 
 /* ---------- MAP on phones: the checker is a bottom sheet ----------

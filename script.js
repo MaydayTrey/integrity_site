@@ -218,26 +218,32 @@ function sectionFades() {
         .to(inner, { autoAlpha: 1, y: 0, duration: 0.75, ease: "power3.out" }, "<");
     }
 
-    menu.addEventListener("click", (e) => {
+    /* EVERY in-page link travels this way, wherever it is (the menu, the hero
+       buttons, the footer, the calls to action), on phones and desktop alike.
+       The service blocks and the home control have their own handlers below;
+       the skip link must stay a real jump for keyboard users. */
+    document.addEventListener("click", (e) => {
         const link = e.target.closest('a[href^="#"]');
-        if (!link) return;
-        const target = document.querySelector(link.getAttribute("href"));
+        if (!link || link.classList.contains("skip-link") || link.classList.contains("home-btn") || link.hasAttribute("data-goto-filter")) return;
+        const href = link.getAttribute("href");
+        if (href === "#" || href === "#top") { e.preventDefault(); toTop(); return; }
+        const target = document.querySelector(href);
         if (!target) return;
         e.preventDefault();
-        fadeTo(link.getAttribute("href"), target);
+        fadeTo(href, target);
     });
-
-    /* the home control: the same fade, back to the very top */
-    const home = document.querySelector(".home-btn");
-    if (home) home.addEventListener("click", (e) => {
-        e.preventDefault();
+    function toTop() {
         if (busy) return;
         busy = true;
         gsap.timeline({ onComplete() { busy = false; } })
             .to(veil, { autoAlpha: 1, duration: 0.28, ease: "power2.in" })
             .add(() => { window.scrollTo({ top: 0, behavior: "instant" }); history.pushState(null, "", location.pathname + location.search); ScrollTrigger.update(); })
             .to(veil, { autoAlpha: 0, duration: 0.55, ease: "power2.out" }, "+=0.05");
-    });
+    }
+
+    /* the home control: the same fade, back to the very top */
+    const home = document.querySelector(".home-btn");
+    if (home) home.addEventListener("click", (e) => { e.preventDefault(); toTop(); });
 
     /* the service blocks: same fade, but landing on the filter row so the
        chosen photos are what you arrive at (ourWork has already picked the filter) */
@@ -753,7 +759,7 @@ function reviewCarousel() {
         const H = win.clientHeight;
         /* phones: each photo fills most of the window (the window's height
            is whatever the head leaves, so it is only known here) */
-        cards.forEach((c) => { c.style.minHeight = wide.matches ? "" : Math.round(H * 0.84) + "px"; });
+        cards.forEach((c) => { c.style.minHeight = wide.matches ? "" : Math.round(H * 0.76) + "px"; });      /* 0.76: the slanted band below rides up over the foot of the window, and the centred photo must clear it */
         const W = Math.round(H * 0.28);                /* the dwell, in px of scrolling */
         const first = cards[0], last = cards[cards.length - 1];
         column.style.paddingTop    = `${Math.max(H / 2 - first.offsetHeight / 2, 0)}px`;
@@ -915,15 +921,18 @@ function serviceMap() {
     fetch(SERVICE_AREA_URL)
         .then((r) => r.json())
         .then((gj) => {
-            area = L.geoJSON(gj, { style: { color: "#BA1E23", weight: 2, fillColor: "#ED1C24", fillOpacity: 0.07 }, interactive: false }).addTo(map);
+            area = L.geoJSON(gj, { style: { color: "#BA1E23", weight: 2, fillColor: "#ED1C24", fillOpacity: 0.07, smoothFactor: 0 }, interactive: false }).addTo(map);   /* smoothFactor 0: Leaflet otherwise thins the outline when zoomed out (phones), and the rounded corners came out as facets */
             fit();
             el.classList.add("is-live");
             if (EDIT_AREA) areaEditor(map, el, () => area);
         })
         .catch(() => {});                                  /* the SVG fallback stays */
 
+    /* the home marker says "based in Trenton": on a phone the whole area is only a
+       few hundred pixels across, so the shield is small there, a point and not a blob */
+    const hs = window.innerWidth < 768 ? [22, 23] : [34, 36];
     L.marker(SERVICE_HOME, {
-        icon: L.divIcon({ className: "map-home", html: '<img src="assets/logo-shield.svg" alt="" width="34" height="36" title="Integrity Restorations and Remodeling, Trenton">', iconSize: [34, 36], iconAnchor: [17, 18] }),
+        icon: L.divIcon({ className: "map-home", html: '<img src="assets/logo-shield.svg" alt="" title="Integrity Restorations and Remodeling, Trenton">', iconSize: hs, iconAnchor: [hs[0] / 2, hs[1] / 2] }),
         title: "Integrity Restorations and Remodeling, Trenton", zIndexOffset: 1000, interactive: false
     }).addTo(map);
 
@@ -1472,7 +1481,7 @@ function philStory() {
             if (next) gsap.set(next, { autoAlpha: 0, scale: 0.6 });
 
             /* the copy, split for typing (same as the first beat) */
-            const titleSplit = SplitText.create(title, { type: "chars", charsClass: "tchar" });
+            const titleSplit = SplitText.create(title, { type: "words,chars", charsClass: "tchar" });   /* words too: chars alone let a narrow screen break a word in two */
             const paraSplits = [...paras].map((p) => SplitText.create(p, { type: "words", wordsClass: "tword" }));
             gsap.set(step, { autoAlpha: 0 });
             gsap.set(titleSplit.chars, { autoAlpha: 0 });
@@ -1536,7 +1545,7 @@ function philStory() {
         /* THE COPY TYPES ITSELF OUT: the title letter by letter, then each
            paragraph word by word in reading order. No motion, just each
            piece switching on, so it reads as typing. Reverted after. */
-        const titleSplit = SplitText.create(title, { type: "chars", charsClass: "tchar" });
+        const titleSplit = SplitText.create(title, { type: "words,chars", charsClass: "tchar" });   /* words too: chars alone let a narrow screen break a word in two */
         const paraSplits = [...paras].map((p) => SplitText.create(p, { type: "words", wordsClass: "tword" }));
         gsap.set(step, { autoAlpha: 0 });
         gsap.set(titleSplit.chars, { autoAlpha: 0 });
@@ -1727,13 +1736,22 @@ function qualsIntro() {
     const offsets = wide ? [-280, 230, -210] : [-120, 100, -90];   /* narrow: shorter columns, shorter sweep */
     const row = section.querySelector(".badges");                    /* the triggers follow the badge row: the claims card below makes the section taller than a screen */
     const badges = [...section.querySelectorAll(".badges .badge")];
-    const slides = badges.map((badge, i) => gsap.fromTo(badge, { y: offsets[i % offsets.length] }, {
+    /* PHONES (under 600px) stack the badges one per row, so there are no columns
+       to converge: the head simply reveals as the section arrives, and each badge
+       slides in from alternate sides as it comes up. */
+    const stacked = window.matchMedia("(max-width: 599px)").matches;
+    if (stacked) {
+        badges.forEach((badge, i) => gsap.from(badge, { x: i % 2 ? 60 : -60, autoAlpha: 0, duration: 0.8, ease: "power3.out", clearProps: "transform",
+            scrollTrigger: { trigger: badge, start: "top 86%", once: true } }));
+    }
+    const slides = stacked ? [] : badges.map((badge, i) => gsap.fromTo(badge, { y: offsets[i % offsets.length] }, {
         y: 0, ease: "none",
         scrollTrigger: { trigger: row, start: "top 110%", end: "center 62%", scrub: 0.6 }
     }));
     /* once they meet, they lock: the scroll no longer moves them, so
        scrolling back up cannot fan them out over the revealed head */
     const lock = () => {
+        if (stacked) return;
         slides.forEach((t) => { t.scrollTrigger.kill(); t.kill(); });
         gsap.set(badges, { y: 0 });
     };
@@ -1745,7 +1763,7 @@ function qualsIntro() {
     const words = SplitText.create(title, { type: "words", mask: "words", wordsClass: "qword" });
     gsap.set(words.words, { yPercent: 110 });
     gsap.timeline({
-        scrollTrigger: { trigger: row, start: "center 64%", once: true },
+        scrollTrigger: stacked ? { trigger: section, start: "top 70%", once: true } : { trigger: row, start: "center 64%", once: true },
         onStart: lock,
         onComplete() { words.revert(); }
     })

@@ -157,7 +157,7 @@
     <link rel="preload" as="image"
           href="assets/divider-site-1600.webp"
           imagesrcset="assets/divider-site-800.webp 800w, assets/divider-site-1200.webp 1200w, assets/divider-site-1600.webp 1600w, assets/divider-site-2048.webp 2048w"
-          imagesizes="100vw">
+          imagesizes="(max-width: 767px) 380vw, 140vw">
         <!--SCRIPTS: defer keeps parsing unblocked; deferred scripts run in
             order, so GSAP and its plugins are ready before script.js-->
     <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.15/dist/gsap.min.js"></script>
@@ -208,17 +208,17 @@
 
             <div class="nav__menu" id="nav-menu">
                 <ul class="nav__list nav__list--left">
-                    <li><a class="nav__link" href="#services" data-roll>Services</a></li>
-                    <li><a class="nav__link" href="#our-work" data-roll>Our Work</a></li>
-                    <li><a class="nav__link" href="#reviews" data-roll>Reviews</a></li>
+                    <li><a class="nav__link" href="#services">Services</a></li>
+                    <li><a class="nav__link" href="#our-work">Our Work</a></li>
+                    <li><a class="nav__link" href="#reviews">Reviews</a></li>
                 </ul>
                 <!--the shield's slot: the brand link above is visually
                     placed here on desktop via grid, so the 3 + 3 links
                     split around it-->
                 <ul class="nav__list nav__list--right">
-                    <li><a class="nav__link" href="#meet-phil" data-roll>Meet Phil</a></li>
-                    <li><a class="nav__link" href="#areas-served" data-roll>Areas Served</a></li>
-                    <li><a class="nav__link" href="#contact" data-roll>Contact</a></li>
+                    <li><a class="nav__link" href="#meet-phil">Meet Phil</a></li>
+                    <li><a class="nav__link" href="#areas-served">Areas Served</a></li>
+                    <li><a class="nav__link" href="#contact">Contact</a></li>
                 </ul>
                 <a class="btn btn--primary nav__cta" href="#contact">Get a Free Estimate</a>
             </div>
@@ -244,7 +244,7 @@
                 <img class="hero__photo hero__photo--before"
                      src="assets/divider-site-1600.webp"
                      srcset="assets/divider-site-800.webp 800w, assets/divider-site-1200.webp 1200w, assets/divider-site-1600.webp 1600w, assets/divider-site-2048.webp 2048w"
-                     sizes="100vw"
+                     sizes="(max-width: 767px) 380vw, 140vw"
                      width="2048" height="1536"
                      fetchpriority="high"
                      decoding="async"
@@ -253,7 +253,7 @@
                 <img class="hero__photo"
                      src="assets/hero-kitchen-1600.webp"
                      srcset="assets/hero-kitchen-800.webp 800w, assets/hero-kitchen-1200.webp 1200w, assets/hero-kitchen-1600.webp 1600w, assets/hero-kitchen-2048.webp 2048w"
-                     sizes="100vw"
+                     sizes="(max-width: 767px) 380vw, 140vw"
                      width="2048" height="1536"
                      decoding="async"
                      alt="Finished kitchen remodel with white shaker cabinets, granite countertops, subway tile backsplash, and a dark island by Integrity Restorations and Remodeling">
