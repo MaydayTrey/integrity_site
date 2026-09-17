@@ -332,10 +332,9 @@ body.has-dialog .home-btn { visibility: hidden; }
 @media (min-width: 768px) {
     /* two equal halves, so the hairline between the phrases stands exactly on the
        page's centre line: plumb with the point of the V and the middle credential */
-    .follow { display: grid; grid-template-columns: 1fr 1fr; gap: 0; padding: 34px var(--gutter); }
-    .follow__item { font-size: 16px; padding: 4px 56px; }
-    .follow__item:first-child { justify-self: end; }
-    .follow__item + .follow__item { justify-self: stretch; border-left: 1px solid var(--grey-300); }
+    .follow { display: grid; grid-template-columns: 1fr 1fr; gap: 0; padding: 0; }
+    .follow__item { font-size: 16px; padding: 38px 24px; justify-content: center; }      /* each phrase centred in its own half */
+    .follow__item + .follow__item { border-left: 1px solid var(--grey-300); }              /* the bar runs the band's full height, line to line */
     .follow__icon { width: 26px; height: 26px; }
 }
 
