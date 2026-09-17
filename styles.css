@@ -1017,6 +1017,20 @@ body.has-dialog .home-btn { visibility: hidden; }
    width fits the card */
 .badge__logo { height: 96px; width: 100%; object-fit: contain; }   /* every logo gets the same slot, so the titles line up */
 .badge__logo--wide { object-fit: contain; }                          /* the wide IICRC lockup just letterboxes inside it */
+/* THE INSURANCE CLAIMS CARD under the badges: a before/after photo (the Our
+   Work component) beside a few lines on how claims are handled. White card,
+   soft shadow, the thin red top edge the other cards wear. */
+.claim {
+    display: grid; gap: 0 32px; max-width: 1040px; margin: 56px auto 0;
+    background: var(--white); border-top: 3px solid var(--red);
+    box-shadow: 0 16px 40px rgba(35, 31, 32, .13), 0 2px 6px rgba(35, 31, 32, .06);
+}
+.claim__pair .pair__figure { border: 0; margin: 0; }
+.claim__pair .pair__media { aspect-ratio: 4 / 3; height: auto; }     /* the whole photo: both shots are 4:3 */
+.claim__body { padding: 22px 20px 26px; text-align: left; }
+.claim__title { font-family: var(--font-display); font-weight: 400; font-size: clamp(30px, 3.2vw, 44px); line-height: 1; letter-spacing: .02em; text-transform: uppercase; margin: 6px 0 14px; }
+.claim__text { font-size: 16px; line-height: 1.6; max-width: 46ch; }
+.claim__text + .claim__text { margin-top: 10px; }
 .badge__title { font-family: var(--font-ui); font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; line-height: 1.25; }
 .badge__text { font-size: 13px; line-height: 1.5; color: var(--ink); max-width: 26ch; }
 
@@ -1453,7 +1467,9 @@ body.has-dialog { overflow: hidden; }
     .check__grid { grid-template-columns: minmax(0, 1fr) 72px 104px; }
 }
 @media (min-width: 1024px) {
-    .badges { grid-template-columns: repeat(4, 1fr); }   /* qualifications: four across */
+    .badges { grid-template-columns: repeat(3, 1fr); max-width: 1040px; margin-inline: auto; }   /* qualifications: three across, centred */
+    .claim { grid-template-columns: 1.35fr 1fr; align-items: center; }
+    .claim__body { padding: 32px 40px 32px 8px; }
 
     /* footer: three columns, legal row and credit row inline */
     .site-footer { padding: 90px var(--gutter) 40px; }

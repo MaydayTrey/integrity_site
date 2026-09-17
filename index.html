@@ -958,12 +958,33 @@
                         <h3 class="badge__title">Cali Vinyl Certified Installer</h3>
                         <p class="badge__text">Factory-certified on Cali luxury vinyl plank, so the warranty holds.</p>
                     </li>
-                    <li class="badge">
-                        <span class="badge__mark badge__mark--claim" aria-hidden="true"></span>
-                        <h3 class="badge__title">Insurance Claims</h3>
-                        <p class="badge__text">Experienced working with adjusters on storm and water damage claims.</p>
-                    </li>
                 </ul>
+
+                <!--INSURANCE CLAIMS: a card under the three badges. The photo is the
+                    same before/after component as Our Work (script.js wirePair wires
+                    every .pair); qualsIntro plays it to After once when the card
+                    arrives. COPY IS A DRAFT: confirm the claims process with Phil.-->
+                <article class="claim" aria-labelledby="claim-title">
+                    <div class="pair claim__pair">
+                        <figure class="pair__figure">
+                            <div class="pair__media">
+                                <img class="pair__before" src="assets/claim-before.webp" width="1000" height="750" loading="lazy" decoding="async" alt="Commercial entrance after damage: the front boarded up with plywood and caution tape across the porch">
+                                <img class="pair__after" src="assets/claim-after.webp" width="1000" height="750" loading="lazy" decoding="async" alt="The same entrance rebuilt: new siding, stone veneer, a new porch roof and wood columns">
+                                <div class="pair__rail" aria-hidden="true"><div class="pair__rail-fill"></div></div>
+                                <div class="pair__switch" role="group" aria-label="Before or after">
+                                    <button class="pair__opt pair__opt--before is-on" type="button" aria-pressed="true">Before</button>
+                                    <button class="pair__opt pair__opt--after" type="button" aria-pressed="false">After</button>
+                                </div>
+                            </div>
+                        </figure>
+                    </div>
+                    <div class="claim__body">
+                        <p class="section__eyebrow">Insurance claims</p>
+                        <h3 class="claim__title" id="claim-title">We handle the claim side too</h3>
+                        <p class="claim__text">When the damage is covered by insurance, we work directly with your adjuster. We document the damage, write up the scope and the estimate, and rebuild once the claim is approved.</p>
+                        <p class="claim__text">Storm, water, and impact damage, for homes and commercial properties alike.</p>
+                    </div>
+                </article>
             </div>
         </section>
 

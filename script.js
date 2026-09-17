@@ -1695,11 +1695,12 @@ function qualsIntro() {
     /* first and third start high (the first highest), second and fourth
        start low (the fourth lowest): each pair a little different */
     const wide = window.matchMedia("(min-width: 1024px)").matches;
-    const offsets = wide ? [-280, 230, -210, 280] : [-120, 100, -90, 120];   /* two across: shorter columns, shorter sweep */
+    const offsets = wide ? [-280, 230, -210] : [-120, 100, -90];   /* narrow: shorter columns, shorter sweep */
+    const row = section.querySelector(".badges");                    /* the triggers follow the badge row: the claims card below makes the section taller than a screen */
     const badges = [...section.querySelectorAll(".badge")];
     const slides = badges.map((badge, i) => gsap.fromTo(badge, { y: offsets[i % offsets.length] }, {
         y: 0, ease: "none",
-        scrollTrigger: { trigger: section, start: "top 90%", end: "center 50%", scrub: 0.6 }
+        scrollTrigger: { trigger: row, start: "top 110%", end: "center 62%", scrub: 0.6 }
     }));
     /* once they meet, they lock: the scroll no longer moves them, so
        scrolling back up cannot fan them out over the revealed head */
@@ -1715,13 +1716,23 @@ function qualsIntro() {
     const words = SplitText.create(title, { type: "words", mask: "words", wordsClass: "qword" });
     gsap.set(words.words, { yPercent: 110 });
     gsap.timeline({
-        scrollTrigger: { trigger: section, start: "center 52%", once: true },
+        scrollTrigger: { trigger: row, start: "center 64%", once: true },
         onStart: lock,
         onComplete() { words.revert(); }
     })
     .to(eyebrow, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" })
     .to(words.words, { yPercent: 0, duration: 0.6, ease: "power3.out", stagger: 0.14 }, "<0.1")
     .to(lede, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, "-=0.2");
+
+    /* the claims card rises in, then plays its own before-to-after once */
+    const claim = section.querySelector(".claim");
+    if (claim) {
+        gsap.set(claim, { autoAlpha: 0, y: 40 });
+        ScrollTrigger.create({ trigger: claim, start: "top 82%", once: true, onEnter() {
+            gsap.to(claim, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out", clearProps: "transform" });
+            gsap.delayedCall(1.3, () => { if (!claim.querySelector(".pair").classList.contains("is-after")) claim.querySelector(".pair__opt--after").click(); });
+        } });
+    }
 }
 
 /* ---------- SECTION FADE-INS (ScrollTrigger) ----------
