@@ -227,6 +227,18 @@ function sectionFades() {
         fadeTo(link.getAttribute("href"), target);
     });
 
+    /* the home control: the same fade, back to the very top */
+    const home = document.querySelector(".home-btn");
+    if (home) home.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (busy) return;
+        busy = true;
+        gsap.timeline({ onComplete() { busy = false; } })
+            .to(veil, { autoAlpha: 1, duration: 0.28, ease: "power2.in" })
+            .add(() => { window.scrollTo({ top: 0, behavior: "instant" }); history.pushState(null, "", location.pathname + location.search); ScrollTrigger.update(); })
+            .to(veil, { autoAlpha: 0, duration: 0.55, ease: "power2.out" }, "+=0.05");
+    });
+
     /* the service blocks: same fade, but landing on the filter row so the
        chosen photos are what you arrive at (ourWork has already picked the filter) */
     document.querySelectorAll("[data-goto-filter]").forEach((link) => {
@@ -264,6 +276,41 @@ function rollingText(el) {
     el.addEventListener("mouseleave", () => rollDown.restart());
     el.addEventListener("focus",      () => rollUp.restart());
     el.addEventListener("blur",       () => rollDown.restart());
+}
+
+/* ---------- HOME CONTROL (from the Homicidal Fitness site) ----------
+   Appears once the first screen of the hero is scrolled off. Its colour
+   comes from a probe of whatever is actually painted under it: take the
+   topmost element at its centre (skipping itself), walk up to the first
+   opaque background and measure its luminance. Photos sit in dark (ink)
+   boxes, so they read as dark. Red over light, white over dark. */
+function homeButton() {
+    const btn = document.querySelector(".home-btn");
+    if (!btn) return;
+    function bgIsLight(x, y) {
+        let node = document.elementsFromPoint(x, y).find((el) => !el.closest(".home-btn") && !el.closest(".veil"));
+        if (node && node.tagName === "IMG") return false;                    /* a photo: treat as dark */
+        while (node && node !== document.documentElement) {
+            const m = getComputedStyle(node).backgroundColor.match(/rgba?\((\d+), (\d+), (\d+)(?:, ([\d.]+))?\)/);
+            if (m && (m[4] === undefined || +m[4] > 0.4)) return (0.299 * +m[1] + 0.587 * +m[2] + 0.114 * +m[3]) / 255 > 0.6;
+            node = node.parentElement;
+        }
+        return true;                                                         /* nothing opaque found: the page is white */
+    }
+    let queued = false;
+    function update() {
+        queued = false;
+        const past = window.scrollY > window.innerHeight * 0.85;
+        btn.classList.toggle("visible", past);
+        if (!past) return;
+        const r = btn.getBoundingClientRect();
+        btn.classList.toggle("on-light", bgIsLight(r.left + r.width / 2, r.top + r.height / 2));
+    }
+    const ask = () => { if (!queued) { queued = true; requestAnimationFrame(update); } };
+    window.addEventListener("scroll", ask, { passive: true });
+    window.addEventListener("resize", ask);
+    setInterval(ask, 500);                  /* things change under it without a scroll too (a band's photo wiping in, a card fading) */
+    update();
 }
 
 /* ---------- HERO ON SCROLL ----------
@@ -1706,7 +1753,7 @@ document.fonts.ready.then(() => {
     serviceMap();
     contactForm();
     shieldCard();
-    heroScroll(); philMorph();
+    homeButton(); heroScroll(); philMorph();
     stackCycle();
     philStory();
     ctaArrow();

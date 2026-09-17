@@ -181,6 +181,26 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .nav__cta { margin-top: 24px; align-self: flex-start; }
 
+/* ---------- HOME CONTROL ----------
+   Fixed bottom left. Hidden over the hero (.visible comes from script.js);
+   its colour follows the background under it: white over dark sections and
+   photos, Integrity red (.on-light) over white and grey ones. */
+.home-btn {
+    position: fixed; left: 18px; bottom: 18px; z-index: 45;      /* under the header and its menu (50) */
+    width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+    color: var(--white); opacity: 0; visibility: hidden;
+    filter: drop-shadow(0 1px 2px rgba(35, 31, 32, .45));
+    transition: opacity .35s ease, visibility .35s, color .4s, filter .4s;
+}
+.home-btn.visible { opacity: 1; visibility: visible; }
+.home-btn.on-light { color: var(--red); filter: none; }
+.home-btn svg { display: block; width: 26px; height: 26px; }
+.home-btn .home-fill { opacity: 0; transition: opacity .3s ease; }
+.home-btn:hover .home-fill, .home-btn:focus-visible .home-fill { opacity: 1; }
+.home-btn:focus-visible { outline: 3px solid currentColor; outline-offset: 2px; }
+body.has-dialog .home-btn { visibility: hidden; }
+@media (prefers-reduced-motion: reduce) { .home-btn, .home-btn .home-fill { transition: none; } }
+
 /* ---------- HERO ---------- */
 .hero {
     position: relative; isolation: isolate;
