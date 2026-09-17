@@ -548,6 +548,16 @@ function reviewCarousel() {
     }
     section.classList.add("is-carousel");
 
+    /* a red rule between every pair of cards (decorative, carousel only). They
+       are plain flow items in the column, so they travel with the cards but are
+       not scaled by the depth effect, and the card centres below still come
+       from offsetTop, rules included. */
+    cards.slice(1).forEach((card) => {
+        const rule = document.createElement("li");
+        rule.className = "reviews__rule"; rule.setAttribute("aria-hidden", "true"); rule.setAttribute("role", "presentation");
+        card.before(rule);
+    });
+
     /* The review text leaves its photo and lives in the head (.reviews-
        current), only the active one shown (moving nodes keeps the
        See-the-job wiring): beside the window from 768px, above it on
@@ -611,6 +621,7 @@ function reviewCarousel() {
        replay on the next pass down. */
     function setCentred(i, dir) {
         if (i === revealed) return;
+        cards.forEach((c, k) => c.classList.toggle("is-focus", k === i));      /* the red frame follows the card in the middle */
         if (revealed >= 0 && dir < 0) conceal(revealed);
         if (i >= 0) reveal(i);
         revealed = i;
@@ -629,6 +640,7 @@ function reviewCarousel() {
         gsap.set(column, { y: 0, paddingTop: 0, paddingBottom: 0 });
         layers.filter(Boolean).forEach((w) => { gsap.killTweensOf(w); w.p = 0; render(w); });
         revealed = -1;
+        cards.forEach((c) => c.classList.remove("is-focus"));          /* a rebuild (resize) starts with nothing in focus */
 
         const H = win.clientHeight;
         /* phones: each photo fills most of the window (the window's height

@@ -599,6 +599,30 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .is-carousel .reviews-layout { height: 100%; grid-template-rows: auto 1fr; min-height: 0; }
 .is-carousel .reviews-head { margin-bottom: 0; }
 .is-carousel .reviews-window { min-height: 0; overflow: hidden; }
+/* THE RED HAIRLINES (carousel mode). Two rails run down the sides of the
+   column and FADE OUT towards the top and bottom of the window (a gradient,
+   not a hard stop); a rule sits between every pair of cards (script.js adds
+   those li.reviews__rule, so the markup and the static list stay clean) and
+   travels with them, fading at its two ends the same way. The rails are
+   behind the cards. */
+.is-carousel .reviews-window::before, .is-carousel .reviews-window::after {
+    content: ""; position: absolute; top: 0; bottom: 0; width: 1px; z-index: 0;
+    background: linear-gradient(to bottom, transparent 0%, var(--red-dark) 22%, var(--red-dark) 78%, transparent 100%);
+    opacity: .6;
+}
+.is-carousel .reviews-window::before { left: 0; }
+.is-carousel .reviews-window::after  { right: 0; }
+.is-carousel .reviews { position: relative; z-index: 1; padding-inline: 16px; }      /* the cards sit just inside the rails */
+.reviews__rule {
+    flex: none; height: 1px; margin-inline: -16px; list-style: none; opacity: .6;
+    background: linear-gradient(to right, transparent 0%, var(--red-dark) 14%, var(--red-dark) 86%, transparent 100%);
+}
+/* THE CARD IN FOCUS (the one the scroll has brought to the middle) lifts off
+   the column on a soft shadow. No coloured frame: a solid red border around
+   it was tried and dropped. */
+.is-carousel .review { box-shadow: 0 0 0 rgba(35, 31, 32, 0); transition: box-shadow .4s var(--ease-out); }
+.is-carousel .review.is-focus { box-shadow: 0 22px 44px rgba(35, 31, 32, .34); z-index: 2; }
+@media (prefers-reduced-motion: reduce) { .is-carousel .review { transition: none; } }
 .is-carousel .review { min-height: 300px; }
 .is-carousel .section__lede { display: none; }   /* phone height budget: the review text takes its place */
 
@@ -1471,6 +1495,8 @@ body.has-dialog { overflow: hidden; }
     .reviews-vprogress__fill { position: absolute; inset: 0; background: linear-gradient(to bottom, var(--red), var(--red-dark)); transform-origin: top; transform: scaleY(0); }
     .reviews-vprogress__total { color: var(--grey-700); }
     .is-carousel .review { min-height: 260px; }
+    .is-carousel .reviews { padding-inline: 10px; }
+    .reviews__rule { margin-inline: -10px; }
 }
 /* short phones: the quote is clamped so the photo keeps a usable window */
 @media (max-width: 767px) and (max-height: 700px) {
