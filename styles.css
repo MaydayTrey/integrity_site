@@ -255,14 +255,6 @@ body.has-dialog .home-btn { visibility: hidden; }
     padding: calc(var(--nav-h) + 40px) var(--gutter) 22px;
     display: flex; flex-direction: column; gap: 18px;
 }
-.hero__socials { display: flex; gap: 10px; }
-.hero__social {
-    display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%;
-    color: var(--white); background: rgba(35, 31, 32, .42); box-shadow: inset 0 0 0 2px rgba(209, 211, 212, .45);
-    transition: background-color .25s, box-shadow .25s, transform .25s var(--ease-out);
-}
-.hero__social svg { width: 20px; height: 20px; }
-.hero__social:hover, .hero__social:focus-visible { background: var(--red); box-shadow: inset 0 0 0 2px var(--red); transform: translateY(-2px); }
 /* headline + note: one block that keeps the content column's rhythm */
 .hero__copy { display: flex; flex-direction: column; gap: inherit; }
 .hero__title {
@@ -292,7 +284,7 @@ body.has-dialog .home-btn { visibility: hidden; }
 .hero__note {
     font-family: var(--font-ui); font-weight: 300; font-size: 15px; line-height: 1.5;
     color: var(--grey-300);
-    border-left: 4px solid var(--red); padding-left: 14px;
+    border-left: 4px solid var(--red); padding: 12px 0 12px 14px;      /* the vertical padding is what makes the red bar stand taller than the line of text */
     max-width: 60ch;
 }
 /* side by side when there is room; each button needs ~140px, so on a
@@ -327,6 +319,14 @@ body.has-dialog .home-btn { visibility: hidden; }
    so it carries no leading dot */
 .trust__item:nth-child(3) { flex-basis: 100%; justify-content: center; }
 .trust__icon { display: none; width: 20px; height: 20px; flex: none; }
+
+/* ---------- FOLLOW BAND: a second strip under the credentials ---------- */
+.follow { background: var(--white); border-top: 1px solid var(--grey-300); padding: 14px var(--gutter); text-align: center; }
+.follow__text { font-family: var(--font-body); font-size: 14px; line-height: 1.9; letter-spacing: .02em; color: var(--ink); }
+.follow__link { display: inline-flex; align-items: center; gap: 7px; vertical-align: middle; font-weight: 600; color: var(--red-dark); border-bottom: 2px solid transparent; transition: border-color .25s; }
+.follow__link:hover, .follow__link:focus-visible { border-bottom-color: currentColor; }
+.follow__icon { width: 20px; height: 20px; flex: none; }
+@media (min-width: 768px) { .follow { padding: 16px var(--gutter); } .follow__text { font-size: 16px; } .follow__icon { width: 22px; height: 22px; } }
 
 /* ---------- SECTION SHELLS ---------- */
 .section {
@@ -1384,7 +1384,7 @@ body.has-dialog { overflow: hidden; }
         gap: 26px;
     }
     .hero__title { font-size: clamp(60px, 6.2vw, 96px); line-height: .94; max-width: 760px; }
-    .hero__note { font-size: clamp(17px, 1.5vw, 21px); padding-left: 18px; max-width: 760px; }
+    .hero__note { font-size: clamp(17px, 1.5vw, 21px); padding: 16px 0 16px 18px; max-width: 760px; }
     .hero__actions {
         margin-top: auto;                     /* pushes the buttons to the bottom edge */
         justify-content: space-between;
