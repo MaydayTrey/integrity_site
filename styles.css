@@ -598,7 +598,15 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .is-carousel .reviews-layout { height: 100%; grid-template-rows: auto 1fr; min-height: 0; }
 .is-carousel .reviews-head { margin-bottom: 0; }
-.is-carousel .reviews-window { min-height: 0; overflow: hidden; }
+.is-carousel .reviews-window {
+    min-height: 0; overflow: hidden;
+    /* ONE FADE FOR EVERYTHING IN THE WINDOW: the photos and the two rails
+       are masked together, so the pictures fade out on exactly the line
+       where the red rails do. */
+    --fade: 16%;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 var(--fade), #000 calc(100% - var(--fade)), transparent 100%);
+            mask-image: linear-gradient(to bottom, transparent 0%, #000 var(--fade), #000 calc(100% - var(--fade)), transparent 100%);
+}
 /* THE RED HAIRLINES (carousel mode). Two rails run down the sides of the
    column and FADE OUT towards the top and bottom of the window (a gradient,
    not a hard stop); a rule sits between every pair of cards (script.js adds
@@ -607,8 +615,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
    behind the cards. */
 .is-carousel .reviews-window::before, .is-carousel .reviews-window::after {
     content: ""; position: absolute; top: 0; bottom: 0; width: 1px; z-index: 0;
-    background: linear-gradient(to bottom, transparent 0%, var(--red-dark) 22%, var(--red-dark) 78%, transparent 100%);
-    opacity: .6;
+    background: var(--red-dark); opacity: .6;       /* solid: the window's mask does the fading */
 }
 .is-carousel .reviews-window::before { left: 0; }
 .is-carousel .reviews-window::after  { right: 0; }
@@ -1119,7 +1126,24 @@ body.has-dialog { overflow: hidden; }
 .divider--mirror .divider__media::after { background: linear-gradient(90deg, rgba(35,31,32,.45) 0%, rgba(35,31,32,.25) 40%, rgba(35,31,32,.55) 100%); }
 .divider--mirror::before { clip-path: polygon(0 var(--slant), 100% 0, 100% 5px, 0 calc(var(--slant) + 5px)); }
 @media (min-width: 1024px) { .divider { --slant: 6vw; } }
-.section--reviews   { background: var(--white); }
+.section--reviews   { background: var(--white); position: relative; isolation: isolate; }
+/* A WHISPER OF TILE behind the words: a photo of white tile at a few percent,
+   fading out before it reaches the photo column (whole section on phones,
+   where the words sit above the photos). */
+.section--reviews::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background: url("assets/tile-accent-800.webp") center / 520px auto;
+    opacity: .1;
+    -webkit-mask-image: linear-gradient(to bottom, #000 25%, transparent 58%);
+            mask-image: linear-gradient(to bottom, #000 25%, transparent 58%);
+}
+@media (min-width: 1024px) {
+    .section--reviews::before {
+        right: 46%; background: url("assets/tile-accent-1400.webp") left center / 900px auto;
+        -webkit-mask-image: linear-gradient(to right, #000 62%, transparent 100%);
+                mask-image: linear-gradient(to right, #000 62%, transparent 100%);
+    }
+}
 .section--phil      { background: var(--grey-100); overflow: clip; }   /* clip: the photo's red bar hangs 4px outside it */
 .section--areas     { background: var(--white); }
 .section--quals     { background: var(--white); min-height: 100svh; display: grid; align-content: center; }   /* a full screen: the badges converge as it centres */
@@ -1495,6 +1519,7 @@ body.has-dialog { overflow: hidden; }
     .reviews-vprogress__fill { position: absolute; inset: 0; background: linear-gradient(to bottom, var(--red), var(--red-dark)); transform-origin: top; transform: scaleY(0); }
     .reviews-vprogress__total { color: var(--grey-700); }
     .is-carousel .review { min-height: 260px; }
+    .is-carousel .reviews-window { --fade: 7%; }      /* the card fills most of the window here: a short fade keeps it whole */
     .is-carousel .reviews { padding-inline: 10px; }
     .reviews__rule { margin-inline: -10px; }
 }
