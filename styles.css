@@ -330,7 +330,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
    from the SVGs' bounding boxes, stroke included) and the tile is that
    rectangle plus --pad. Re-measure if an icon file changes. */
 .service__icon::before {
-    --pad: 4px;
+    --pad: 7px;                            /* enough that a square corner in the drawing (the shower's) clears the tile's rounded corner */
     content: ""; position: absolute; border-radius: 9px;
     inset: calc(var(--at) - var(--pad)) calc(var(--ar) - var(--pad)) calc(var(--ab) - var(--pad)) calc(var(--al) - var(--pad));
     background: var(--grad-brand);
