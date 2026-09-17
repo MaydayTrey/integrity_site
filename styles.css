@@ -1066,16 +1066,23 @@ body.has-dialog .home-btn { visibility: hidden; }
     box-shadow: 0 18px 40px rgba(35, 31, 32, .3);
     font-size: 16px; line-height: 1.6;
 }
+/* from 1024px: a contained two-column row, not a full-bleed split. The words
+   on the left, a modest 4:3 photo on the right with the red card lapping its
+   lower left corner. The V foot still runs the full width. */
 @media (min-width: 1024px) {
     .claim { --below: var(--grey-900); }                       /* the contact section is grey from here up */
-    .claim__inner { grid-template-columns: 46% 1fr; min-height: min(86svh, 760px); padding-bottom: 0; }
-    .claim__panel { padding: 88px 56px 300px var(--gutter); }
-    .claim__media { aspect-ratio: auto; height: 100%; }
+    .claim__inner {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 460px); column-gap: 72px; align-items: center;
+        padding: 88px max(var(--gutter), calc((100% - 1080px) / 2)) calc(var(--vee) + 96px);
+    }
+    .claim__panel { padding: 0; grid-row: 1 / span 2; }
+    .claim__media { grid-column: 2; grid-row: 1; }
     .claim__card {
-        position: absolute; left: 30%; width: min(42%, 600px); bottom: calc(var(--vee) + 56px); margin: 0;
-        padding: 30px 34px; font-size: 17px;
+        grid-column: 2; grid-row: 2; justify-self: start; width: 86%; margin: -44px 0 0 -48px;
+        padding: 20px 24px; font-size: 15px;
     }
     .claim__lede { font-size: 17px; }
+}
 }
 .badge__title { font-family: var(--font-ui); font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; line-height: 1.25; }
 .badge__text { font-size: 13px; line-height: 1.5; color: var(--ink); max-width: 26ch; }
