@@ -1430,24 +1430,19 @@ body.has-dialog { overflow: hidden; }
    rises in, and slides away once a choice is made. */
 .cookies {
     position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 58;
-    display: grid; gap: 14px; padding: 18px 18px 16px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 10px 10px 16px;
     background: var(--white); color: var(--ink); border-top: 3px solid var(--red);
-    box-shadow: 0 18px 50px rgba(35, 31, 32, .35), 0 2px 8px rgba(35, 31, 32, .12);
+    box-shadow: 0 14px 40px rgba(35, 31, 32, .32), 0 2px 8px rgba(35, 31, 32, .12);
     transform: translateY(calc(100% + 24px)); transition: transform .6s cubic-bezier(.65, 0, .35, 1);
 }
 .cookies[hidden] { display: none; }
 .cookies.is-in { transform: none; transition: transform .6s var(--ease-out); }
-.cookies__title { font-family: var(--font-ui); font-weight: 600; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 6px; }
-.cookies__text { font-size: 14px; line-height: 1.55; max-width: 70ch; }
-.cookies__actions { display: flex; gap: 10px; }
-.cookies__btn { flex: 1 1 0; min-height: 46px; font-size: 13.5px; padding: 12px 18px; box-shadow: none; }
-.cookies__btn--decline { color: var(--ink); box-shadow: inset 0 0 0 2px var(--grey-300); background: var(--white); }
-.cookies__btn--decline:hover, .cookies__btn--decline:focus-visible { box-shadow: inset 0 0 0 2px var(--ink); }
-@media (min-width: 768px) {
-    .cookies { left: 24px; right: auto; bottom: 24px; width: min(560px, calc(100% - 48px)); padding: 22px 24px 20px; }
-    .cookies__actions { justify-content: flex-end; }
-    .cookies__btn { flex: 0 0 auto; min-width: 130px; }
-}
+.cookies__text { font-family: var(--font-ui); font-weight: 500; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
+.cookies__actions { display: flex; gap: 8px; flex: none; }
+.cookies .cookies__btn { min-height: 40px; font-size: 12.5px; padding: 10px 16px; box-shadow: none; }      /* two classes: holds its size against the big desktop .btn rules */
+.cookies .cookies__btn--decline { color: var(--ink); box-shadow: inset 0 0 0 2px var(--grey-300); background: var(--white); }
+.cookies .cookies__btn--decline:hover, .cookies .cookies__btn--decline:focus-visible { box-shadow: inset 0 0 0 2px var(--ink); }
+@media (min-width: 768px) { .cookies { left: 24px; right: auto; bottom: 24px; gap: 28px; padding: 12px 12px 12px 20px; } }
 @media (prefers-reduced-motion: reduce) { .cookies, .cookies.is-in { transition: none; } }
 
 /* ---------- VEIL: the dip between sections on a menu click (script.js) ---------- */
