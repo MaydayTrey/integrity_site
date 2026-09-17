@@ -1437,12 +1437,24 @@ body.has-dialog { overflow: hidden; }
 }
 .cookies[hidden] { display: none; }
 .cookies.is-in { transform: none; transition: transform .6s var(--ease-out); }
+.cookies__body { display: flex; align-items: center; gap: 10px; }
+/* the cookie: the SVG is the stencil, the brand gradient the paint (as the service icons) */
+.cookies__icon { flex: none; width: 26px; aspect-ratio: 1; background: var(--grad-brand); -webkit-mask: url("assets/icon-cookie.svg") center / contain no-repeat; mask: url("assets/icon-cookie.svg") center / contain no-repeat; }
 .cookies__text { font-family: var(--font-ui); font-weight: 500; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
 .cookies__actions { display: flex; gap: 8px; flex: none; }
 .cookies .cookies__btn { min-height: 40px; font-size: 12.5px; padding: 10px 16px; box-shadow: none; }      /* two classes: holds its size against the big desktop .btn rules */
 .cookies .cookies__btn--decline { color: var(--ink); box-shadow: inset 0 0 0 2px var(--grey-300); background: var(--white); }
 .cookies .cookies__btn--decline:hover, .cookies .cookies__btn--decline:focus-visible { box-shadow: inset 0 0 0 2px var(--ink); }
 @media (min-width: 768px) { .cookies { left: 24px; right: auto; bottom: 24px; gap: 28px; padding: 12px 12px 12px 20px; } }
+@media (max-width: 479px) {      /* phones: everything on one line */
+    .cookies { gap: 8px; padding: 8px 8px 8px 12px; }
+    .cookies__body { gap: 8px; }
+    .cookies__icon { width: 22px; }
+    .cookies__text { font-size: 11.5px; letter-spacing: .04em; white-space: nowrap; }
+    .cookies__actions { gap: 6px; }
+    .cookies .cookies__btn { padding: 10px 11px; font-size: 12px; letter-spacing: .06em; }
+}
+@media (max-width: 359px) { .cookies { left: 8px; right: 8px; padding-left: 10px; } .cookies__icon { width: 20px; } .cookies__text { font-size: 10.5px; letter-spacing: .02em; } .cookies .cookies__btn { padding: 10px 8px; font-size: 11.5px; } }
 @media (prefers-reduced-motion: reduce) { .cookies, .cookies.is-in { transition: none; } }
 
 /* ---------- VEIL: the dip between sections on a menu click (script.js) ---------- */
