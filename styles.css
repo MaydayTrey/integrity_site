@@ -311,32 +311,35 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
    custom property, or a gradient itself, cannot be transitioned) */
 @property --ico-a { syntax: "<color>"; inherits: false; initial-value: #ED1C24; }
 @property --ico-b { syntax: "<color>"; inherits: false; initial-value: #BA1E23; }
-.service__icon {
-    position: relative; width: 64px; aspect-ratio: 1;
-    --tile: 5px;                           /* the hover tile hugs the icon: this much past it on every side */
-}
-/* THE ICON is painted by ::after: a box the size of the tile, masked by the
-   SVG (the mask is inset by --tile, so the drawing stays icon-sized). Its
+.service__icon { position: relative; width: 64px; aspect-ratio: 1; }
+/* THE ICON is painted by ::after: the icon's box, masked by the SVG. Its
    fill is the brand gradient built from --ico-a / --ico-b; on hover both
    fade to white. */
 .service__icon::after {
-    content: ""; position: absolute; inset: calc(var(--tile) * -1);
+    content: ""; position: absolute; inset: 0;
     background: linear-gradient(90deg, var(--ico-a) 0%, var(--ico-a) 50%, var(--ico-b) 100%);
-    -webkit-mask: var(--icon) center / calc(100% - var(--tile) * 2) no-repeat;
-            mask: var(--icon) center / calc(100% - var(--tile) * 2) no-repeat;
+    -webkit-mask: var(--icon) center / contain no-repeat;
+            mask: var(--icon) center / contain no-repeat;
     transition: --ico-a .35s ease, --ico-b .35s ease;
 }
-/* THE TILE is ::before: the same box in brand red, faded out at rest. On
-   hover it fades in while the lines fade to white: the colours swap. */
+/* THE TILE is ::before: brand red with rounded corners, faded out at rest;
+   on hover it fades in while the lines fade to white. It HUGS THE DRAWING,
+   not the square box: each SVG's artwork sits differently inside its box
+   (the kitchen and bathroom are wide and short, the other two near square),
+   so each icon carries its artwork's insets (--at --ar --ab --al, measured
+   from the SVGs' bounding boxes, stroke included) and the tile is that
+   rectangle plus --pad. Re-measure if an icon file changes. */
 .service__icon::before {
-    content: ""; position: absolute; inset: calc(var(--tile) * -1);
+    --pad: 4px;
+    content: ""; position: absolute; border-radius: 9px;
+    inset: calc(var(--at) - var(--pad)) calc(var(--ar) - var(--pad)) calc(var(--ab) - var(--pad)) calc(var(--al) - var(--pad));
     background: var(--grad-brand);
     opacity: 0; transition: opacity .35s ease;
 }
-.service__icon--kitchen  { --icon: url("assets/icon-kitchen.svg"); }
-.service__icon--bathroom { --icon: url("assets/icon-bathroom.svg"); }
-.service__icon--basement { --icon: url("assets/icon-basement.svg"); }
-.service__icon--other    { --icon: url("assets/icon-other.svg"); }
+.service__icon--kitchen  { --icon: url("assets/icon-kitchen.svg"); --at: 11.48%; --ar: 3.7%; --ab: 11.48%; --al: 3.7%; }
+.service__icon--bathroom { --icon: url("assets/icon-bathroom.svg"); --at: 10.69%; --ar: 3.7%; --ab: 10.68%; --al: 3.7%; }
+.service__icon--basement { --icon: url("assets/icon-basement.svg"); --at: 3.7%; --ar: 4.54%; --ab: 3.71%; --al: 4.54%; }
+.service__icon--other    { --icon: url("assets/icon-other.svg"); --at: 3.7%; --ar: 4.02%; --ab: 3.71%; --al: 4.02%; }
 .service__title {
     font-family: var(--font-ui); font-weight: 600; font-size: 17px;
     letter-spacing: .1em; text-transform: uppercase; line-height: 1.2;
