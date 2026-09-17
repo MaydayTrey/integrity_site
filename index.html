@@ -968,33 +968,30 @@
                         <p class="badge__text">Factory-certified on Cali luxury vinyl plank, so the warranty holds.</p>
                     </li>
                 </ul>
+            </div>
+        </section>
 
-                <!--INSURANCE: a fourth badge on the left ("we handle insurance too"),
-                    and to its right the photos of a claim job, before and after side by
-                    side, with a few lines on how claims are handled. No card, no toggle.
-                    COPY IS A DRAFT: confirm the claims process with Phil.-->
-                <div class="claim">
-                    <div class="badge claim__badge">
-                        <span class="badge__mark badge__mark--claim" aria-hidden="true"></span>
-                        <h3 class="badge__title">We Handle Insurance Too</h3>
-                        <p class="badge__text">Experienced working with adjusters on storm, water, and impact damage claims.</p>
-                    </div>
-                    <div class="claim__work">
-                        <div class="claim__photos">
-                            <figure class="claim__photo">
-                                <img src="assets/claim-before.webp" width="1000" height="750" loading="lazy" decoding="async" alt="Commercial entrance after damage: the front boarded up with plywood and caution tape across the porch">
-                                <figcaption class="claim__tag">Before</figcaption>
-                            </figure>
-                            <figure class="claim__photo">
-                                <img src="assets/claim-after.webp" width="1000" height="750" loading="lazy" decoding="async" alt="The same entrance rebuilt: new siding, stone veneer, a new porch roof and wood columns">
-                                <figcaption class="claim__tag claim__tag--after">After</figcaption>
-                            </figure>
-                        </div>
-                        <div class="claim__body">
-                            <p class="claim__text">When the damage is covered by insurance, we work directly with your adjuster. We document the damage, write up the scope and the estimate, and rebuild once the claim is approved.</p>
-                            <p class="claim__text">Homes and commercial properties alike.</p>
-                        </div>
-                    </div>
+        <!--INSURANCE: a full-width split block. Left, a white panel with the
+            information; right, one photo that plays the damage turning into
+            the repair on its own (script.js, claimPlay: no buttons). A red
+            card straddles the two with how a claim runs. The block's foot is
+            the hero's shield point: a shallow V with the red rule along it.
+            COPY IS A DRAFT: confirm the claims process with Phil.-->
+        <section class="claim" aria-labelledby="claim-title">
+            <div class="claim__inner">
+                <div class="claim__panel">
+                    <span class="badge__mark badge__mark--claim claim__mark" aria-hidden="true"></span>
+                    <p class="section__eyebrow">Insurance claims</p>
+                    <h2 class="claim__title" id="claim-title">We handle insurance too</h2>
+                    <p class="claim__lede">Storm, water, or impact damage, at a home or a commercial property. If it is covered, we can take the job from the first call with your adjuster through to the finished repair.</p>
+                </div>
+                <figure class="claim__media" data-claim>
+                    <img class="claim__img" src="assets/claim-before.webp" width="1000" height="750" loading="lazy" decoding="async" alt="Commercial entrance after damage: the front boarded up with plywood and caution tape across the porch">
+                    <img class="claim__img claim__img--after" src="assets/claim-after.webp" width="1000" height="750" loading="lazy" decoding="async" alt="The same entrance rebuilt: new siding, stone veneer, a new porch roof and wood columns">
+                    <figcaption class="claim__tag" aria-hidden="true"><span class="claim__tag-word">The damage</span><span class="claim__tag-word claim__tag-word--after">The repair</span></figcaption>
+                </figure>
+                <div class="claim__card">
+                    <p>We work directly with your adjuster. We document the damage, write up the scope and the estimate, and rebuild once the claim is approved.</p>
                 </div>
             </div>
         </section>

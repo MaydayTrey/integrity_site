@@ -313,6 +313,35 @@ function homeButton() {
     update();
 }
 
+/* ---------- INSURANCE: the damage turns into the repair ----------
+   One photo, no controls. While the block is on screen a loop plays: hold
+   on the damage, the repair wipes in left to right (one number drives the
+   clip, GSAP would snap an inset string), hold, the repair fades away,
+   again. Off screen it pauses. The panel, photo and card rise in once.
+   Reduced motion: the repair, still. */
+function claimPlay() {
+    const media = document.querySelector("[data-claim]");
+    if (!media) return;
+    const after = media.querySelector(".claim__img--after");
+    if (reduceMotion) { media.classList.add("is-after"); return; }
+    const w = { p: 0 };
+    const draw = () => { after.style.clipPath = `inset(0 ${((1 - w.p) * 100).toFixed(3)}% 0 0)`; };
+    draw();
+    const loop = gsap.timeline({ paused: true, repeat: -1 })
+        .to(w, { p: 1, duration: 1.5, ease: "power2.inOut", onUpdate: draw }, 1.8)
+        .add(() => media.classList.add("is-after"), 2.5)
+        .to(after, { autoAlpha: 0, duration: 0.9, ease: "power1.inOut" }, 7)
+        .add(() => media.classList.remove("is-after"), 7.4)
+        .add(() => { w.p = 0; draw(); }, 7.95)
+        .set(after, { autoAlpha: 1 }, 8);
+    ScrollTrigger.create({ trigger: media, start: "top 80%", end: "bottom 10%", onToggle: (self) => self.isActive ? loop.play() : loop.pause() });
+
+    const parts = [".claim__panel > *", ".claim__card"];
+    gsap.set(parts, { autoAlpha: 0, y: 28 });
+    ScrollTrigger.create({ trigger: ".claim", start: "top 72%", once: true,
+        onEnter: () => gsap.to(parts, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out", stagger: 0.1, clearProps: "transform" }) });
+}
+
 /* ---------- HERO ON SCROLL ----------
    1. The headline and note fade out (and lift a little) BEFORE they reach
       the nav: fully gone by the time their top would touch the logo's
@@ -1723,15 +1752,6 @@ function qualsIntro() {
     .to(eyebrow, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" })
     .to(words.words, { yPercent: 0, duration: 0.6, ease: "power3.out", stagger: 0.14 }, "<0.1")
     .to(lede, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, "-=0.2");
-
-    /* the insurance row rises in: the badge, then the two photos, then the words */
-    const claim = section.querySelector(".claim");
-    if (claim) {
-        const parts = [claim.querySelector(".claim__badge"), ...claim.querySelectorAll(".claim__photo"), claim.querySelector(".claim__body")];
-        gsap.set(parts, { autoAlpha: 0, y: 36 });
-        ScrollTrigger.create({ trigger: claim, start: "top 82%", once: true,
-            onEnter: () => gsap.to(parts, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out", stagger: 0.14, clearProps: "transform" }) });
-    }
 }
 
 /* ---------- SECTION FADE-INS (ScrollTrigger) ----------
@@ -1763,7 +1783,7 @@ document.fonts.ready.then(() => {
     serviceMap();
     contactForm();
     shieldCard();
-    homeButton(); heroScroll(); philMorph();
+    homeButton(); claimPlay(); heroScroll(); philMorph();
     stackCycle();
     philStory();
     ctaArrow();

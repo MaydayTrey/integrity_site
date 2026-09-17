@@ -1026,23 +1026,57 @@ body.has-dialog .home-btn { visibility: hidden; }
    width fits the card */
 .badge__logo { height: 96px; width: 100%; object-fit: contain; }   /* every logo gets the same slot, so the titles line up */
 .badge__logo--wide { object-fit: contain; }                          /* the wide IICRC lockup just letterboxes inside it */
-/* INSURANCE, under the three badges: a fourth badge on the left, the claim
-   job's before and after photos side by side to its right, and a few lines
-   on how claims are handled under them. Same 1040px measure as the badges,
-   so the badge sits under the first column. */
-.claim { display: grid; gap: 28px; max-width: 1040px; margin: 56px auto 0; align-items: center; }
-.claim__photos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.claim__photo { position: relative; margin: 0; }
-.claim__photo img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
-.claim__tag {
-    position: absolute; left: 0; top: 0; padding: 7px 12px;
-    font-family: var(--font-ui); font-weight: 600; font-size: 12px; letter-spacing: .16em; text-transform: uppercase;
-    color: var(--white); background: rgba(35, 31, 32, .78);
+/* INSURANCE: a full-width split block after the qualifications. A white
+   information panel on the left, the claim job's photo on the right (it
+   plays damage to repair by itself), a red card straddling the two. THE FOOT
+   IS THE HERO'S SHIELD POINT: .claim__inner is clipped to a shallow V and a
+   red rule runs along the cut; .claim itself only paints the two corners
+   under the V with the colour of the section that follows. */
+.claim { --vee: clamp(22px, 3.4vw, 62px); --below: var(--white); background: var(--below); }
+.claim:has(+ .section--contact.is-intro) { --below: var(--grey-900); }
+.claim__inner {
+    position: relative; display: grid; background: var(--white);
+    padding-bottom: calc(var(--vee) + 28px);
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--vee)), 50% 100%, 0 calc(100% - var(--vee)));
 }
-.claim__tag--after { background: var(--red-dark); }
-.claim__body { margin-top: 16px; text-align: left; }
-.claim__text { font-size: 15px; line-height: 1.6; max-width: 62ch; }
-.claim__text + .claim__text { margin-top: 8px; }
+.claim__inner::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: calc(var(--vee) + 5px); pointer-events: none; z-index: 3;
+    background: var(--grad-brand-smooth);
+    clip-path: polygon(0 0, 50% var(--vee), 100% 0, 100% 5px, 50% 100%, 0 5px);
+}
+.claim__panel { padding: 56px var(--gutter) 28px; }
+.claim__mark { display: block; width: 64px; margin-bottom: 16px; }
+.claim__title { font-family: var(--font-display); font-weight: 400; font-size: clamp(36px, 4.4vw, 64px); line-height: .98; letter-spacing: .02em; text-transform: uppercase; margin: 6px 0 16px; }
+.claim__lede { font-size: 16px; line-height: 1.65; max-width: 48ch; }
+.claim__media { position: relative; margin: 0; aspect-ratio: 4 / 3; overflow: hidden; background: var(--ink); }
+.claim__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.claim__tag {
+    position: absolute; right: 0; top: 0; z-index: 1; display: grid; padding: 8px 14px;
+    font-family: var(--font-ui); font-weight: 600; font-size: 12px; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--white); background: rgba(35, 31, 32, .78); transition: background-color .4s;
+}
+.claim__tag-word { grid-area: 1 / 1; transition: opacity .4s; }
+.claim__tag-word--after { opacity: 0; }
+.claim__media.is-after .claim__tag { background: var(--red-dark); }
+.claim__media.is-after .claim__tag-word { opacity: 0; }
+.claim__media.is-after .claim__tag-word--after { opacity: 1; }
+.claim__card {
+    position: relative; z-index: 2; margin: -36px 16px 0; padding: 22px 22px;
+    background: var(--grad-brand); color: var(--white); border: 2px solid var(--white);
+    box-shadow: 0 18px 40px rgba(35, 31, 32, .3);
+    font-size: 16px; line-height: 1.6;
+}
+@media (min-width: 1024px) {
+    .claim { --below: var(--grey-900); }                       /* the contact section is grey from here up */
+    .claim__inner { grid-template-columns: 46% 1fr; min-height: min(86svh, 760px); padding-bottom: 0; }
+    .claim__panel { padding: 88px 56px 300px var(--gutter); }
+    .claim__media { aspect-ratio: auto; height: 100%; }
+    .claim__card {
+        position: absolute; left: 30%; width: min(42%, 600px); bottom: calc(var(--vee) + 56px); margin: 0;
+        padding: 30px 34px; font-size: 17px;
+    }
+    .claim__lede { font-size: 17px; }
+}
 .badge__title { font-family: var(--font-ui); font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; line-height: 1.25; }
 .badge__text { font-size: 13px; line-height: 1.5; color: var(--ink); max-width: 26ch; }
 
@@ -1481,8 +1515,6 @@ body.has-dialog { overflow: hidden; }
 @media (min-width: 1024px) {
     .badges { grid-template-columns: repeat(3, 1fr); max-width: 1040px; margin-inline: auto; }
     .badges .badge:last-child:nth-child(odd) { grid-column: auto; }   /* qualifications: three across, centred */
-    .claim { grid-template-columns: 1fr 2fr; gap: 32px; }        /* the badge under column one, the work under two and three */
-    .claim__text { font-size: 16px; }
 
     /* footer: three columns, legal row and credit row inline */
     .site-footer { padding: 90px var(--gutter) 40px; }
