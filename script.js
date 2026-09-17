@@ -651,6 +651,10 @@ function reviewCarousel() {
         column.style.paddingTop    = `${Math.max(H / 2 - first.offsetHeight / 2, 0)}px`;
         column.style.paddingBottom = `${Math.max(H / 2 - last.offsetHeight / 2, 0)}px`;
 
+        /* the window's top fade (photos and rails together) stops short of the centred card */
+        const tallest = Math.max(...cards.map((c) => c.offsetHeight));
+        win.style.setProperty("--fade", Math.round(Math.min(Math.max((H - tallest) / 2 - 14, 10), 80)) + "px");
+
         const centres = cards.map((c) => c.offsetTop + c.offsetHeight / 2 - H / 2);   /* column y = -centre puts card i in the middle */
         tl = gsap.timeline({ defaults: { ease: "none" }, onUpdate: depth });
         const arrive = [];                             /* timeline time at which card i is centred */

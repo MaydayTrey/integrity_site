@@ -593,25 +593,28 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
    pinned), the head sits above (phone) or beside (desktop) a window
    that clips the travelling column, with soft edges top and bottom */
 .section--reviews.is-carousel {
-    height: 100svh; padding: calc(var(--nav-h) + 20px) var(--gutter) 20px;
+    height: 100svh; padding: calc(var(--nav-h) + 20px) var(--gutter) 0;
     display: grid;
 }
 .is-carousel .reviews-layout { height: 100%; grid-template-rows: auto 1fr; min-height: 0; }
 .is-carousel .reviews-head { margin-bottom: 0; }
 .is-carousel .reviews-window {
     min-height: 0; overflow: hidden;
-    /* ONE FADE FOR EVERYTHING IN THE WINDOW: the photos and the two rails
-       are masked together, so the pictures fade out on exactly the line
-       where the red rails do. */
-    --fade: 16%;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 var(--fade), #000 calc(100% - var(--fade)), transparent 100%);
-            mask-image: linear-gradient(to bottom, transparent 0%, #000 var(--fade), #000 calc(100% - var(--fade)), transparent 100%);
+    /* ONE FADE FOR EVERYTHING IN THE WINDOW, at the top only: the photos and
+       the two rails are masked together, so the pictures fade out on exactly
+       the line where the red rails do. script.js sets --fade to the free
+       space above the centred card, so the card in focus is never touched.
+       No fade at the bottom: rails and photos run down to the edge of the
+       screen and, past the pin, in under the slanted band below. */
+    --fade: 48px;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 var(--fade));
+            mask-image: linear-gradient(to bottom, transparent 0, #000 var(--fade));
 }
 /* THE RED HAIRLINES (carousel mode). Two rails run down the sides of the
    column and FADE OUT towards the top and bottom of the window (a gradient,
    not a hard stop); a rule sits between every pair of cards (script.js adds
    those li.reviews__rule, so the markup and the static list stay clean) and
-   travels with them, fading at its two ends the same way. The rails are
+   travels with them, solid from rail to rail. The rails are
    behind the cards. */
 .is-carousel .reviews-window::before, .is-carousel .reviews-window::after {
     content: ""; position: absolute; top: 0; bottom: 0; width: 1px; z-index: 0;
@@ -622,7 +625,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .is-carousel .reviews { position: relative; z-index: 1; padding-inline: 16px; }      /* the cards sit just inside the rails */
 .reviews__rule {
     flex: none; height: 1px; margin-inline: -16px; list-style: none; opacity: .6;
-    background: linear-gradient(to right, transparent 0%, var(--red-dark) 14%, var(--red-dark) 86%, transparent 100%);
+    background: var(--red-dark);      /* solid from rail to rail */
 }
 /* THE CARD IN FOCUS (the one the scroll has brought to the middle) lifts off
    the column on a soft shadow. No coloured frame: a solid red border around
@@ -634,18 +637,32 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .is-carousel .section__lede { display: none; }   /* phone height budget: the review text takes its place */
 
 /* the active review's text, moved into the left column by script.js.
-   On white it drops the glass and echoes the business card's red bar */
+   There it is A WHITE CARD like a reviews widget: the name in red with the
+   stars under it, the Facebook mark top right (every review is from
+   Facebook; the word stays in the markup for screen readers), the quote,
+   then See the job. The footer is display:contents so its name, source
+   and button can take their own cells of the card's grid. */
 .reviews-current { margin-top: 20px; }
 .reviews-current .review__glass {
-    background: none; border: 0; padding: 4px 0 4px 18px;
-    border-left: 4px solid var(--red);
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 16px;
+    padding: 22px 24px 12px;
+    background: var(--white); border: 0; border-top: 3px solid var(--red);
+    box-shadow: 0 14px 34px rgba(35, 31, 32, .13), 0 2px 6px rgba(35, 31, 32, .06);
     -webkit-backdrop-filter: none; backdrop-filter: none;
     color: var(--ink);
 }
 .reviews-current .review__glass::before { display: none; }
+.reviews-current .review__meta { display: contents; }
+.reviews-current .review__name { grid-area: 1 / 1; font-size: 17px; color: var(--red-dark); }
+.reviews-current .review__stars { grid-area: 2 / 1; }
+.reviews-current .review__source {
+    grid-area: 1 / 2 / span 2 / auto; align-self: center;
+    width: 34px; height: 34px; overflow: hidden; font-size: 0; color: transparent;
+    background: url("assets/icon-facebook.svg") center / contain no-repeat;
+}
+.reviews-current .review__quote { grid-area: 3 / 1 / auto / -1; margin-top: 12px; padding-bottom: 10px; }
 .reviews-current .review__quote p { font-size: 17px; }
-.reviews-current .review__source { color: var(--grey-700); }
-.reviews-current .review__job { color: var(--red-dark); }
+.reviews-current .review__job { grid-area: 4 / 1 / auto / -1; justify-self: end; margin: 0; color: var(--red-dark); }
 /* GLASS: a translucent ink tint plus backdrop blur. The blur samples
    the photo behind the panel, so the panel reads as frosted glass
    rather than a grey box. Browsers without backdrop-filter just get
@@ -1122,6 +1139,11 @@ body.has-dialog { overflow: hidden; }
 .divider--mirror { --above: var(--grey-100); --below: var(--white); }
 /* the wide Phil photo: a shorter parallax box (data-grow) and a crop biased to him, low in the frame */
 .divider--phil .divider__photo { object-position: 50% 78%; }
+/* the band under the reviews rides UP over that section's foot by the height
+   of its slant, with nothing painted in its top corner: the tile and the
+   carousel's red rails run on down to the red cut itself, instead of stopping
+   short at a white wedge like the bottom of a box. */
+.divider--phil { z-index: 2; margin-top: calc(-1 * var(--slant)); background: linear-gradient(to bottom, transparent 50%, var(--below) 50%); }
 .divider--mirror .divider__media { clip-path: polygon(0 var(--slant), 100% 0, 100% calc(100% - var(--slant)), 0 100%); }
 .divider--mirror .divider__media::after { background: linear-gradient(90deg, rgba(35,31,32,.45) 0%, rgba(35,31,32,.25) 40%, rgba(35,31,32,.55) 100%); }
 .divider--mirror::before { clip-path: polygon(0 var(--slant), 100% 0, 100% 5px, 0 calc(var(--slant) + 5px)); }
@@ -1502,14 +1524,17 @@ body.has-dialog { overflow: hidden; }
    the window below never jumps. A vertical 01..08 bar runs beside the
    window; the horizontal bar and the hint are desktop-only. */
 @media (max-width: 767px) {
-    .section--reviews.is-carousel { padding-top: calc(var(--nav-h) + 12px); padding-bottom: 14px; }
+    .section--reviews.is-carousel { padding-top: calc(var(--nav-h) + 12px); padding-bottom: 0; }
     .is-carousel .reviews-layout { grid-template-columns: 26px minmax(0, 1fr); grid-template-rows: auto 1fr; gap: 12px 10px; }
     .is-carousel .reviews-head { grid-column: 1 / -1; }
     .is-carousel .reviews-head .section__eyebrow { margin-bottom: 4px; }
     .is-carousel .section__title { font-size: clamp(30px, 8.6vw, 36px); }
     .is-carousel .reviews-progress, .is-carousel .reviews-hint { display: none; }
     .reviews-current { margin-top: 10px; text-align: left; }
-    .reviews-current .review__glass { padding: 2px 0 2px 14px; }
+    .reviews-current .review__glass { padding: 12px 14px 8px; gap: 2px 12px; }
+    .reviews-current .review__name { font-size: 15px; }
+    .reviews-current .review__source { width: 28px; height: 28px; }
+    .reviews-current .review__quote { margin-top: 6px; padding-bottom: 4px; }
     .reviews-current .review__quote p { font-size: 15px; line-height: 1.5; }
     .is-carousel .reviews-vprogress {
         display: flex; flex-direction: column; align-items: center; gap: 8px; min-height: 0;
@@ -1519,7 +1544,6 @@ body.has-dialog { overflow: hidden; }
     .reviews-vprogress__fill { position: absolute; inset: 0; background: linear-gradient(to bottom, var(--red), var(--red-dark)); transform-origin: top; transform: scaleY(0); }
     .reviews-vprogress__total { color: var(--grey-700); }
     .is-carousel .review { min-height: 260px; }
-    .is-carousel .reviews-window { --fade: 7%; }      /* the card fills most of the window here: a short fade keeps it whole */
     .is-carousel .reviews { padding-inline: 10px; }
     .reviews__rule { margin-inline: -10px; }
 }
@@ -1530,7 +1554,6 @@ body.has-dialog { overflow: hidden; }
     .reviews-current { margin-top: 6px; }
     .reviews-current .review__quote p { font-size: 14px; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     .reviews-current .review__name { font-size: 14px; }
-    .reviews-current .review__meta { margin-top: 6px; }
 }
 
 /* ---------- MAP on phones: the checker is a bottom sheet ----------
