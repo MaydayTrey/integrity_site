@@ -307,31 +307,31 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
    a mask means the box paints its background (the brand gradient) only
    where the icon has ink. Same trick as the trust icons, one asset each,
    and the files stay plain black SVGs that work anywhere else. */
+/* two registered colours, so the icon's gradient can FADE to white (a plain
+   custom property, or a gradient itself, cannot be transitioned) */
+@property --ico-a { syntax: "<color>"; inherits: false; initial-value: #ED1C24; }
+@property --ico-b { syntax: "<color>"; inherits: false; initial-value: #BA1E23; }
 .service__icon {
     position: relative; width: 64px; aspect-ratio: 1;
-    --tile: 12px;                          /* how far the hover tile reaches past the icon on every side */
+    --tile: 5px;                           /* the hover tile hugs the icon: this much past it on every side */
 }
-/* THE ICON is painted by ::after: a box the size of the tile, masked by
-   the SVG (the mask is inset by --tile, so the drawing stays icon-sized).
-   Its background is two layers: white on top, sized 100% x 0% from the
-   bottom, over the brand gradient. At rest the white has no height, so
-   the lines are red. */
+/* THE ICON is painted by ::after: a box the size of the tile, masked by the
+   SVG (the mask is inset by --tile, so the drawing stays icon-sized). Its
+   fill is the brand gradient built from --ico-a / --ico-b; on hover both
+   fade to white. */
 .service__icon::after {
     content: ""; position: absolute; inset: calc(var(--tile) * -1);
-    background: linear-gradient(var(--white), var(--white)) bottom / 100% 0% no-repeat, var(--grad-brand);
+    background: linear-gradient(90deg, var(--ico-a) 0%, var(--ico-a) 50%, var(--ico-b) 100%);
     -webkit-mask: var(--icon) center / calc(100% - var(--tile) * 2) no-repeat;
             mask: var(--icon) center / calc(100% - var(--tile) * 2) no-repeat;
-    transition: background-size .45s var(--ease-out);
+    transition: --ico-a .35s ease, --ico-b .35s ease;
 }
-/* THE TILE is ::before: the same box, brand red, scaled to nothing from
-   the bottom. On hover it fills upward while the white layer above grows
-   at the same rate over the same box, so the lines turn white exactly
-   where the red has reached: the colours swap in one sweep. */
+/* THE TILE is ::before: the same box in brand red, faded out at rest. On
+   hover it fades in while the lines fade to white: the colours swap. */
 .service__icon::before {
     content: ""; position: absolute; inset: calc(var(--tile) * -1);
     background: var(--grad-brand);
-    transform: scaleY(0); transform-origin: 50% 100%;
-    transition: transform .45s var(--ease-out);
+    opacity: 0; transition: opacity .35s ease;
 }
 .service__icon--kitchen  { --icon: url("assets/icon-kitchen.svg"); }
 .service__icon--bathroom { --icon: url("assets/icon-bathroom.svg"); }
@@ -361,8 +361,8 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
     color: var(--red-dark); border-bottom: 2px solid transparent; transition: border-color .25s;
 }
 .service:hover .service__icon { transform: translateY(-4px); }
-.service:hover .service__icon::before, .service:has(.service__link:focus-visible) .service__icon::before { transform: none; }
-.service:hover .service__icon::after,  .service:has(.service__link:focus-visible) .service__icon::after  { background-size: 100% 100%, auto; }
+.service:hover .service__icon::before, .service:has(.service__link:focus-visible) .service__icon::before { opacity: 1; }
+.service:hover .service__icon::after,  .service:has(.service__link:focus-visible) .service__icon::after  { --ico-a: #FFFFFF; --ico-b: #FFFFFF; }
 @media (prefers-reduced-motion: reduce) { .service__icon, .service__icon::before, .service__icon::after { transition: none; } }
 .service:hover .service__title { color: var(--red-dark); }
 .service:hover .service__more, .service:has(.service__link:focus-visible) .service__more { border-bottom-color: currentColor; }
