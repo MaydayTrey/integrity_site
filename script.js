@@ -59,7 +59,7 @@ if (!reduceMotion) {
            stays over the lower part of the picture the whole way */
         const spare = -((grow - 100) / grow) * 100, rest = parseFloat(div.dataset.rest) || 0;
         gsap.set(photo, { height: grow + "%", yPercent: spare });
-        gsap.to(photo, { yPercent: spare * rest, ease: "none", scrollTrigger: { trigger: div, start: "top bottom", end: "bottom top", scrub: true } });
+        gsap.to(photo, { yPercent: spare * rest, ease: "none", force3D: true, scrollTrigger: { trigger: div, start: "top bottom", end: "bottom top", scrub: 0.6 } });   /* scrub 0.6: the photo eases after the wheel instead of stepping with each scroll event, which read as jitter */
 
         const wipe = { p: 0 };
         const draw = () => {
@@ -1697,7 +1697,7 @@ function qualsIntro() {
     const wide = window.matchMedia("(min-width: 1024px)").matches;
     const offsets = wide ? [-280, 230, -210] : [-120, 100, -90];   /* narrow: shorter columns, shorter sweep */
     const row = section.querySelector(".badges");                    /* the triggers follow the badge row: the claims card below makes the section taller than a screen */
-    const badges = [...section.querySelectorAll(".badge")];
+    const badges = [...section.querySelectorAll(".badges .badge")];
     const slides = badges.map((badge, i) => gsap.fromTo(badge, { y: offsets[i % offsets.length] }, {
         y: 0, ease: "none",
         scrollTrigger: { trigger: row, start: "top 110%", end: "center 62%", scrub: 0.6 }
@@ -1724,14 +1724,13 @@ function qualsIntro() {
     .to(words.words, { yPercent: 0, duration: 0.6, ease: "power3.out", stagger: 0.14 }, "<0.1")
     .to(lede, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, "-=0.2");
 
-    /* the claims card rises in, then plays its own before-to-after once */
+    /* the insurance row rises in: the badge, then the two photos, then the words */
     const claim = section.querySelector(".claim");
     if (claim) {
-        gsap.set(claim, { autoAlpha: 0, y: 40 });
-        ScrollTrigger.create({ trigger: claim, start: "top 82%", once: true, onEnter() {
-            gsap.to(claim, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out", clearProps: "transform" });
-            gsap.delayedCall(1.3, () => { if (!claim.querySelector(".pair").classList.contains("is-after")) claim.querySelector(".pair__opt--after").click(); });
-        } });
+        const parts = [claim.querySelector(".claim__badge"), ...claim.querySelectorAll(".claim__photo"), claim.querySelector(".claim__body")];
+        gsap.set(parts, { autoAlpha: 0, y: 36 });
+        ScrollTrigger.create({ trigger: claim, start: "top 82%", once: true,
+            onEnter: () => gsap.to(parts, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out", stagger: 0.14, clearProps: "transform" }) });
     }
 }
 

@@ -186,7 +186,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
    its colour follows the background under it: white over dark sections and
    photos, Integrity red (.on-light) over white and grey ones. */
 .home-btn {
-    position: fixed; left: 18px; bottom: 18px; z-index: 45;      /* under the header and its menu (50) */
+    position: fixed; left: -9px; bottom: 12px; z-index: 45;       /* tucked into the page gutter, clear of the text column (the glyph sits 13px in from the button edge) */      /* under the header and its menu (50) */
     width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
     color: var(--white); opacity: 0; visibility: hidden;
     filter: drop-shadow(0 1px 2px rgba(35, 31, 32, .45));
@@ -194,7 +194,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .home-btn.visible { opacity: 1; visibility: visible; }
 .home-btn.on-light { color: var(--red); filter: none; }
-.home-btn svg { display: block; width: 26px; height: 26px; }
+.home-btn svg { display: block; width: 18px; height: 18px; }
 .home-btn .home-fill { opacity: 0; transition: opacity .3s ease; }
 .home-btn:hover .home-fill, .home-btn:focus-visible .home-fill { opacity: 1; }
 .home-btn:focus-visible { outline: 3px solid currentColor; outline-offset: 2px; }
@@ -254,6 +254,14 @@ body.has-dialog .home-btn { visibility: hidden; }
     padding: calc(var(--nav-h) + 40px) var(--gutter) 22px;
     display: flex; flex-direction: column; gap: 18px;
 }
+.hero__socials { display: flex; gap: 10px; }
+.hero__social {
+    display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%;
+    color: var(--white); background: rgba(35, 31, 32, .42); box-shadow: inset 0 0 0 2px rgba(209, 211, 212, .45);
+    transition: background-color .25s, box-shadow .25s, transform .25s var(--ease-out);
+}
+.hero__social svg { width: 20px; height: 20px; }
+.hero__social:hover, .hero__social:focus-visible { background: var(--red); box-shadow: inset 0 0 0 2px var(--red); transform: translateY(-2px); }
 /* headline + note: one block that keeps the content column's rhythm */
 .hero__copy { display: flex; flex-direction: column; gap: inherit; }
 .hero__title {
@@ -994,6 +1002,7 @@ body.has-dialog .home-btn { visibility: hidden; }
 
 /* ---------- QUALIFICATIONS: badge row ---------- */
 .badges { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 12px; }
+.badges .badge:last-child:nth-child(odd) { grid-column: 1 / -1; }   /* two across: an odd one out sits centred under the pair */
 .badge {
     display: grid; justify-items: center; align-content: start; text-align: center; gap: 10px;
     padding: 8px 6px;
@@ -1017,20 +1026,23 @@ body.has-dialog .home-btn { visibility: hidden; }
    width fits the card */
 .badge__logo { height: 96px; width: 100%; object-fit: contain; }   /* every logo gets the same slot, so the titles line up */
 .badge__logo--wide { object-fit: contain; }                          /* the wide IICRC lockup just letterboxes inside it */
-/* THE INSURANCE CLAIMS CARD under the badges: a before/after photo (the Our
-   Work component) beside a few lines on how claims are handled. White card,
-   soft shadow, the thin red top edge the other cards wear. */
-.claim {
-    display: grid; gap: 0 32px; max-width: 1040px; margin: 56px auto 0;
-    background: var(--white); border-top: 3px solid var(--red);
-    box-shadow: 0 16px 40px rgba(35, 31, 32, .13), 0 2px 6px rgba(35, 31, 32, .06);
+/* INSURANCE, under the three badges: a fourth badge on the left, the claim
+   job's before and after photos side by side to its right, and a few lines
+   on how claims are handled under them. Same 1040px measure as the badges,
+   so the badge sits under the first column. */
+.claim { display: grid; gap: 28px; max-width: 1040px; margin: 56px auto 0; align-items: center; }
+.claim__photos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.claim__photo { position: relative; margin: 0; }
+.claim__photo img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+.claim__tag {
+    position: absolute; left: 0; top: 0; padding: 7px 12px;
+    font-family: var(--font-ui); font-weight: 600; font-size: 12px; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--white); background: rgba(35, 31, 32, .78);
 }
-.claim__pair .pair__figure { border: 0; margin: 0; }
-.claim__pair .pair__media { aspect-ratio: 4 / 3; height: auto; }     /* the whole photo: both shots are 4:3 */
-.claim__body { padding: 22px 20px 26px; text-align: left; }
-.claim__title { font-family: var(--font-display); font-weight: 400; font-size: clamp(30px, 3.2vw, 44px); line-height: 1; letter-spacing: .02em; text-transform: uppercase; margin: 6px 0 14px; }
-.claim__text { font-size: 16px; line-height: 1.6; max-width: 46ch; }
-.claim__text + .claim__text { margin-top: 10px; }
+.claim__tag--after { background: var(--red-dark); }
+.claim__body { margin-top: 16px; text-align: left; }
+.claim__text { font-size: 15px; line-height: 1.6; max-width: 62ch; }
+.claim__text + .claim__text { margin-top: 8px; }
 .badge__title { font-family: var(--font-ui); font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; line-height: 1.25; }
 .badge__text { font-size: 13px; line-height: 1.5; color: var(--ink); max-width: 26ch; }
 
@@ -1191,7 +1203,7 @@ body.has-dialog { overflow: hidden; }
     position: absolute; inset: 0; overflow: hidden; background: var(--ink);
     clip-path: polygon(0 0, 100% var(--slant), 100% 100%, 0 calc(100% - var(--slant)));
 }
-.divider__photo { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 45%; }
+.divider__photo { will-change: transform; display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 45%; }
 /* ink tint so the band sits with the dark hero and the grey section, not a bright hole */
 .divider__media::after {
     content: ""; position: absolute; inset: 0;
@@ -1467,9 +1479,10 @@ body.has-dialog { overflow: hidden; }
     .check__grid { grid-template-columns: minmax(0, 1fr) 72px 104px; }
 }
 @media (min-width: 1024px) {
-    .badges { grid-template-columns: repeat(3, 1fr); max-width: 1040px; margin-inline: auto; }   /* qualifications: three across, centred */
-    .claim { grid-template-columns: 1.35fr 1fr; align-items: center; }
-    .claim__body { padding: 32px 40px 32px 8px; }
+    .badges { grid-template-columns: repeat(3, 1fr); max-width: 1040px; margin-inline: auto; }
+    .badges .badge:last-child:nth-child(odd) { grid-column: auto; }   /* qualifications: three across, centred */
+    .claim { grid-template-columns: 1fr 2fr; gap: 32px; }        /* the badge under column one, the work under two and three */
+    .claim__text { font-size: 16px; }
 
     /* footer: three columns, legal row and credit row inline */
     .site-footer { padding: 90px var(--gutter) 40px; }
@@ -1574,8 +1587,8 @@ body.has-dialog { overflow: hidden; }
     }
     .section { scroll-margin-top: 64px; }  /* anchors land under the compact bar */
 
-    /* full-width headline earns the full I range: white into the two greys */
-    :root { --grad-steel: linear-gradient(90deg, var(--white) 0%, var(--grey-300) 50%, var(--grey-700) 100%); }
+    /* full-width headline: white into the light grey of the I */
+    :root { --grad-steel: linear-gradient(90deg, var(--white) 0%, var(--white) 35%, var(--grey-300) 100%); }   /* no darker than the light grey: the far end went muddy over the photo */
 }
 
 /* ---------- MOTION ---------- */

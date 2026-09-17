@@ -273,6 +273,15 @@
                 <!--PLACEHOLDER: personal note from Phil, 1 to 2 sentences.
                     Never ships as-is-->
                 <p class="hero__note" data-placeholder>[ Placeholder: a short welcome note from the team, one or two sentences. Copy due 9/13. ]</p>
+                <!--quick links: Facebook and email (a phone icon joins them when the number arrives)-->
+                <div class="hero__socials">
+                    <a class="hero__social" href="https://www.facebook.com/Integrityrnr" target="_blank" rel="noopener" aria-label="Integrity Restorations and Remodeling on Facebook">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.8c0-.9.3-1.6 1.6-1.6h1.7V4.4c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.2v2.3H7.4V14h2.8v8h3.3Z"/></svg>
+                    </a>
+                    <a class="hero__social" href="mailto:phil@integrityrnr.com" aria-label="Email us">
+                        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect fill="none" stroke="currentColor" stroke-width="2" x="3" y="5" width="18" height="14" rx="1"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="m3 7 9 6 9-6"/></svg>
+                    </a>
+                </div>
                 </div>
 
                 <div class="hero__actions">
@@ -960,31 +969,33 @@
                     </li>
                 </ul>
 
-                <!--INSURANCE CLAIMS: a card under the three badges. The photo is the
-                    same before/after component as Our Work (script.js wirePair wires
-                    every .pair); qualsIntro plays it to After once when the card
-                    arrives. COPY IS A DRAFT: confirm the claims process with Phil.-->
-                <article class="claim" aria-labelledby="claim-title">
-                    <div class="pair claim__pair">
-                        <figure class="pair__figure">
-                            <div class="pair__media">
-                                <img class="pair__before" src="assets/claim-before.webp" width="1000" height="750" loading="lazy" decoding="async" alt="Commercial entrance after damage: the front boarded up with plywood and caution tape across the porch">
-                                <img class="pair__after" src="assets/claim-after.webp" width="1000" height="750" loading="lazy" decoding="async" alt="The same entrance rebuilt: new siding, stone veneer, a new porch roof and wood columns">
-                                <div class="pair__rail" aria-hidden="true"><div class="pair__rail-fill"></div></div>
-                                <div class="pair__switch" role="group" aria-label="Before or after">
-                                    <button class="pair__opt pair__opt--before is-on" type="button" aria-pressed="true">Before</button>
-                                    <button class="pair__opt pair__opt--after" type="button" aria-pressed="false">After</button>
-                                </div>
-                            </div>
-                        </figure>
+                <!--INSURANCE: a fourth badge on the left ("we handle insurance too"),
+                    and to its right the photos of a claim job, before and after side by
+                    side, with a few lines on how claims are handled. No card, no toggle.
+                    COPY IS A DRAFT: confirm the claims process with Phil.-->
+                <div class="claim">
+                    <div class="badge claim__badge">
+                        <span class="badge__mark badge__mark--claim" aria-hidden="true"></span>
+                        <h3 class="badge__title">We Handle Insurance Too</h3>
+                        <p class="badge__text">Experienced working with adjusters on storm, water, and impact damage claims.</p>
                     </div>
-                    <div class="claim__body">
-                        <p class="section__eyebrow">Insurance claims</p>
-                        <h3 class="claim__title" id="claim-title">We handle the claim side too</h3>
-                        <p class="claim__text">When the damage is covered by insurance, we work directly with your adjuster. We document the damage, write up the scope and the estimate, and rebuild once the claim is approved.</p>
-                        <p class="claim__text">Storm, water, and impact damage, for homes and commercial properties alike.</p>
+                    <div class="claim__work">
+                        <div class="claim__photos">
+                            <figure class="claim__photo">
+                                <img src="assets/claim-before.webp" width="1000" height="750" loading="lazy" decoding="async" alt="Commercial entrance after damage: the front boarded up with plywood and caution tape across the porch">
+                                <figcaption class="claim__tag">Before</figcaption>
+                            </figure>
+                            <figure class="claim__photo">
+                                <img src="assets/claim-after.webp" width="1000" height="750" loading="lazy" decoding="async" alt="The same entrance rebuilt: new siding, stone veneer, a new porch roof and wood columns">
+                                <figcaption class="claim__tag claim__tag--after">After</figcaption>
+                            </figure>
+                        </div>
+                        <div class="claim__body">
+                            <p class="claim__text">When the damage is covered by insurance, we work directly with your adjuster. We document the damage, write up the scope and the estimate, and rebuild once the claim is approved.</p>
+                            <p class="claim__text">Homes and commercial properties alike.</p>
+                        </div>
                     </div>
-                </article>
+                </div>
             </div>
         </section>
 
