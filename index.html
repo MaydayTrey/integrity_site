@@ -752,20 +752,26 @@
 
                 <!--two beats, both in Phil's own words (sent 9/17, tidied for
                     punctuation only). Photo one side, text the other, swapping
-                    sides beat by beat. Each photo is a FRAME of fixed size that
-                    script.js (beatSlides) transitions between photos: first Phil
-                    then his family; then the crew at work. The dots pick a photo
-                    and stop the rotation. Without JS the first photo shows.
+                    sides beat by beat. Nothing here needs a click.
+                    Beat 1: a frame that opens portrait-shaped on Phil and, as
+                    the page scrolls, reshapes into the landscape family photo
+                    (script.js, philMorph). The stage around it reserves the
+                    room, so nothing below moves. Without JS: the family photo.
+                    Beat 2: the three crew photos fly in from the left and land
+                    stacked, then the text fades in (philStory). Without JS:
+                    the finished stack.
                     This section is the one place the site speaks about Phil;
                     everywhere else is "we".-->
                 <ol class="story">
                     <li class="beat">
                         <figure class="beat__media">
-                            <div class="slides" data-slides>
-                                <img class="beat__photo slide is-active" src="assets/phil-self-900.webp" srcset="assets/phil-self-480.webp 480w, assets/phil-self-900.webp 900w" sizes="(min-width: 768px) 46vw, 92vw" width="900" height="1200" loading="lazy" decoding="async" data-caption="Phil Betzner, owner" alt="Phil Betzner in an Integrity polo and cap, smiling in front of his garage with an American flag beside him">
-                                <img class="beat__photo slide" src="assets/phil-family-960.webp" srcset="assets/phil-family-640.webp 640w, assets/phil-family-960.webp 960w" sizes="(min-width: 768px) 46vw, 92vw" width="960" height="640" loading="lazy" decoding="async" data-caption="The Betzners, Trenton, Ohio" alt="Phil Betzner seated on a couch with his wife Dawn and their four kids, everyone in plaid and denim">
+                            <div class="morph" data-morph>
+                                <div class="morph__frame">
+                                    <img class="beat__photo morph__img morph__img--family" src="assets/phil-family-960.webp" srcset="assets/phil-family-640.webp 640w, assets/phil-family-960.webp 960w" sizes="(min-width: 768px) 46vw, 92vw" width="960" height="640" loading="lazy" decoding="async" alt="Phil Betzner seated on a couch with his wife Dawn and their four kids, everyone in plaid and denim">
+                                    <img class="beat__photo morph__img morph__img--self" src="assets/phil-self-900.webp" srcset="assets/phil-self-480.webp 480w, assets/phil-self-900.webp 900w" sizes="(min-width: 768px) 36vw, 70vw" width="900" height="1200" loading="lazy" decoding="async" alt="Phil Betzner in an Integrity polo and cap, smiling in front of his garage with an American flag beside him">
+                                </div>
+                                <figcaption class="beat__caption" data-cap-self="Phil Betzner, owner" data-cap-family="The Betzners, Trenton, Ohio">The Betzners, Trenton, Ohio</figcaption>
                             </div>
-                            <figcaption class="beat__caption">Phil Betzner, owner</figcaption>
                         </figure>
                         <div class="beat__body">
                             <p class="beat__step">01 &middot; Roots</p>
@@ -774,14 +780,15 @@
                             <p>I met my wife, Dawn, in 2020, and we have four kids between us, one girl and three boys: Carter, Caleb, Emma, and Caiden. Work hard, don't be afraid to dream big, and put God first in everything!</p>
                         </div>
                     </li>
-                    <li class="beat">
+                    <li class="beat beat--work">
                         <figure class="beat__media">
-                            <div class="slides slides--tall" data-slides>
-                                <img class="beat__photo slide is-active" src="assets/work-tile-900.webp" srcset="assets/work-tile-480.webp 480w, assets/work-tile-900.webp 900w" sizes="(min-width: 768px) 46vw, 92vw" width="900" height="1200" loading="lazy" decoding="async" data-caption="Setting floor tile" alt="Phil kneeling in an Integrity shirt, setting patterned floor tile">
-                                <img class="beat__photo slide" src="assets/work-ceiling-900.webp" srcset="assets/work-ceiling-480.webp 480w, assets/work-ceiling-900.webp 900w" sizes="(min-width: 768px) 46vw, 92vw" width="900" height="1200" loading="lazy" decoding="async" data-caption="Insulating an open ceiling" alt="A crew member in an Integrity shirt fastening insulation into an open ceiling bay">
-                                <img class="beat__photo slide" src="assets/work-kitchen-900.webp" srcset="assets/work-kitchen-480.webp 480w, assets/work-kitchen-900.webp 900w" sizes="(min-width: 768px) 46vw, 92vw" width="900" height="1200" loading="lazy" decoding="async" data-caption="A kitchen, mid-remodel" alt="Two crew members at work in a kitchen with navy cabinets, one wearing an Integrity shirt">
+                            <!--DOM order is landing order: the last photo lands on top-->
+                            <div class="stack" data-stack>
+                                <img class="beat__photo stack__photo" src="assets/work-ceiling-900.webp" srcset="assets/work-ceiling-480.webp 480w, assets/work-ceiling-900.webp 900w" sizes="(min-width: 768px) 46vw, 92vw" width="900" height="1200" loading="lazy" decoding="async" alt="A crew member in an Integrity shirt fastening insulation into an open ceiling bay">
+                                <img class="beat__photo stack__photo" src="assets/work-kitchen-900.webp" srcset="assets/work-kitchen-480.webp 480w, assets/work-kitchen-900.webp 900w" sizes="(min-width: 768px) 46vw, 92vw" width="900" height="1200" loading="lazy" decoding="async" alt="Two crew members at work in a kitchen with navy cabinets, one wearing an Integrity shirt">
+                                <img class="beat__photo stack__photo" src="assets/work-tile-900.webp" srcset="assets/work-tile-480.webp 480w, assets/work-tile-900.webp 900w" sizes="(min-width: 768px) 46vw, 92vw" width="900" height="1200" loading="lazy" decoding="async" alt="Phil kneeling in an Integrity shirt, setting patterned floor tile">
                             </div>
-                            <figcaption class="beat__caption">Setting floor tile</figcaption>
+                            <figcaption class="beat__caption">The crew at work</figcaption>
                         </figure>
                         <div class="beat__body">
                             <p class="beat__step">02 &middot; The work</p>

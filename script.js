@@ -1247,16 +1247,41 @@ function philStory() {
     const beats = [...document.querySelectorAll(".beat")];
     if (!beats.length || reduceMotion) return;
     beats.forEach((beat, i) => {
-        const media = beat.querySelector(".beat__media");
-        const photo = beat.querySelector(".beat__photo");            /* the frame's first photo */
         const step  = beat.querySelector(".beat__step");
         const title = beat.querySelector(".beat__title");
         const paras = beat.querySelectorAll(".beat__body > p:not(.beat__step)");
+        const stack = beat.querySelector("[data-stack]");
+
+        if (stack) {
+            /* THE WORK: the three photos fly in from beyond the left edge,
+               one after another, each landing on the pile; the last lands
+               on top, square to the frame. Only then does the text fade
+               in. Once, no loop. Resting transforms match the CSS. */
+            const STACK_REST = [{ x: -14, y: 10, rotation: -3.5 }, { x: 12, y: -8, rotation: 2.5 }, { x: 0, y: 0, rotation: 0 }];
+            const photos = [...stack.querySelectorAll(".stack__photo")];
+            const caption = beat.querySelector(".beat__caption");
+            const texts = [step, title, ...paras];
+            photos.forEach((ph) => { ph.loading = "eager"; });
+            const away = () => -(stack.getBoundingClientRect().left + stack.offsetWidth + 80);   /* fully off the left of the screen */
+            photos.forEach((ph, k) => gsap.set(ph, { x: away(), y: STACK_REST[k].y + 30, rotation: STACK_REST[k].rotation - 14, autoAlpha: 0 }));
+            gsap.set([...texts, caption], { autoAlpha: 0, y: 14 });
+            const tl = gsap.timeline({ scrollTrigger: { trigger: beat, start: "top 70%", once: true } });
+            photos.forEach((ph, k) => {
+                tl.set(ph, { autoAlpha: 1 }, k * 0.42)
+                  .to(ph, { ...STACK_REST[k], duration: 1.05, ease: "power3.out" }, k * 0.42);
+            });
+            tl.to(caption, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" }, "-=0.35")
+              .to(texts, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out", stagger: 0.12, clearProps: "transform" }, "-=0.2");
+            return;
+        }
+
+        const media  = beat.querySelector(".beat__media");
+        const photos = beat.querySelectorAll(".beat__photo");        /* both photos in the morph frame */
         const photoRight = i % 2 === 1;                      /* even beats: photo left; odd: photo right */
         const wipe = { p: 0 };
         const draw = () => { const hid = ((1 - wipe.p) * 100).toFixed(3) + "%"; media.style.clipPath = photoRight ? `inset(0 0 0 ${hid})` : `inset(0 ${hid} 0 0)`; };
         draw();
-        gsap.set(photo, { scale: 1.12, transformOrigin: "50% 50%" });
+        gsap.set(photos, { scale: 1.12, transformOrigin: "50% 50%" });
 
         /* THE COPY TYPES ITSELF OUT: the title letter by letter, then each
            paragraph word by word in reading order. No motion, just each
@@ -1272,7 +1297,7 @@ function philStory() {
             onComplete() { titleSplit.revert(); paraSplits.forEach((s) => s.revert()); }
         });
         tl.to(wipe, { p: 1, duration: 1.0, ease: "power3.inOut", onUpdate: draw, onComplete: () => { media.style.clipPath = ""; } })
-          .to(photo, { scale: 1, duration: 1.4, ease: "power2.out", clearProps: "transform" }, 0)
+          .to(photos, { scale: 1, duration: 1.4, ease: "power2.out", clearProps: "transform" }, 0)
           .to(step, { autoAlpha: 1, duration: 0.3 }, 0.3)
           .to(titleSplit.chars, { autoAlpha: 1, duration: 0.01, stagger: 0.035 }, 0.45);
         paraSplits.forEach((s) => tl.to(s.words, { autoAlpha: 1, duration: 0.01, stagger: 0.022 }, "+=0.15"));
@@ -1286,64 +1311,38 @@ function philStory() {
     });
 }
 
-/* ---------- MEET PHIL: the photo frames ----------
-   Each [data-slides] frame holds several photos at one fixed size. One
-   shows; every few seconds the next wipes in over it, left to right,
-   settling from a slight zoom (the same language as the before and
-   after photos). It only runs while the frame is on screen. A row of
-   dots under the frame picks a photo directly and stops the rotation,
-   so nobody is stuck with content that moves on its own. Reduced
-   motion: no rotation, and the dots swap photos instantly. */
-function beatSlides() {
-    document.querySelectorAll("[data-slides]").forEach((frame) => {
-        const slides  = [...frame.querySelectorAll(".slide")];
-        if (slides.length < 2) return;
-        const caption = frame.parentElement.querySelector(".beat__caption");
-        let index = 0, busy = false, auto = !reduceMotion, timer = null;
-
-        const dots = document.createElement("div");
-        dots.className = "slides__dots"; dots.setAttribute("role", "group"); dots.setAttribute("aria-label", "Choose a photo");
-        const buttons = slides.map((s, k) => {
-            const btn = document.createElement("button");
-            btn.type = "button"; btn.className = "slides__dot";
-            btn.setAttribute("aria-label", `Photo ${k + 1} of ${slides.length}: ${s.dataset.caption || ""}`);
-            btn.setAttribute("aria-pressed", String(k === 0));
-            btn.addEventListener("click", () => { auto = false; stop(); go(k); });
-            dots.appendChild(btn); return btn;
-        });
-        frame.after(dots);
-
-        function mark(n) {
-            buttons.forEach((bt, k) => bt.setAttribute("aria-pressed", String(k === n)));
-            if (caption) caption.textContent = slides[n].dataset.caption || "";
-        }
-        function go(n) {
-            if (n === index || busy) return;
-            const from = slides[index], to = slides[n];
-            to.loading = "eager";
-            if (!to.complete || !to.naturalWidth) { to.addEventListener("load", () => go(n), { once: true }); return; }   /* not here yet: try again when it lands */
-            if (reduceMotion) { from.classList.remove("is-active"); to.classList.add("is-active"); index = n; mark(n); return; }
-            busy = true; mark(n);
-            const w = { p: 0 };
-            gsap.set(to, { visibility: "visible", zIndex: 2, scale: 1.1, transformOrigin: "50% 50%", clipPath: "inset(0 100% 0 0)" });
-            gsap.timeline({ onComplete() {
-                    from.classList.remove("is-active"); to.classList.add("is-active");
-                    gsap.set(to, { clearProps: "visibility,zIndex,transform,clipPath" });
-                    index = n; busy = false; if (auto) queue();
-                } })
-                .to(w, { p: 1, duration: 1.1, ease: "power3.inOut", onUpdate: () => { to.style.clipPath = `inset(0 ${((1 - w.p) * 100).toFixed(3)}% 0 0)`; } })
-                .to(to, { scale: 1, duration: 1.5, ease: "power2.out" }, 0);
-        }
-        function queue() { stop(); timer = gsap.delayedCall(4.2, () => go((index + 1) % slides.length)); }
-        function stop()  { if (timer) { timer.kill(); timer = null; } }
-
-        if (!auto) return;
-        slides.forEach((s) => { s.loading = "eager"; });        /* they will be needed within seconds */
-        ScrollTrigger.create({
-            trigger: frame, start: "top 85%", end: "bottom 15%",
-            onToggle: (self) => { if (!auto) return; if (self.isActive) queue(); else stop(); }
-        });
-    });
+/* ---------- MEET PHIL: the frame that reshapes ----------
+   Driven by scroll POSITION, nothing to click. The frame starts
+   portrait-shaped (75% of the stage wide, 3:4) showing Phil whole; as
+   the stage travels up the screen it widens to the full stage and
+   flattens to 3:2 while Phil crossfades to the family photo. Scrolling
+   back reverses it. The stage's own size never changes, so the page
+   below holds still. One number drives the width, the shape, both
+   opacities and the caption. */
+function philMorph() {
+    const stage = document.querySelector("[data-morph]");
+    if (!stage || reduceMotion) return;
+    const frame   = stage.querySelector(".morph__frame");
+    const self    = stage.querySelector(".morph__img--self");
+    const family  = stage.querySelector(".morph__img--family");
+    const caption = stage.querySelector(".beat__caption");
+    [self, family].forEach((im) => { im.loading = "eager"; });
+    stage.classList.add("is-live");
+    const m = { p: 0 };
+    const fade = gsap.utils.clamp(0, 1);
+    function render() {
+        const p = m.p;
+        frame.style.width = (75 + 25 * p).toFixed(3) + "%";
+        frame.style.aspectRatio = (0.75 + 0.75 * p).toFixed(4);              /* 3:4 (0.75) to 3:2 (1.5) */
+        const x = fade((p - 0.3) / 0.45);                                   /* the crossfade sits in the middle of the reshape */
+        self.style.opacity = (1 - x).toFixed(3);
+        family.style.opacity = x.toFixed(3);
+        const cap = x < 0.5 ? caption.dataset.capSelf : caption.dataset.capFamily;
+        if (caption.textContent !== cap) caption.textContent = cap;
+    }
+    render();
+    gsap.to(m, { p: 1, ease: "none", onUpdate: render,
+        scrollTrigger: { trigger: stage, start: "center 62%", end: "center 26%", scrub: 0.6 } });
 }
 
 /* ---------- QUALIFICATIONS: the badges converge, then the words ----------
@@ -1417,8 +1416,8 @@ document.fonts.ready.then(() => {
     serviceMap();
     contactForm();
     shieldCard();
+    philMorph();
     philStory();
-    beatSlides();
     qualsIntro();
     sectionReveals();
     sectionFades();
