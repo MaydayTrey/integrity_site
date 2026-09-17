@@ -1247,10 +1247,16 @@ function philStory() {
     const beats = [...document.querySelectorAll(".beat")];
     if (!beats.length || reduceMotion) return;
     beats.forEach((beat, i) => {
-        const wideBeat = beat.classList.contains("beat--wide");     /* the work: three photos across, no columns */
+        const media = beat.querySelector(".beat__media");
+        const photo = beat.querySelector(".beat__photo");            /* the frame's first photo */
         const step  = beat.querySelector(".beat__step");
         const title = beat.querySelector(".beat__title");
         const paras = beat.querySelectorAll(".beat__body > p:not(.beat__step)");
+        const photoRight = i % 2 === 1;                      /* even beats: photo left; odd: photo right */
+        const wipe = { p: 0 };
+        const draw = () => { const hid = ((1 - wipe.p) * 100).toFixed(3) + "%"; media.style.clipPath = photoRight ? `inset(0 0 0 ${hid})` : `inset(0 ${hid} 0 0)`; };
+        draw();
+        gsap.set(photo, { scale: 1.12, transformOrigin: "50% 50%" });
 
         /* THE COPY TYPES ITSELF OUT: the title letter by letter, then each
            paragraph word by word in reading order. No motion, just each
@@ -1265,33 +1271,6 @@ function philStory() {
             scrollTrigger: { trigger: beat, start: "top 72%", once: true },
             onComplete() { titleSplit.revert(); paraSplits.forEach((s) => s.revert()); }
         });
-
-        if (wideBeat) {
-            /* each crew photo wipes in left to right inside its own frame,
-               one after another, settling from a slight zoom */
-            const frames = [...beat.querySelectorAll(".crew__item")];
-            frames.forEach((f, k) => {
-                const w = { p: 0 };
-                const draw = () => { f.style.clipPath = `inset(0 ${((1 - w.p) * 100).toFixed(3)}% 0 0)`; };
-                draw();
-                gsap.set(f.querySelector(".beat__photo"), { scale: 1.12, transformOrigin: "50% 50%" });
-                tl.to(w, { p: 1, duration: 0.9, ease: "power3.inOut", onUpdate: draw, onComplete: () => { f.style.clipPath = ""; } }, 0.25 + k * 0.18)
-                  .to(f.querySelector(".beat__photo"), { scale: 1, duration: 1.3, ease: "power2.out", clearProps: "transform" }, 0.25 + k * 0.18);
-            });
-            tl.to(step, { autoAlpha: 1, duration: 0.3 }, 0)
-              .to(titleSplit.chars, { autoAlpha: 1, duration: 0.01, stagger: 0.035 }, 0.1);
-            paraSplits.forEach((s, k) => tl.to(s.words, { autoAlpha: 1, duration: 0.01, stagger: 0.016 }, k === 0 ? 1.1 : "+=0.1"));
-            return;
-        }
-
-        const media = beat.querySelector(".beat__media");
-        const photo = beat.querySelector(".beat__photo");
-        const photoRight = i % 2 === 1;                      /* even beats: photo left; odd: photo right */
-        const wipe = { p: 0 };
-        const draw = () => { const hid = ((1 - wipe.p) * 100).toFixed(3) + "%"; media.style.clipPath = photoRight ? `inset(0 0 0 ${hid})` : `inset(0 ${hid} 0 0)`; };
-        draw();
-        gsap.set(photo, { scale: 1.12, transformOrigin: "50% 50%" });
-
         tl.to(wipe, { p: 1, duration: 1.0, ease: "power3.inOut", onUpdate: draw, onComplete: () => { media.style.clipPath = ""; } })
           .to(photo, { scale: 1, duration: 1.4, ease: "power2.out", clearProps: "transform" }, 0)
           .to(step, { autoAlpha: 1, duration: 0.3 }, 0.3)
@@ -1301,13 +1280,68 @@ function philStory() {
     gsap.matchMedia().add("(min-width: 768px)", () => {
         beats.forEach((beat) => {
             const st = { trigger: beat, start: "top bottom", end: "bottom top", scrub: true };
-            if (beat.classList.contains("beat--wide")) {
-                /* the three photos drift at three speeds, so the row breathes */
-                beat.querySelectorAll(".crew__item").forEach((f, k) => gsap.fromTo(f, { y: [36, 64, 20][k % 3] }, { y: -[36, 64, 20][k % 3], ease: "none", scrollTrigger: st }));
-                return;
-            }
             gsap.fromTo(beat.querySelector(".beat__media"), { y: 56 }, { y: -56, ease: "none", scrollTrigger: st });
             gsap.fromTo(beat.querySelector(".beat__body"),  { y: -36 }, { y: 36, ease: "none", scrollTrigger: st });
+        });
+    });
+}
+
+/* ---------- MEET PHIL: the photo frames ----------
+   Each [data-slides] frame holds several photos at one fixed size. One
+   shows; every few seconds the next wipes in over it, left to right,
+   settling from a slight zoom (the same language as the before and
+   after photos). It only runs while the frame is on screen. A row of
+   dots under the frame picks a photo directly and stops the rotation,
+   so nobody is stuck with content that moves on its own. Reduced
+   motion: no rotation, and the dots swap photos instantly. */
+function beatSlides() {
+    document.querySelectorAll("[data-slides]").forEach((frame) => {
+        const slides  = [...frame.querySelectorAll(".slide")];
+        if (slides.length < 2) return;
+        const caption = frame.parentElement.querySelector(".beat__caption");
+        let index = 0, busy = false, auto = !reduceMotion, timer = null;
+
+        const dots = document.createElement("div");
+        dots.className = "slides__dots"; dots.setAttribute("role", "group"); dots.setAttribute("aria-label", "Choose a photo");
+        const buttons = slides.map((s, k) => {
+            const btn = document.createElement("button");
+            btn.type = "button"; btn.className = "slides__dot";
+            btn.setAttribute("aria-label", `Photo ${k + 1} of ${slides.length}: ${s.dataset.caption || ""}`);
+            btn.setAttribute("aria-pressed", String(k === 0));
+            btn.addEventListener("click", () => { auto = false; stop(); go(k); });
+            dots.appendChild(btn); return btn;
+        });
+        frame.after(dots);
+
+        function mark(n) {
+            buttons.forEach((bt, k) => bt.setAttribute("aria-pressed", String(k === n)));
+            if (caption) caption.textContent = slides[n].dataset.caption || "";
+        }
+        function go(n) {
+            if (n === index || busy) return;
+            const from = slides[index], to = slides[n];
+            to.loading = "eager";
+            if (!to.complete || !to.naturalWidth) { to.addEventListener("load", () => go(n), { once: true }); return; }   /* not here yet: try again when it lands */
+            if (reduceMotion) { from.classList.remove("is-active"); to.classList.add("is-active"); index = n; mark(n); return; }
+            busy = true; mark(n);
+            const w = { p: 0 };
+            gsap.set(to, { visibility: "visible", zIndex: 2, scale: 1.1, transformOrigin: "50% 50%", clipPath: "inset(0 100% 0 0)" });
+            gsap.timeline({ onComplete() {
+                    from.classList.remove("is-active"); to.classList.add("is-active");
+                    gsap.set(to, { clearProps: "visibility,zIndex,transform,clipPath" });
+                    index = n; busy = false; if (auto) queue();
+                } })
+                .to(w, { p: 1, duration: 1.1, ease: "power3.inOut", onUpdate: () => { to.style.clipPath = `inset(0 ${((1 - w.p) * 100).toFixed(3)}% 0 0)`; } })
+                .to(to, { scale: 1, duration: 1.5, ease: "power2.out" }, 0);
+        }
+        function queue() { stop(); timer = gsap.delayedCall(4.2, () => go((index + 1) % slides.length)); }
+        function stop()  { if (timer) { timer.kill(); timer = null; } }
+
+        if (!auto) return;
+        slides.forEach((s) => { s.loading = "eager"; });        /* they will be needed within seconds */
+        ScrollTrigger.create({
+            trigger: frame, start: "top 85%", end: "bottom 15%",
+            onToggle: (self) => { if (!auto) return; if (self.isActive) queue(); else stop(); }
         });
     });
 }
@@ -1384,6 +1418,7 @@ document.fonts.ready.then(() => {
     contactForm();
     shieldCard();
     philStory();
+    beatSlides();
     qualsIntro();
     sectionReveals();
     sectionFades();
