@@ -39,9 +39,9 @@ if (!reduceMotion) {
     gsap.set(photo, { height: "130%", yPercent: -11.5 });
     gsap.to(photo, { yPercent: 0, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
     /* the divider bands' photos drift the same way, harder: each is
-       190% of its band's height and travels the spare 90% across its
-       whole trip through the viewport, so it moves at about 0.7x the
-       page. Each band also REVEALS once: the photo wipes in sideways
+       230% of its band's height and travels the spare 130% across its
+       whole trip through the viewport, so it moves at well under half
+       the page's speed. Each band also REVEALS once: the photo wipes in sideways
        with a vertical front that follows the two slanted cuts, left to
        right for the first band, right to left for the mirrored one.
        Timed, not scrubbed, so it never runs back. GSAP would snap a
@@ -50,11 +50,16 @@ if (!reduceMotion) {
         const photo = div.querySelector(".divider__photo");
         const media = div.querySelector(".divider__media");
         const mirror = div.classList.contains("divider--mirror");
-        /* data-grow overrides the 190% for a band whose photo is too wide
+        /* data-grow overrides the 230% for a band whose photo is too wide
            to survive a long vertical trip (the subject would leave the frame) */
-        const grow = parseFloat(div.dataset.grow) || 190;
-        gsap.set(photo, { height: grow + "%", yPercent: -((grow - 100) / grow) * 100 });
-        gsap.to(photo, { yPercent: 0, ease: "none", scrollTrigger: { trigger: div, start: "top bottom", end: "bottom top", scrub: true } });
+        const grow = Math.min(parseFloat(div.dataset.grow) || 230, window.innerWidth < 768 ? 150 : 1e3);   /* phones: a landscape photo in a tall narrow band is already zoomed hard, so less spare */
+        /* data-rest: the share of the spare height still hidden above the band
+           when the trip ends (0 by default: the photo's top arrives). A band
+           whose subject stands LOW in the photo keeps some, so the window
+           stays over the lower part of the picture the whole way */
+        const spare = -((grow - 100) / grow) * 100, rest = parseFloat(div.dataset.rest) || 0;
+        gsap.set(photo, { height: grow + "%", yPercent: spare });
+        gsap.to(photo, { yPercent: spare * rest, ease: "none", scrollTrigger: { trigger: div, start: "top bottom", end: "bottom top", scrub: true } });
 
         const wipe = { p: 0 };
         const draw = () => {

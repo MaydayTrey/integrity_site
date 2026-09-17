@@ -1116,7 +1116,7 @@ body.has-dialog { overflow: hidden; }
 .divider {
     --slant: 9vw;                                   /* the rise of each cut edge */
     --above: var(--white); --below: var(--grey-100);   /* the neighbours' colours fill the corners */
-    position: relative; height: clamp(260px, 46vh, 560px);
+    position: relative; height: clamp(346px, 61vh, 746px);      /* a tall band: about three fifths of a screen */
     background: linear-gradient(to bottom, var(--above) 50%, var(--below) 50%);
 }
 .divider__media {
