@@ -1161,6 +1161,21 @@
         palette: ink ground, red labels, white hairlines. Links roll on
         hover (data-roll); the credit URL rolls in pure white.
         Phone: TODO from Phil.-->
+    <!--COOKIE NOTICE. Hidden in the markup; script.js (cookieNotice) shows it
+        only when no choice has been stored. Nothing that tracks anyone may load
+        before "Accept": analytics goes in loadAnalytics() in script.js, which
+        runs only after consent. Not a modal: the page stays usable behind it.-->
+    <aside class="cookies" id="cookie-notice" role="region" aria-label="Cookie notice" hidden>
+        <div class="cookies__body">
+            <p class="cookies__title">Cookies on this site</p>
+            <p class="cookies__text">We would like to use analytics cookies to see how visitors use the site, so we can make it better. Nothing is collected unless you accept, and the site works the same either way.</p>
+        </div>
+        <div class="cookies__actions">
+            <button class="btn cookies__btn cookies__btn--decline" type="button" data-cookie-choice="denied">Decline</button>
+            <button class="btn btn--primary cookies__btn" type="button" data-cookie-choice="granted">Accept</button>
+        </div>
+    </aside>
+
     <footer class="site-footer" id="site-footer">
         <div class="footer__grid">
             <div class="footer__brand">
@@ -1185,6 +1200,9 @@
             <span>&copy; 2026 Integrity Restorations and Remodeling LLC. All rights reserved.</span>
             <div class="footer__social">
                 <a href="https://www.facebook.com/Integrityrnr" target="_blank" rel="noopener" data-roll>Facebook</a>
+                <a href="sitemap.xml" data-roll>Sitemap</a>
+                <!--reopens the cookie notice so a choice can be changed (script.js, cookieNotice)-->
+                <button class="footer__cookies" type="button" data-cookie-settings>Cookie settings</button>
             </div>
         </div>
         <div class="footer__credit">

@@ -285,6 +285,60 @@ function rollingText(el) {
     el.addEventListener("blur",       () => rollDown.restart());
 }
 
+/* ---------- COOKIE NOTICE AND CONSENT ----------
+   The choice lives in localStorage ("integrity-consent": granted | denied,
+   with the date). No choice yet: the notice rises in shortly after load.
+   "Cookie settings" in the footer brings it back so the choice can change.
+
+   ANALYTICS GOES IN loadAnalytics() AND NOWHERE ELSE. It runs only once
+   consent is "granted" (now, or on a later visit), so nothing that tracks
+   a visitor can load before they say yes. When a tool is chosen: add its
+   script here, and add its hosts to script-src / connect-src in the
+   Content-Security-Policy in netlify.toml, or the browser will block it.
+   window.integrityConsent holds the current value, and an
+   "integrity:consent" event fires on the document when it changes. */
+function loadAnalytics() {
+    if (loadAnalytics.done) return;
+    loadAnalytics.done = true;
+    /* the analytics snippet goes here */
+}
+function cookieNotice() {
+    const KEY = "integrity-consent";
+    const box = document.getElementById("cookie-notice");
+    if (!box) return;
+    const read = () => { try { return JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { return null; } };
+    const apply = (value) => {
+        window.integrityConsent = value;
+        document.dispatchEvent(new CustomEvent("integrity:consent", { detail: value }));
+        if (value === "granted") loadAnalytics();
+    };
+    let opener = null;
+    function show(from) {
+        opener = from || null;
+        box.hidden = false;
+        requestAnimationFrame(() => requestAnimationFrame(() => box.classList.add("is-in")));
+        if (from) box.querySelector("[data-cookie-choice='granted']").focus({ preventScroll: true });
+    }
+    function hide() {
+        box.classList.remove("is-in");
+        setTimeout(() => { box.hidden = true; }, reduceMotion ? 0 : 650);
+        if (opener) opener.focus({ preventScroll: true });
+    }
+    box.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-cookie-choice]");
+        if (!btn) return;
+        const value = btn.dataset.cookieChoice;
+        try { localStorage.setItem(KEY, JSON.stringify({ value, at: new Date().toISOString().slice(0, 10) })); } catch (err) { /* private mode: the choice lasts for this page only */ }
+        apply(value);
+        hide();
+    });
+    document.querySelectorAll("[data-cookie-settings]").forEach((b) => b.addEventListener("click", () => show(b)));
+
+    const saved = read();
+    if (saved && (saved.value === "granted" || saved.value === "denied")) apply(saved.value);
+    else { window.integrityConsent = "unset"; setTimeout(() => show(), 1800); }      /* after the hero's intro has had its moment */
+}
+
 /* ---------- HOME CONTROL (from the Homicidal Fitness site) ----------
    Appears once the first screen of the hero is scrolled off. Its colour
    comes from a probe of whatever is actually painted under it: take the
@@ -1834,7 +1888,7 @@ document.fonts.ready.then(() => {
     serviceMap();
     contactForm();
     shieldCard();
-    homeButton(); claimPlay(); heroScroll(); philMorph();
+    cookieNotice(); homeButton(); claimPlay(); heroScroll(); philMorph();
     stackCycle();
     philStory();
     ctaArrow();
