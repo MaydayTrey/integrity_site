@@ -1096,7 +1096,7 @@ body.has-dialog .home-btn { visibility: hidden; }
         grid-template-columns: minmax(0, 1fr) minmax(0, 460px); column-gap: 72px; align-items: center;
         padding: 88px max(var(--gutter), calc((100% - 1080px) / 2)) calc(var(--vee) + 96px);
     }
-    .claim__panel { padding: 0; align-self: start; }
+    .claim__panel { padding: 0; align-self: center; }       /* the words (and the drawing behind them) share the photo's centre line */
     /* the shield and its label stand centred at the head of the panel; the heading and the words stay flush left under them */
     .claim__mark { margin-inline: auto; width: 84px; }
     .claim__panel .section__eyebrow { text-align: center; margin-bottom: 28px; }
