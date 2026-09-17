@@ -81,9 +81,10 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 /* THE OUTLINE BUTTON. At rest: a faint grey frame, and a line of Integrity
    red that travels round it, drawing the outline as it goes (a conic
    gradient turned by --spin, masked down to a 2px ring). On hover or focus
-   the ring closes into a full red outline and the brand gradient fills the
+   the line runs on round the whole frame, then the brand gradient fills the
    button. Reduced motion: the full red outline, still. */
 @property --spin { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+@property --gap { syntax: "<percentage>"; inherits: false; initial-value: 55%; }   /* the part of the ring with no red on it */
 .btn--outline {
     position: relative; isolation: isolate;
     box-shadow: inset 0 0 0 2px rgba(209, 211, 212, .28); color: var(--grey-300);      /* the faint frame: a shadow, not a border, so the ring below can sit inside the button's own box (the rolling label clips overflow) */
@@ -92,11 +93,12 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .btn--outline::before {
     content: ""; position: absolute; inset: 0; z-index: -1;
-    background: var(--grad-brand); opacity: 0; transition: opacity .3s;
+    background: var(--grad-brand); opacity: 0; transition: opacity .25s;
 }
 .btn--outline::after {
     content: ""; position: absolute; inset: 0; padding: 2px; pointer-events: none;
-    background: conic-gradient(from var(--spin), transparent 0 55%, var(--red-dark) 78%, var(--red) 100%);
+    background: conic-gradient(from var(--spin), transparent 0 var(--gap), var(--red-dark) calc(var(--gap) * 1.42), var(--red) 100%);
+    transition: --gap .75s ease-in-out;
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
             mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor; mask-composite: exclude;
@@ -104,9 +106,12 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 @keyframes btn-spin { to { --spin: 360deg; } }
 .btn--outline:hover, .btn--outline:focus-visible { color: var(--white); }
-.btn--outline:hover::before, .btn--outline:focus-visible::before { opacity: 1; }
-.btn--outline:hover::after, .btn--outline:focus-visible::after { background: var(--red); animation-play-state: paused; }
-@media (prefers-reduced-motion: reduce) { .btn--outline::after { animation: none; background: var(--red); } }
+/* hover, in two beats: the red line runs on round the frame until it meets
+   its own tail (--gap closes), THEN the fill comes in. Leaving: the fill goes
+   first, the line lets go after. */
+.btn--outline:hover::before, .btn--outline:focus-visible::before { opacity: 1; transition: opacity .35s .7s; }
+.btn--outline:hover::after, .btn--outline:focus-visible::after { --gap: 0%; animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .btn--outline::after { animation: none; transition: none; --gap: 0%; } .btn--outline:hover::before, .btn--outline:focus-visible::before { transition: none; } }
 .btn:hover, .btn:focus-visible { transform: translateY(-2px); }
 .btn--primary:hover { box-shadow: 0 10px 28px rgba(35, 31, 32, .55); }
 
