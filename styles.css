@@ -182,11 +182,11 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .nav__cta { margin-top: 24px; align-self: flex-start; }
 
 /* ---------- HOME CONTROL ----------
-   Fixed bottom left. Hidden over the hero (.visible comes from script.js);
+   Fixed bottom right. Hidden over the hero (.visible comes from script.js);
    its colour follows the background under it: white over dark sections and
    photos, Integrity red (.on-light) over white and grey ones. */
 .home-btn {
-    position: fixed; left: -9px; bottom: 12px; z-index: 45;       /* tucked into the page gutter, clear of the text column (the glyph sits 13px in from the button edge) */      /* under the header and its menu (50) */
+    position: fixed; right: -6px; bottom: 12px; z-index: 45;      /* bottom right, tucked into the page gutter so it stays clear of the text column */      /* under the header and its menu (50) */
     width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
     color: var(--white); opacity: 0; visibility: hidden;
     filter: drop-shadow(0 1px 2px rgba(35, 31, 32, .45));
@@ -194,7 +194,8 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .home-btn.visible { opacity: 1; visibility: visible; }
 .home-btn.on-light { color: var(--red); filter: none; }
-.home-btn svg { display: block; width: 18px; height: 18px; }
+.home-btn svg { display: block; width: 22px; height: 22px; }
+@media (min-width: 768px) { .home-btn { right: 10px; bottom: 16px; width: 52px; height: 52px; } .home-btn svg { width: 32px; height: 32px; } }
 .home-btn .home-fill { opacity: 0; transition: opacity .3s ease; }
 .home-btn:hover .home-fill, .home-btn:focus-visible .home-fill { opacity: 1; }
 .home-btn:focus-visible { outline: 3px solid currentColor; outline-offset: 2px; }
@@ -1082,7 +1083,6 @@ body.has-dialog .home-btn { visibility: hidden; }
         padding: 20px 24px; font-size: 15px;
     }
     .claim__lede { font-size: 17px; }
-}
 }
 .badge__title { font-family: var(--font-ui); font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; line-height: 1.25; }
 .badge__text { font-size: 13px; line-height: 1.5; color: var(--ink); max-width: 26ch; }
