@@ -1088,9 +1088,16 @@ body.has-dialog .home-btn { visibility: hidden; }
 .claim { --vee: clamp(22px, 3.4vw, 62px); position: relative; z-index: 2; margin-bottom: calc(-1 * var(--vee) - 1px); overflow: clip; pointer-events: none; }
 .claim__inner { pointer-events: auto; }   /* clip: the drawing behind the words hangs past the panel, and clip-path alone does not stop that widening the page (on phones it shrank the whole site and pushed the hamburger off screen) */
 .claim__inner {
-    position: relative; display: grid; background: var(--white);
+    position: relative; isolation: isolate; display: grid;
     padding-bottom: calc(var(--vee) + 28px);
     clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--vee)), 50% 100%, 0 calc(100% - var(--vee)));
+}
+/* the white is its own layer and stops 2px ABOVE the outer cut, tucked under
+   the red rule. Cut along the very same diagonal as the red, anti-aliasing let
+   a hairline of white show under it (the same fix as the hero's strip). */
+.claim__inner::before {
+    content: ""; position: absolute; inset: 0; z-index: -1; background: var(--white);
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--vee) - 2px), 50% calc(100% - 2px), 0 calc(100% - var(--vee) - 2px));
 }
 .claim__inner::after {
     content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: calc(var(--vee) + 5px); pointer-events: none; z-index: 3;
