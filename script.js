@@ -1301,26 +1301,68 @@ function philStory() {
         if (stack) {
             /* THE WORK: the three photos fly in from beyond the left edge,
                one after another, each landing on the pile; the last lands
-               on top, square to the frame. Only then does the text fade
-               in. Once, no loop. Resting transforms match the CSS. */
+               on top, square to the frame. Only then does the text type
+               itself out, like the first beat. Its last word, "integrity",
+               is typed, backspaced under a cursor, and retyped bold in the
+               wordmark's red. Once, no loop. Resting transforms match CSS. */
             const photos = [...stack.querySelectorAll(".stack__photo")];
             const caption = beat.querySelector(".beat__caption");
             const next = stack.querySelector(".stack__next");          /* the cycle button arrives with the caption */
-            const texts = [step, title, ...paras];
             photos.forEach((ph) => { ph.loading = "eager"; });
             const away = () => -(stack.getBoundingClientRect().left + stack.offsetWidth + 80);   /* fully off the left of the screen */
             photos.forEach((ph, k) => gsap.set(ph, { x: away(), y: STACK_REST[k].y + 30, rotation: STACK_REST[k].rotation - 14, autoAlpha: 0 }));
-            gsap.set([...texts, caption], { autoAlpha: 0, y: 14 });
+            gsap.set(caption, { autoAlpha: 0, y: 14 });
             if (next) gsap.set(next, { autoAlpha: 0, scale: 0.6 });
-            const tl = gsap.timeline({ scrollTrigger: { trigger: beat, start: "top 70%", once: true } });
+
+            /* the copy, split for typing (same as the first beat) */
+            const titleSplit = SplitText.create(title, { type: "chars", charsClass: "tchar" });
+            const paraSplits = [...paras].map((p) => SplitText.create(p, { type: "words", wordsClass: "tword" }));
+            gsap.set(step, { autoAlpha: 0 });
+            gsap.set(titleSplit.chars, { autoAlpha: 0 });
+            paraSplits.forEach((s) => gsap.set(s.words, { autoAlpha: 0 }));
+            /* the word to retype: typed by hand below, so it leaves the word-by-word run,
+               and so does whatever follows it (the full stop) */
+            const retype = beat.querySelector("[data-retype]");
+            const rWord  = retype && retype.querySelector(".tword");
+            const rText  = rWord ? rWord.textContent : "";
+            const runs = paraSplits.map((s) => [...s.words]);     /* what the word-by-word run types, per paragraph */
+            let tail = [];
+            if (rWord) {
+                const last = runs[runs.length - 1];
+                const at = last.indexOf(rWord);
+                tail = last.slice(at + 1);
+                runs[runs.length - 1] = last.slice(0, at);
+            }
+
+            const tl = gsap.timeline({
+                scrollTrigger: { trigger: beat, start: "top 70%", once: true },
+                onComplete() { titleSplit.revert(); paraSplits.forEach((s) => s.revert()); }   /* back to plain markup: the word rests bold and red via CSS */
+            });
             photos.forEach((ph, k) => {
                 tl.set(ph, { autoAlpha: 1 }, k * 0.42)
                   .to(ph, { ...STACK_REST[k], duration: 1.05, ease: "power3.out" }, k * 0.42);
             });
             tl.to(caption, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" }, "-=0.35");
             if (next) tl.to(next, { autoAlpha: 1, scale: 1, duration: 0.45, ease: "back.out(2)", clearProps: "transform" }, "<");
-            tl
-              .to(texts, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out", stagger: 0.12, clearProps: "transform" }, "-=0.2");
+            tl.to(step, { autoAlpha: 1, duration: 0.3 }, "-=0.2")
+              .to(titleSplit.chars, { autoAlpha: 1, duration: 0.01, stagger: 0.035 }, "<0.15");
+            runs.forEach((words) => tl.to(words, { autoAlpha: 1, duration: 0.01, stagger: 0.022 }, "+=0.15"));
+
+            if (rWord) {
+                const cursor = document.createElement("span");
+                cursor.className = "type-cursor"; cursor.setAttribute("aria-hidden", "true"); cursor.textContent = "|";
+                const show = (n) => () => { rWord.textContent = rText.slice(0, n); };
+                tl.call(() => {                                    /* plain first, empty, cursor on */
+                    retype.classList.add("is-plain"); rWord.textContent = ""; gsap.set(rWord, { autoAlpha: 1 }); retype.after(cursor);
+                }, null, "+=0.05");
+                for (let n = 1; n <= rText.length; n++) tl.call(show(n), null, "+=0.075");             /* type it */
+                tl.call(() => {}, null, "+=0.8");                                                      /* look at it */
+                for (let n = rText.length - 1; n >= 0; n--) tl.call(show(n), null, "+=0.05");          /* backspace */
+                tl.call(() => retype.classList.remove("is-plain"), null, "+=0.35");                    /* now bold, in the wordmark's red */
+                for (let n = 1; n <= rText.length; n++) tl.call(show(n), null, "+=0.11");              /* retype, a touch slower */
+                tl.to(tail, { autoAlpha: 1, duration: 0.01 }, "+=0.25")                                /* the full stop */
+                  .call(() => cursor.remove(), null, "+=1.6");                                         /* a few blinks, then the cursor goes */
+            }
             return;
         }
 

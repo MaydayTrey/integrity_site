@@ -641,7 +641,14 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .stack__photo:nth-child(2) { transform: translate(12px, -8px) rotate(2.5deg); }
 .beat__media .beat__caption { margin-top: 12px; }
 /* under the stack: clear of the tilted prints' corners, and lined up with the stack, not the column */
-.beat--work .beat__caption { width: min(100%, calc((100svh - 200px) * 4 / 5)); margin: 30px auto 0; }
+.beat--work .beat__caption { width: min(100%, calc((100svh - 200px) * 4 / 5)); margin: 46px auto 0; }
+/* THE LAST WORD. At rest "integrity" is bold in the wordmark's red. While
+   script.js types the paragraph it is first typed plain (.is-plain),
+   backspaced under the cursor, then retyped like this. */
+.type-word { font-weight: 700; color: var(--red-dark); }
+.type-word.is-plain { font-weight: inherit; color: inherit; }
+.type-cursor { display: inline-block; margin-left: 1px; font-weight: 400; color: var(--ink); animation: type-blink .9s steps(1) infinite; }
+@keyframes type-blink { 50% { opacity: 0; } }
 /* THE FLIP BUTTON: a labelled pill in the stack's bottom right, tucked
    inside the top photo's rounded corner. Sends the top print to the
    back of the pile. Same translucent ink + white keyline as the
