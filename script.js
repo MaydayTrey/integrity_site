@@ -492,6 +492,8 @@ function reviewCarousel() {
     const slot    = section.querySelector(".reviews-current");
     const count   = section.querySelector(".reviews-progress__count");
     const fill    = section.querySelector(".reviews-progress__fill");
+    const vcount  = section.querySelector(".reviews-vprogress__count");   /* phones: the vertical bar beside the window */
+    const vfill   = section.querySelector(".reviews-vprogress__fill");
 
     if (reduceMotion) {
         layers.filter(Boolean).forEach((w) => { w.p = 1; render(w); });   /* everything in its finished state */
@@ -499,26 +501,25 @@ function reviewCarousel() {
     }
     section.classList.add("is-carousel");
 
-    /* From 768px the review text leaves its photo and lives in the left
-       column, only the active one shown (moving nodes keeps the
-       See-the-job wiring). Phones keep the glass on the photo: the head
-       would otherwise grow with each quote and squeeze the window. */
+    /* The review text leaves its photo and lives in the head (.reviews-
+       current), only the active one shown (moving nodes keeps the
+       See-the-job wiring): beside the window from 768px, above it on
+       phones. On phones the slot is sized to the LONGEST review, so the
+       head never grows or shrinks and the window below never jumps. */
     const wide = window.matchMedia("(min-width: 768px)");
     let active = 0;
     function placeTexts() {
-        if (wide.matches) {
-            texts.forEach((t, i) => { t.hidden = i !== active; slot.appendChild(t); });
-        } else {
-            texts.forEach((t, i) => { t.hidden = false; cards[i].appendChild(t); });
-        }
+        texts.forEach((t, i) => { t.hidden = i !== active; slot.appendChild(t); });
+        if (wide.matches) { slot.style.minHeight = ""; return; }
+        let tallest = 0;
+        texts.forEach((t) => { const was = t.hidden; t.hidden = false; tallest = Math.max(tallest, t.offsetHeight); t.hidden = was; });
+        slot.style.minHeight = tallest + "px";
     }
     function showText(i) {
         if (i === active) return;
-        if (wide.matches) {
-            texts[active].hidden = true;
-            texts[i].hidden = false;
-            gsap.fromTo(texts[i], { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out", clearProps: "transform" });
-        }
+        texts[active].hidden = true;
+        texts[i].hidden = false;
+        gsap.fromTo(texts[i], { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out", clearProps: "transform" });
         active = i;
     }
 
@@ -538,7 +539,7 @@ function reviewCarousel() {
                sit around 0.6, so they read as a step back rather than
                already at the floor, and the gradient shows during travel */
             const d = Math.min(Math.abs(r.top + r.height / 2 - mid) / box.height, 1);
-            gsap.set(card, { scale: 1 - d * 0.22, x: d * 56, transformOrigin: "50% 50%" });
+            gsap.set(card, { scale: 1 - d * 0.22, x: d * (wide.matches ? 56 : 22), transformOrigin: "50% 50%" });
         });
     }
 
@@ -583,6 +584,9 @@ function reviewCarousel() {
         revealed = -1;
 
         const H = win.clientHeight;
+        /* phones: each photo fills most of the window (the window's height
+           is whatever the head leaves, so it is only known here) */
+        cards.forEach((c) => { c.style.minHeight = wide.matches ? "" : Math.round(H * 0.84) + "px"; });
         const W = Math.round(H * 0.28);                /* the dwell, in px of scrolling */
         const first = cards[0], last = cards[cards.length - 1];
         column.style.paddingTop    = `${Math.max(H / 2 - first.offsetHeight / 2, 0)}px`;
@@ -618,8 +622,9 @@ function reviewCarousel() {
                     if (gap < best) { best = gap; idx = i; }
                 });
                 showText(idx);
-                count.textContent = String(idx + 1).padStart(2, "0");
+                count.textContent = vcount.textContent = String(idx + 1).padStart(2, "0");
                 fill.style.transform = `scaleX(${self.progress})`;
+                vfill.style.transform = `scaleY(${self.progress})`;
                 /* the centre band: within 30% of a card-height of the midline */
                 setCentred(best <= cards[idx].offsetHeight * 0.3 ? idx : -1, self.direction);
             },
@@ -660,6 +665,7 @@ const EDIT_AREA = new URLSearchParams(location.search).has("edit-area");
 function serviceMap() {
     const el = document.getElementById("service-map");
     if (!el || typeof L === "undefined") return;         /* Leaflet did not load: the SVG stays */
+    const check = el.parentElement;                      /* .check: the map plus the checker panel */
 
     const map = L.map(el, {
         zoomControl: false, dragging: false, scrollWheelZoom: false, doubleClickZoom: false,
@@ -702,9 +708,37 @@ function serviceMap() {
             map.fitBounds(area.getBounds(), { paddingTopLeft: [16, navH + 12], paddingBottomRight: [16, 16], animate: false });
             map.panBy([-(r.width / 2 + 24), 0], { animate: false });
         } else {
-            /* phones: fill the width; the bottom edge may tuck under the panel */
-            map.fitBounds(area.getBounds(), { paddingTopLeft: [10, navH + 10], paddingBottomRight: [10, r.height * 0.45], animate: false });
+            /* phones: fill the width. Sheet closed: clear the button at the
+               foot. Sheet open: the bottom edge may tuck under the panel */
+            const closed = check.classList.contains("is-sheet") && !check.classList.contains("is-open");
+            map.fitBounds(area.getBounds(), { paddingTopLeft: [10, navH + 10], paddingBottomRight: [10, closed ? 116 : r.height * 0.45], animate: false });
         }
+    }
+
+    /* PHONES: the checker is a bottom sheet. The button at the map's foot
+       slides the form up to where it always sat; the form's close button
+       (or Escape) slides it away. CSS does the motion off two classes. */
+    const openBtn  = check.querySelector(".check__open");
+    const closeBtn = check.querySelector(".check__close");
+    const sheetMq  = window.matchMedia("(max-width: 767px)");
+    function setSheet(open) {
+        check.classList.toggle("is-open", open);
+        openBtn.setAttribute("aria-expanded", String(open));
+        fit();
+        if (open) setTimeout(() => check.querySelector("#check-street").focus({ preventScroll: true }), 460);   /* after the slide */
+        else if (sheetMq.matches) openBtn.focus({ preventScroll: true });
+    }
+    function applySheet() {
+        check.classList.toggle("is-sheet", sheetMq.matches);
+        if (!sheetMq.matches) { check.classList.remove("is-open"); openBtn.setAttribute("aria-expanded", "false"); }
+        fit();
+    }
+    if (openBtn && closeBtn) {
+        openBtn.addEventListener("click", () => setSheet(true));
+        closeBtn.addEventListener("click", () => setSheet(false));
+        check.addEventListener("keydown", (e) => { if (e.key === "Escape" && check.classList.contains("is-open") && sheetMq.matches) setSheet(false); });
+        sheetMq.addEventListener("change", applySheet);
+        applySheet();
     }
 
     fetch(SERVICE_AREA_URL)
@@ -1069,7 +1103,45 @@ function contactForm() {
    them. On arrival the halves slide to the card's edges while they
    grow to the card's height, the panel opens between them, and the
    content fades in. Plays once. Reduced motion: the finished card. */
+/* BELOW 1024px there is no split: the card is several screens tall
+   there, and scaling something that size was glitchy on phones. The
+   shield and wordmark build on the grey section, the section turns
+   white, and the form's blocks fade in top to bottom. Only opacity,
+   small transforms and one background colour move. Plays once.
+   Without this (no JS, reduced motion) the section is simply white
+   with the form in place. */
+function contactIntroSmall() {
+    const section = document.querySelector(".section--contact");
+    const intro   = section && section.querySelector(".contact-intro");
+    if (!intro || reduceMotion) return;
+    const shield = intro.querySelector(".contact-intro__shield");
+    const items = [...section.querySelectorAll(
+        ".contact-card__main > :not(form), .form > :not(input):not(.form__hp), .contact-card__side > *"
+    )];
+    section.classList.add("is-intro");
+    gsap.set(items, { autoAlpha: 0, y: 10 });
+    gsap.set(shield, { autoAlpha: 0, scale: 0.85, transformOrigin: "50% 50%" });
+    const name = SplitText.create(intro.querySelector(".lockup__name"), { type: "chars", mask: "chars", charsClass: "char" });
+    const tag  = SplitText.create(intro.querySelector(".lockup__tag"),  { type: "chars", charsClass: "char" });
+    gsap.set(name.chars, { yPercent: -110 });
+    gsap.set(tag.chars,  { scale: 0, transformOrigin: "50% 50%" });
+
+    gsap.timeline({ scrollTrigger: { trigger: section, start: "top 30%", once: true } })
+        .to(shield, { autoAlpha: 1, scale: 1, duration: 0.5, ease: "back.out(1.4)" })
+        .to(name.chars, { yPercent: 0, duration: 0.4, ease: "power2.out", stagger: 0.035 }, "-=0.2")
+        .to(tag.chars, { scale: 1, duration: 0.25, ease: "back.out(1.7)", stagger: 0.012 }, "-=0.25")
+        .to(intro, { autoAlpha: 0, duration: 0.35, ease: "power2.in" }, "+=0.6")
+        .to(section, { backgroundColor: "#FFFFFF", duration: 0.5, ease: "power2.inOut" }, "<")
+        .add(() => {
+            section.classList.remove("is-intro");                 /* the stylesheet's white takes over */
+            gsap.set(section, { clearProps: "backgroundColor" });
+            name.revert(); tag.revert();
+        })
+        .to(items, { autoAlpha: 1, y: 0, duration: 0.35, ease: "power2.out", stagger: 0.04, clearProps: "transform" });
+}
+
 function shieldCard() {
+    if (!window.matchMedia("(min-width: 1024px)").matches) { contactIntroSmall(); return; }
     const card = document.querySelector(".shield-card");
     if (!card || reduceMotion) return;
     const left    = card.querySelector(".shield-card__cap--left");
@@ -1251,7 +1323,7 @@ function sectionReveals() {
     /* the reviews section is excluded: its cards live inside the pinned,
        transformed column and its head must be visible the moment the
        pin engages */
-    const targets = ".section__head:not(.reviews-head):not(.quals-head), .placeholder .section__inner, .service, .segments, .panel:not([hidden]), .about__cta-row, .areas__body, .check__panel";   /* qualifications run their own entrance (qualsIntro) */   /* the contact card is excluded: the pour is its entrance, and a translated card would throw the tint projection off */
+    const targets = ".section__head:not(.reviews-head):not(.quals-head), .placeholder .section__inner, .service, .segments, .panel:not([hidden]), .about__cta-row, .areas__body" + (window.matchMedia("(min-width: 768px)").matches ? ", .check__panel" : "");   /* phones: the panel is a CSS-driven sheet */   /* qualifications run their own entrance (qualsIntro) */   /* the contact card is excluded: the pour is its entrance, and a translated card would throw the tint projection off */
     gsap.set(targets, { autoAlpha: 0, y: 24 });
     ScrollTrigger.batch(targets, {
         start: "top 85%",

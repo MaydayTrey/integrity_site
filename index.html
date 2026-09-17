@@ -600,6 +600,15 @@
                     <div class="reviews-current"></div>
                 </header>
 
+                <!--phones: a vertical progress bar beside the window, 01 at the
+                    top, 08 at the foot; script.js fills it (desktop uses the
+                    horizontal one in the head)-->
+                <div class="reviews-vprogress" aria-hidden="true">
+                    <span class="reviews-vprogress__count">01</span>
+                    <span class="reviews-vprogress__track"><span class="reviews-vprogress__fill"></span></span>
+                    <span class="reviews-vprogress__total">08</span>
+                </div>
+
                 <!--the window clips the travelling column; the column is
                     moved with a transform by the scrubbed timeline-->
                 <div class="reviews-window">
@@ -822,7 +831,14 @@
                 <!--data-suggest-key: paste a Geoapify API key (free tier, domain-restricted)
                     to turn on address-level suggestions under the street field.
                     Empty = no suggestions; the check itself needs no key.-->
+                <!--phones: the checker is a bottom sheet. This button sits at the
+                    foot of the map and slides the form up; the form's close
+                    button slides it away again (script.js, .is-sheet/.is-open).
+                    Without JS neither button shows and the form is just there.-->
+                <button class="btn btn--primary check__open" type="button" aria-controls="check-form" aria-expanded="false">Tap to check if your address is covered</button>
+
                 <form class="check__panel" id="check-form" novalidate autocomplete="on" data-suggest-key="22ffe73888f94158a60ade9276536286">
+                    <button class="check__close" type="button" aria-label="Close the address checker">&times;</button>
                     <p class="section__eyebrow">Am I in range?</p>
                     <h2 class="check__title" id="check-title">Check your address</h2>
 
@@ -908,6 +924,15 @@
             Netlify form: data-netlify + hidden form-name, honeypot
             bot-field, action /thanks.html. Phone: TODO from Phil.-->
         <section class="section section--contact" id="contact" aria-labelledby="contact-title">
+            <!--below 1024px there is no split shield (a card several screens
+                tall made that animation glitchy). Instead: this shield and
+                wordmark build on the grey section, the section turns white,
+                and the form fades in. Shown only while script.js runs it.-->
+            <div class="contact-intro" aria-hidden="true">
+                <img class="contact-intro__shield" src="assets/logo-shield.svg" alt="" width="219" height="231" decoding="async">
+                <p class="lockup__name">Integrity</p>
+                <p class="lockup__tag">Restorations &amp; Remodeling</p>
+            </div>
             <div class="section__inner">
                 <!--wrap carries the drop-shadow of the whole silhouette-->
                 <div class="shield-card__wrap">
