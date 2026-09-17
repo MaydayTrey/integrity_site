@@ -28,7 +28,7 @@
     --grad-steel:  linear-gradient(90deg, var(--white) 0%, var(--white) 45%, var(--grey-300) 100%);
 
     /* Photo overlay strength (comp default .85). One knob. */
-    --overlay: 0.85;
+    --overlay: 0.6;
 
     --font-display: "Bebas Neue", "Oswald", Impact, sans-serif;
     --font-ui:      "Oswald", "Arial Narrow", sans-serif;
@@ -270,7 +270,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
    320px phone (276px of content) they wrap and stack instead of
    overflowing the nowrap labels */
 .hero__actions { display: flex; flex-wrap: wrap; gap: 10px; }
-.hero__actions .btn--outline { flex: 0 1 auto; }
+.hero__actions .btn--outline { flex: 1 1 140px; }
 .hero__actions .btn--outline { background: rgba(35, 31, 32, .42); color: var(--white); }   /* a dark backing over the photo */
 
 /* THE TALL HERO (a trial: delete this one block to go back to the hero that
