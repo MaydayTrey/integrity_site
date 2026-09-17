@@ -124,7 +124,7 @@ function cross(on) {
               const state = Flip.getState([shield, wordmark]);
               if (swapToggle) gsap.set(toggle, { autoAlpha: 0 });
               setScrolled(true);
-              gsap.set(lists, { clearProps: "opacity,visibility" });   /* they live in the drawer now */
+              gsap.set(lists, { autoAlpha: 1 });   /* they live in the drawer now. Set, not cleared: the stylesheet starts them at opacity 0 for the intro, so clearing left the drawer empty */
               flipping = Flip.from(state, { duration: 0.65, ease: "power3.inOut", scale: true, stagger: 0.12, onComplete() { flipping = null; } });
           })
           .to(headerBg, { scaleX: 1, duration: 0.55, ease: "power2.inOut" }, "+=0.25");
