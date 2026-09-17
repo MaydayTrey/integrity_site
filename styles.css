@@ -323,6 +323,48 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
     margin-bottom: 8px;
 }
 .service__text { font-size: 16px; line-height: 1.6; max-width: 46ch; }
+/* THE WHOLE BLOCK IS THE LINK: the title's link stretches over the block,
+   so the icon is clickable too. The cue line and a small lift on the icon
+   say so. */
+.service { position: relative; isolation: isolate; --ico: 64px; }      /* --ico: the icon's size, so the ripple can find its centre */
+/* THE RIPPLE. Hovering (or focusing) a service sends two soft rings out
+   from the centre of its icon. Each ring is a radial gradient that is
+   TRANSPARENT in the middle and at the rim, with a band of brand red
+   between, so it is hollow with fuzzy edges; it scales up from the
+   centre and fades as it goes. The second ring follows a beat behind.
+   Pseudo-elements on the block (not the icon, which is a mask and would
+   clip them), behind the icon. Runs once per hover. */
+.service::before, .service::after {
+    content: ""; position: absolute; z-index: -1; pointer-events: none;
+    left: calc(var(--ico) / 2); top: calc(var(--ico) / 2);
+    width: calc(var(--ico) * 2.6); aspect-ratio: 1; translate: -50% -50%;
+    border-radius: 50%; opacity: 0; scale: .25;
+    background: radial-gradient(circle closest-side, transparent 46%, rgba(237, 28, 36, .30) 62%, rgba(186, 30, 35, .16) 76%, transparent 96%);
+}
+.service:hover::before, .service:has(.service__link:focus-visible)::before { animation: service-ripple 1s var(--ease-out) both; }
+.service:hover::after,  .service:has(.service__link:focus-visible)::after  { animation: service-ripple 1s var(--ease-out) .22s both; }
+@keyframes service-ripple {
+    0%   { opacity: 0;  scale: .25; }
+    25%  { opacity: 1; }
+    100% { opacity: 0;  scale: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .service:hover::before, .service:hover::after, .service:has(.service__link:focus-visible)::before, .service:has(.service__link:focus-visible)::after { animation: none; }
+}
+.service__link { color: inherit; text-decoration: none; }
+.service__link::after { content: ""; position: absolute; inset: -10px; }
+.service__link:focus-visible { outline: none; }
+.service:has(.service__link:focus-visible) { outline: 3px solid var(--red); outline-offset: 10px; }
+.service__icon { transition: transform .35s var(--ease-out); }
+.service__title { transition: color .25s; }
+.service__more {
+    display: inline-block; margin-top: 10px;
+    font-family: var(--font-ui); font-weight: 600; font-size: 13px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--red-dark); border-bottom: 2px solid transparent; transition: border-color .25s;
+}
+.service:hover .service__icon { transform: translateY(-4px); }
+.service:hover .service__title { color: var(--red-dark); }
+.service:hover .service__more, .service:has(.service__link:focus-visible) .service__more { border-bottom-color: currentColor; }
 
 /* ---------- OUR WORK ---------- */
 /* segmented control: two cards, the active one goes ink with a brand
@@ -1195,14 +1237,14 @@ body.has-dialog { overflow: hidden; }
     .section__head { margin-bottom: 56px; }
     .section__lede { font-size: 18px; }
     .services { gap: 44px; max-width: 640px; margin-inline: auto; }
-    .service { grid-template-columns: 80px 1fr; gap: 28px; }
+    .service { grid-template-columns: 80px 1fr; gap: 28px; --ico: 80px; }
     .service__icon { width: 80px; }
     .service__title { font-size: 18px; }
     .service__text { font-size: 17px; max-width: none; }
 }
 @media (min-width: 1024px) {
     .services { grid-template-columns: 1fr 1fr; gap: 56px 64px; max-width: none; }
-    .service { grid-template-columns: 96px 1fr; }
+    .service { grid-template-columns: 96px 1fr; --ico: 96px; }
     .service__icon { width: 96px; }
 }
 

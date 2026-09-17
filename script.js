@@ -182,31 +182,53 @@ function sectionFades() {
     document.body.appendChild(veil);
     let busy = false;
 
+    /* href: the hash to record. target: the section whose content rises in.
+       land: the element to bring under the bar (defaults to the section
+       itself, honouring its scroll-margin-top). */
+    function fadeTo(href, target, land) {
+        if (busy) return;
+        busy = true;
+        const inner = target.querySelector(":scope > .section__inner") || target;
+        gsap.timeline({
+            onComplete() { busy = false; gsap.set(inner, { clearProps: "opacity,visibility,transform" }); }
+        })
+        .to(veil, { autoAlpha: 1, duration: 0.28, ease: "power2.in" })
+        .add(() => {
+            let top;
+            if (land) {                                              /* a spot inside the section: just under the bar */
+                const bar = header.getBoundingClientRect().height;
+                top = land.getBoundingClientRect().top + window.scrollY - bar - 28;
+            } else {                                                 /* land where the browser would: the section's top under the bar */
+                const margin = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+                top = target.getBoundingClientRect().top + window.scrollY - margin;
+            }
+            window.scrollTo({ top, behavior: "instant" });
+            history.pushState(null, "", href);
+            ScrollTrigger.update();
+            gsap.set(inner, { autoAlpha: 0, y: 28 });
+        })
+        .to(veil,  { autoAlpha: 0, duration: 0.55, ease: "power2.out" }, "+=0.05")
+        .to(inner, { autoAlpha: 1, y: 0, duration: 0.75, ease: "power3.out" }, "<");
+    }
+
     menu.addEventListener("click", (e) => {
         const link = e.target.closest('a[href^="#"]');
         if (!link) return;
         const target = document.querySelector(link.getAttribute("href"));
         if (!target) return;
         e.preventDefault();
-        if (busy) return;
-        busy = true;
-        const inner = target.querySelector(":scope > .section__inner") || target;
+        fadeTo(link.getAttribute("href"), target);
+    });
 
-        gsap.timeline({
-            onComplete() { busy = false; gsap.set(inner, { clearProps: "opacity,visibility,transform" }); }
-        })
-        .to(veil, { autoAlpha: 1, duration: 0.28, ease: "power2.in" })
-        .add(() => {
-            /* land where the browser would: the section's top under the bar */
-            const margin = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
-            const top = target.getBoundingClientRect().top + window.scrollY - margin;
-            window.scrollTo({ top, behavior: "instant" });
-            history.pushState(null, "", link.getAttribute("href"));
-            ScrollTrigger.update();
-            gsap.set(inner, { autoAlpha: 0, y: 28 });
-        })
-        .to(veil,  { autoAlpha: 0, duration: 0.55, ease: "power2.out" }, "+=0.05")
-        .to(inner, { autoAlpha: 1, y: 0, duration: 0.75, ease: "power3.out" }, "<");
+    /* the service blocks: same fade, but landing on the filter row so the
+       chosen photos are what you arrive at (ourWork has already picked the filter) */
+    document.querySelectorAll("[data-goto-filter]").forEach((link) => {
+        link.addEventListener("click", (e) => {
+            const target = document.querySelector(link.getAttribute("href"));
+            if (!target) return;
+            e.preventDefault();
+            fadeTo(link.getAttribute("href"), target, target.querySelector(".filters"));
+        });
     });
 }
 
@@ -359,6 +381,17 @@ function ourWork() {
     });
 
     document.querySelectorAll(".pair").forEach(wirePair);
+
+    /* THE SERVICE LINKS above: each names a filter. Picking it happens here,
+       at once, while the gallery is still off screen; getting there is
+       sectionFades' job (or the plain anchor jump, with reduced motion). */
+    document.querySelectorAll("[data-goto-filter]").forEach((link) => {
+        link.addEventListener("click", () => {
+            selectTab(0);                                                    /* Residential */
+            const btn = filters.find((f) => f.dataset.filter === link.dataset.gotoFilter);
+            if (btn && btn.getAttribute("aria-pressed") !== "true") btn.click();
+        });
+    });
 }
 
 /* tap / keyboard flip for one before/after card; hover is pure CSS.

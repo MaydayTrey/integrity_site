@@ -309,33 +309,42 @@
                     <p class="section__lede" data-placeholder>Kitchens, bathrooms, basements, and the jobs in between, done right the first time for homeowners across the Miami Valley.</p>
                 </header>
 
+                <!--each service is a link to the gallery with its filter already
+                    selected. The link is the title; its ::after stretches over the
+                    whole block, so the icon and the text are clickable too with one
+                    tab stop. script.js (ourWork + sectionFades) picks the filter and
+                    fades there like the menu links; without JS it is a plain #our-work link.-->
                 <ul class="services">
                     <li class="service">
                         <span class="service__icon service__icon--kitchen" aria-hidden="true"></span>
                         <div class="service__body">
-                            <h3 class="service__title">Kitchen Remodeling</h3>
+                            <h3 class="service__title"><a class="service__link" href="#our-work" data-goto-filter="kitchens">Kitchen Remodeling</a></h3>
                             <p class="service__text" data-placeholder>Cabinets, countertops, tile backsplashes, and new flooring, planned around how your family actually uses the room.</p>
+                            <span class="service__more" aria-hidden="true">See our kitchens &rarr;</span>
                         </div>
                     </li>
                     <li class="service">
                         <span class="service__icon service__icon--bathroom" aria-hidden="true"></span>
                         <div class="service__body">
-                            <h3 class="service__title">Bathroom Remodeling</h3>
+                            <h3 class="service__title"><a class="service__link" href="#our-work" data-goto-filter="bathrooms">Bathroom Remodeling</a></h3>
                             <p class="service__text" data-placeholder>From a worn-out shower to a finished tile surround with new fixtures, with any water damage or mold handled properly before the pretty part goes in.</p>
+                            <span class="service__more" aria-hidden="true">See our bathrooms &rarr;</span>
                         </div>
                     </li>
                     <li class="service">
                         <span class="service__icon service__icon--basement" aria-hidden="true"></span>
                         <div class="service__body">
-                            <h3 class="service__title">Basement Finishing</h3>
+                            <h3 class="service__title"><a class="service__link" href="#our-work" data-goto-filter="basements">Basement Finishing</a></h3>
                             <p class="service__text" data-placeholder>Framing, drywall, flooring, and finish work that turns unused square footage into living space your family will use every day.</p>
+                            <span class="service__more" aria-hidden="true">See our basements &rarr;</span>
                         </div>
                     </li>
                     <li class="service">
                         <span class="service__icon service__icon--other" aria-hidden="true"></span>
                         <div class="service__body">
-                            <h3 class="service__title">Flooring, Painting &amp; More</h3>
+                            <h3 class="service__title"><a class="service__link" href="#our-work" data-goto-filter="more">Flooring, Painting &amp; More</a></h3>
                             <p class="service__text" data-placeholder>Flooring, painting, drywall, windows and doors, fencing, and the odd jobs in between. If it makes your home better, we are not afraid to take it on.</p>
+                            <span class="service__more" aria-hidden="true">See more of our work &rarr;</span>
                         </div>
                     </li>
                 </ul>
