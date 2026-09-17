@@ -1051,7 +1051,7 @@ function addressCheck(map, fit) {
                 const alt = await photon(`${parts.street}, ${parts.city}, ${parts.state} ${parts.zip}`.trim(), 1);
                 if (alt[0]) hit = { label: `${alt[0].street}, ${alt[0].city}, ${alt[0].state} ${alt[0].zip}`.trim(), lat: alt[0].lat, lng: alt[0].lng };
             }
-            if (!hit) { say("is-err", "We couldn't find that address. Check the spelling and city, or <a href=\"#contact\">ask Phil</a>."); return; }
+            if (!hit) { say("is-err", "We couldn't find that address. Check the spelling and city, or <a href=\"#contact\">ask us</a>."); return; }
             if (!geo) geo = await fetch(SERVICE_AREA_URL).then((r) => r.json());
             const zone = areaAt(geo, hit.lng, hit.lat);
 
@@ -1066,12 +1066,12 @@ function addressCheck(map, fit) {
             fit([hit.lat, hit.lng]);
 
             /* name the county only when the shape IS a county; a hand-drawn
-               zone just reads as "Phil's service area" */
+               zone just reads as "our service area" */
             const where = zone && /county$/i.test(zone) ? ` in ${zone}` : "";
-            if (zone) say("is-yes", `Yes. ${hit.label} is inside Phil's service area${where}. <a href="#contact">Get a free estimate</a>.`);
-            else say("is-no", `${hit.label} is outside Phil's service area. If you're close to the line, <a href="#contact">ask Phil anyway</a>.`);
+            if (zone) say("is-yes", `Yes. ${hit.label} is inside our service area${where}. <a href="#contact">Get a free estimate</a>.`);
+            else say("is-no", `${hit.label} is outside our service area. If you're close to the line, <a href="#contact">ask us anyway</a>.`);
         } catch (_) {
-            say("is-err", "The address lookup didn't respond. Try again in a moment, or <a href=\"#contact\">ask Phil</a>.");
+            say("is-err", "The address lookup didn't respond. Try again in a moment, or <a href=\"#contact\">ask us</a>.");
         } finally {
             btn.disabled = false;
         }
