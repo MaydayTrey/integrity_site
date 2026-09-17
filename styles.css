@@ -622,18 +622,40 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .morph__frame { position: relative; overflow: hidden; aspect-ratio: 3 / 2; border-radius: 0 56px 0 56px; background: var(--grey-300); }
 .beat .morph__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 0; }
 .morph__img--self { opacity: 0; }
-.morph.is-live { aspect-ratio: 10 / 11; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+/* FIT THE SCREEN: both photo blocks are sized from the viewport's height
+   (less the header bar and some air), so the whole photo is visible at
+   once and never needs scrolling; the width follows from the shape. */
+.morph.is-live {
+    aspect-ratio: 10 / 11; display: flex; flex-direction: column; justify-content: center; align-items: center;
+    width: min(100%, calc((100svh - 170px) * 10 / 11)); margin-inline: auto;
+}
 .morph.is-live .morph__frame { flex: none; width: 75%; aspect-ratio: 3 / 4; }     /* script.js drives both from here */
 .morph.is-live .beat__caption { align-self: flex-start; }
 /* THE STACK (beat 2): three prints on one spot, the last on top and
    square to the frame, the two under it turned a few degrees so their
    corners show. script.js flies them in from the left to these resting
    transforms (kept in step with STACK_REST there). */
-.stack { position: relative; aspect-ratio: 4 / 5; }
+.stack { position: relative; aspect-ratio: 4 / 5; width: min(100%, calc((100svh - 200px) * 4 / 5)); margin-inline: auto; }
 .beat .stack__photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; box-shadow: 0 16px 34px rgba(35, 31, 32, .24); }
 .stack__photo:nth-child(1) { transform: translate(-14px, 10px) rotate(-3.5deg); }
 .stack__photo:nth-child(2) { transform: translate(12px, -8px) rotate(2.5deg); }
 .beat__media .beat__caption { margin-top: 12px; }
+/* under the stack: clear of the tilted prints' corners, and lined up with the stack, not the column */
+.beat--work .beat__caption { width: min(100%, calc((100svh - 200px) * 4 / 5)); margin: 30px auto 0; }
+/* THE FLIP BUTTON: a labelled pill in the stack's bottom right, tucked
+   inside the top photo's rounded corner. Sends the top print to the
+   back of the pile. Same translucent ink + white keyline as the
+   BEFORE / AFTER buttons. */
+.stack__next {
+    position: absolute; right: 40px; bottom: 26px; z-index: 20;
+    display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 16px 8px 12px; border-radius: 22px;
+    font-family: var(--font-ui); font-weight: 600; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap;
+    color: var(--white); background: rgba(35, 31, 32, .62); border: 1px solid rgba(255, 255, 255, .7);
+    -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+    transition: background-color .25s, border-color .25s, transform .25s var(--ease-out);
+}
+.stack__next svg { width: 20px; height: 20px; flex: none; }
+.stack__next:hover, .stack__next:focus-visible { background: var(--red-dark); border-color: var(--red-dark); transform: translateY(-2px); }
 .beat__caption {
     margin-top: 10px; font-family: var(--font-ui); font-weight: 500; font-size: 13px;
     letter-spacing: .1em; text-transform: uppercase; color: var(--grey-700);

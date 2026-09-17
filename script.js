@@ -1243,6 +1243,52 @@ function shieldCard() {
    side, line by line. From tablet up the two columns also drift past
    each other with the scroll (the photo down-to-up, the copy the other
    way), so the pair reads as two planes. Reduced motion: static. */
+/* where the three stacked prints rest, bottom to top (mirrored in the CSS
+   nth-child transforms for the static page) */
+const STACK_REST = [{ x: -14, y: 10, rotation: -3.5 }, { x: 12, y: -8, rotation: 2.5 }, { x: 0, y: 0, rotation: 0 }];
+
+/* ---------- MEET PHIL: cycling the stack ----------
+   A round button in the stack's bottom right. Each press slides the top
+   print out to the right, tucks it under the pile, and moves the other
+   two up a place, so the next photo is on top. Works with reduced
+   motion too (the moves are instant). */
+function stackCycle() {
+    const stack = document.querySelector("[data-stack]");
+    if (!stack) return;
+    const photos = [...stack.querySelectorAll(".stack__photo")];
+    if (photos.length < 2) return;
+    const order = photos.map((_, k) => k);                          /* bottom to top */
+    order.forEach((idx, pos) => gsap.set(photos[idx], { zIndex: pos + 1 }));
+
+    const btn = document.createElement("button");
+    btn.type = "button"; btn.className = "stack__next";
+    btn.setAttribute("aria-label", "Flip through the photos of the crew at work");
+    const NS = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(NS, "svg");
+    svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("aria-hidden", "true"); svg.setAttribute("focusable", "false");
+    const path = document.createElementNS(NS, "path");               /* two layers and an arrow: next in the pile */
+    path.setAttribute("d", "M12 3 3 8l9 5 9-5-9-5ZM3 13l9 5 9-5M3 17.5l9 5 9-5");
+    path.setAttribute("fill", "none"); path.setAttribute("stroke", "currentColor"); path.setAttribute("stroke-width", "1.8");
+    path.setAttribute("stroke-linecap", "round"); path.setAttribute("stroke-linejoin", "round");
+    svg.appendChild(path); btn.appendChild(svg);
+    const label = document.createElement("span");                   /* "Tap" where there is no mouse */
+    label.textContent = window.matchMedia("(hover: none)").matches ? "Tap to flip through" : "Click to flip through";
+    btn.appendChild(label); stack.appendChild(btn);
+
+    let busy = false;
+    btn.addEventListener("click", () => {
+        if (busy) return;
+        busy = true;
+        const d = reduceMotion ? 0 : 0.95;
+        const top = order.pop(); order.unshift(top);                /* the top print goes to the back */
+        const tl = gsap.timeline({ onComplete() { busy = false; } });
+        tl.to(photos[top], { x: stack.offsetWidth * 0.62, y: -18, rotation: 10, duration: d * 0.42, ease: "power2.in" })
+          .add(() => order.forEach((idx, pos) => gsap.set(photos[idx], { zIndex: pos + 1 })))
+          .to(photos[top], { ...STACK_REST[0], duration: d * 0.58, ease: "power2.out" });
+        order.slice(1).forEach((idx, k) => tl.to(photos[idx], { ...STACK_REST[k + 1], duration: d * 0.7, ease: "power2.inOut" }, 0));
+    });
+}
+
 function philStory() {
     const beats = [...document.querySelectorAll(".beat")];
     if (!beats.length || reduceMotion) return;
@@ -1257,20 +1303,23 @@ function philStory() {
                one after another, each landing on the pile; the last lands
                on top, square to the frame. Only then does the text fade
                in. Once, no loop. Resting transforms match the CSS. */
-            const STACK_REST = [{ x: -14, y: 10, rotation: -3.5 }, { x: 12, y: -8, rotation: 2.5 }, { x: 0, y: 0, rotation: 0 }];
             const photos = [...stack.querySelectorAll(".stack__photo")];
             const caption = beat.querySelector(".beat__caption");
+            const next = stack.querySelector(".stack__next");          /* the cycle button arrives with the caption */
             const texts = [step, title, ...paras];
             photos.forEach((ph) => { ph.loading = "eager"; });
             const away = () => -(stack.getBoundingClientRect().left + stack.offsetWidth + 80);   /* fully off the left of the screen */
             photos.forEach((ph, k) => gsap.set(ph, { x: away(), y: STACK_REST[k].y + 30, rotation: STACK_REST[k].rotation - 14, autoAlpha: 0 }));
             gsap.set([...texts, caption], { autoAlpha: 0, y: 14 });
+            if (next) gsap.set(next, { autoAlpha: 0, scale: 0.6 });
             const tl = gsap.timeline({ scrollTrigger: { trigger: beat, start: "top 70%", once: true } });
             photos.forEach((ph, k) => {
                 tl.set(ph, { autoAlpha: 1 }, k * 0.42)
                   .to(ph, { ...STACK_REST[k], duration: 1.05, ease: "power3.out" }, k * 0.42);
             });
-            tl.to(caption, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" }, "-=0.35")
+            tl.to(caption, { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" }, "-=0.35");
+            if (next) tl.to(next, { autoAlpha: 1, scale: 1, duration: 0.45, ease: "back.out(2)", clearProps: "transform" }, "<");
+            tl
               .to(texts, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out", stagger: 0.12, clearProps: "transform" }, "-=0.2");
             return;
         }
@@ -1312,13 +1361,13 @@ function philStory() {
 }
 
 /* ---------- MEET PHIL: the frame that reshapes ----------
-   Driven by scroll POSITION, nothing to click. The frame starts
-   portrait-shaped (75% of the stage wide, 3:4) showing Phil whole; as
-   the stage travels up the screen it widens to the full stage and
-   flattens to 3:2 while Phil crossfades to the family photo. Scrolling
-   back reverses it. The stage's own size never changes, so the page
-   below holds still. One number drives the width, the shape, both
-   opacities and the caption. */
+   TIMED, not tied to scrolling. When the stage comes into view the
+   frame is portrait-shaped (75% of the stage wide, 3:4) showing Phil
+   whole. It holds on him for a few seconds, then on its own widens to
+   the full stage and flattens to 3:2 while Phil crossfades to the
+   family photo. Once; it stays on the family. The stage's own size
+   never changes, so the page below holds still. One number drives the
+   width, the shape, both opacities and the caption. */
 function philMorph() {
     const stage = document.querySelector("[data-morph]");
     if (!stage || reduceMotion) return;
@@ -1341,8 +1390,8 @@ function philMorph() {
         if (caption.textContent !== cap) caption.textContent = cap;
     }
     render();
-    gsap.to(m, { p: 1, ease: "none", onUpdate: render,
-        scrollTrigger: { trigger: stage, start: "center 62%", end: "center 26%", scrub: 0.6 } });
+    gsap.to(m, { p: 1, duration: 1.9, ease: "power3.inOut", delay: 3.2, onUpdate: render,   /* the hold on Phil, then the warp */
+        scrollTrigger: { trigger: stage, start: "top 72%", once: true } });
 }
 
 /* ---------- QUALIFICATIONS: the badges converge, then the words ----------
@@ -1417,6 +1466,7 @@ document.fonts.ready.then(() => {
     contactForm();
     shieldCard();
     philMorph();
+    stackCycle();
     philStory();
     qualsIntro();
     sectionReveals();
