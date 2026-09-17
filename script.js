@@ -1336,7 +1336,10 @@ function philStory() {
 
             const tl = gsap.timeline({
                 scrollTrigger: { trigger: beat, start: "top 70%", once: true },
-                onComplete() { titleSplit.revert(); paraSplits.forEach((s) => s.revert()); }   /* back to plain markup: the word rests bold and red via CSS */
+                onComplete() {
+                    titleSplit.revert(); paraSplits.forEach((s) => s.revert());   /* back to plain markup: the word rests bold and red via CSS */
+                    document.dispatchEvent(new CustomEvent("work-typed"));       /* the marker arrow waits for this */
+                }
             });
             photos.forEach((ph, k) => {
                 tl.set(ph, { autoAlpha: 1 }, k * 0.42)
@@ -1355,11 +1358,11 @@ function philStory() {
                 tl.call(() => {                                    /* plain first, empty, cursor on */
                     retype.classList.add("is-plain"); rWord.textContent = ""; gsap.set(rWord, { autoAlpha: 1 }); retype.after(cursor);
                 }, null, "+=0.05");
-                for (let n = 1; n <= rText.length; n++) tl.call(show(n), null, "+=0.075");             /* type it */
-                tl.call(() => {}, null, "+=0.8");                                                      /* look at it */
-                for (let n = rText.length - 1; n >= 0; n--) tl.call(show(n), null, "+=0.05");          /* backspace */
+                for (let n = 1; n <= rText.length; n++) tl.call(show(n), null, "+=0.1125");            /* type it (2/3 of the first speed, user asked) */
+                tl.call(() => {}, null, "+=1.0");                                                      /* look at it */
+                for (let n = rText.length - 1; n >= 0; n--) tl.call(show(n), null, "+=0.075");         /* backspace */
                 tl.call(() => retype.classList.remove("is-plain"), null, "+=0.35");                    /* now bold, in the wordmark's red */
-                for (let n = 1; n <= rText.length; n++) tl.call(show(n), null, "+=0.11");              /* retype, a touch slower */
+                for (let n = 1; n <= rText.length; n++) tl.call(show(n), null, "+=0.165");             /* retype, a touch slower */
                 tl.to(tail, { autoAlpha: 1, duration: 0.01 }, "+=0.25")                                /* the full stop */
                   .call(() => cursor.remove(), null, "+=1.6");                                         /* a few blinks, then the cursor goes */
             }
@@ -1397,7 +1400,9 @@ function philStory() {
         beats.forEach((beat) => {
             const st = { trigger: beat, start: "top bottom", end: "bottom top", scrub: true };
             gsap.fromTo(beat.querySelector(".beat__media"), { y: 56 }, { y: -56, ease: "none", scrollTrigger: st });
-            gsap.fromTo(beat.querySelector(".beat__body"),  { y: -36 }, { y: 36, ease: "none", scrollTrigger: st });
+            /* the work beat's TEXT holds still: the marker arrow runs from its last word to the
+               estimate button, and a drifting paragraph would slide under the arrow */
+            if (!beat.classList.contains("beat--work")) gsap.fromTo(beat.querySelector(".beat__body"), { y: -36 }, { y: 36, ease: "none", scrollTrigger: st });
         });
     });
 }
@@ -1434,6 +1439,88 @@ function philMorph() {
     render();
     gsap.to(m, { p: 1, duration: 1.9, ease: "power3.inOut", delay: 3.2, onUpdate: render,   /* the hold on Phil, then the warp */
         scrollTrigger: { trigger: stage, start: "top 72%", once: true } });
+}
+
+/* ---------- MEET PHIL: the marker arrow ----------
+   A hand-drawn black marker arrow from under "integrity" to the estimate button:
+   a short hook to the right, a turn down, a swoop along the bottom, then
+   up into the tip, the way someone would draw it with a fat marker. It
+   is built from where the word and the button ACTUALLY are, in the pixel
+   space of the section's inner box, and rebuilt on resize. It draws
+   itself left to right (the shaft, then the head) once two things are
+   true: the text has finished typing, and the button has scrolled into
+   view. Hidden where there is no room (phones). Reduced motion: drawn
+   at once, no animation. The rough edge is an SVG turbulence filter. */
+function ctaArrow() {
+    const box = document.querySelector("#meet-phil .section__inner");
+    const btn = document.querySelector(".about__cta");
+    if (!box || !btn) return;
+    const NS = "http://www.w3.org/2000/svg";
+    const el = (name, attrs) => { const n = document.createElementNS(NS, name); Object.entries(attrs || {}).forEach(([k, v]) => n.setAttribute(k, v)); return n; };
+    const svg = el("svg", { class: "cta-arrow", "aria-hidden": "true", focusable: "false" });
+    const defs = el("defs");
+    const filter = el("filter", { id: "marker-rough", x: "-10%", y: "-10%", width: "120%", height: "120%" });
+    filter.appendChild(el("feTurbulence", { type: "fractalNoise", baseFrequency: "0.035 0.06", numOctaves: "2", seed: "7", result: "noise" }));
+    filter.appendChild(el("feDisplacementMap", { in: "SourceGraphic", in2: "noise", scale: "7", xChannelSelector: "R", yChannelSelector: "G" }));
+    defs.appendChild(filter); svg.appendChild(defs);
+    const g = el("g", { filter: "url(#marker-rough)" });
+    const shaft = el("path", { class: "cta-arrow__shaft" });
+    const head  = el("path", { class: "cta-arrow__head" });
+    g.appendChild(shaft); g.appendChild(head); svg.appendChild(g); box.appendChild(svg);
+
+    let drawn = false, typed = reduceMotion, seen = false;
+
+    function build() {
+        const word = document.querySelector("[data-retype]");
+        const c = box.getBoundingClientRect(), w = word.getBoundingClientRect(), b = btn.getBoundingClientRect();
+        const para = word.closest("p").getBoundingClientRect();
+        const tx = b.left - c.left - 50, ty = b.top + b.height / 2 - c.top;          /* the vertex: the mitred point runs ~26px past it, leaving a clear gap to the button */
+        const left = para.left - c.left;                                             /* the text column's left edge */
+        /* start under the word when it begins a line (or sits near the left);
+           otherwise under the left end of that same last line */
+        const sx = (w.left - c.left - left < 200 ? w.left - c.left : left) + 2;
+        const sy = w.bottom - c.top + 22;                                            /* clear of the last line, stroke and rough edge included */
+        const fits = tx - sx >= 220 && ty - sy > 70 && window.innerWidth >= 768;
+        svg.style.display = fits ? "" : "none";
+        if (!fits) return false;
+        const dx = tx - sx, dy = ty - sy, by = ty + Math.min(86, dy * 0.45);        /* by: the low point of the swoop */
+        shaft.setAttribute("d",
+            `M ${sx} ${sy} L ${sx + 56} ${sy + 5} ` +
+            `C ${sx + 108} ${sy + 10} ${sx + 102} ${sy + dy * 0.3} ${sx + 80} ${sy + dy * 0.55} ` +
+            `C ${sx + 50} ${sy + dy * 0.86} ${sx + 52} ${by - 12} ${sx + 150} ${by} ` +
+            `C ${sx + dx * 0.45} ${by + 14} ${sx + dx * 0.76} ${ty + 26} ${tx} ${ty}`);
+        /* THE HEAD is symmetrical about the direction the shaft arrives in: the
+           two barbs are the same length, the same angle either side of it */
+        const ux = dx * 0.24, uy = -26, ul = Math.hypot(ux, uy), ax = ux / ul, ay = uy / ul;   /* unit tangent at the tip */
+        const LEN = 78, PHI = 36 * Math.PI / 180;
+        const barb = (s) => {                                        /* the reversed tangent, turned by +/- PHI */
+            const bx = -ax * Math.cos(PHI) - s * (-ay) * Math.sin(PHI), byy = -ay * Math.cos(PHI) + s * (-ax) * Math.sin(PHI);
+            return `${(tx + bx * LEN).toFixed(1)} ${(ty + byy * LEN).toFixed(1)}`;
+        };
+        head.setAttribute("d", `M ${barb(1)} L ${(tx + ax * 9).toFixed(1)} ${(ty + ay * 9).toFixed(1)} L ${barb(-1)}`);
+        [shaft, head].forEach((pth) => {
+            const L = pth.getTotalLength();
+            pth.style.strokeDasharray = L; pth.style.strokeDashoffset = drawn ? 0 : L;
+        });
+        return true;
+    }
+
+    function draw() {
+        if (drawn || !typed || !seen) return;
+        if (!build()) return;
+        drawn = true;
+        if (reduceMotion) { shaft.style.strokeDashoffset = 0; head.style.strokeDashoffset = 0; return; }
+        gsap.timeline()
+            /* a hand's pace: the long stroke takes its time, a beat, then the head in one motion */
+            .to(shaft, { strokeDashoffset: 0, duration: 2.6, ease: "power1.inOut" })
+            .to(head,  { strokeDashoffset: 0, duration: 0.85, ease: "power1.inOut" }, "+=0.25");
+    }
+
+    build();
+    document.addEventListener("work-typed", () => { typed = true; draw(); });
+    ScrollTrigger.create({ trigger: btn, start: "top 88%", once: true, onEnter: () => { seen = true; draw(); } });
+    let timer;
+    window.addEventListener("resize", () => { clearTimeout(timer); timer = setTimeout(build, 200); });
 }
 
 /* ---------- QUALIFICATIONS: the badges converge, then the words ----------
@@ -1510,6 +1597,7 @@ document.fonts.ready.then(() => {
     philMorph();
     stackCycle();
     philStory();
+    ctaArrow();
     qualsIntro();
     sectionReveals();
     sectionFades();
