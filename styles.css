@@ -78,20 +78,35 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
     background: var(--grad-brand);
     box-shadow: 0 6px 22px rgba(35, 31, 32, .45);
 }
-/* the outline button: the logo's light grey at rest (the I on the
-   shield), the brand gradient filling in on hover */
+/* THE OUTLINE BUTTON. At rest: a faint grey frame, and a line of Integrity
+   red that travels round it, drawing the outline as it goes (a conic
+   gradient turned by --spin, masked down to a 2px ring). On hover or focus
+   the ring closes into a full red outline and the brand gradient fills the
+   button. Reduced motion: the full red outline, still. */
+@property --spin { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
 .btn--outline {
     position: relative; isolation: isolate;
-    border: 2px solid var(--grey-300); color: var(--grey-300);
+    box-shadow: inset 0 0 0 2px rgba(209, 211, 212, .28); color: var(--grey-300);      /* the faint frame: a shadow, not a border, so the ring below can sit inside the button's own box (the rolling label clips overflow) */
     font-weight: 500;
-    transition: transform .25s var(--ease-out), color .3s, border-color .3s;
+    transition: transform .25s var(--ease-out), color .3s;
 }
 .btn--outline::before {
     content: ""; position: absolute; inset: 0; z-index: -1;
     background: var(--grad-brand); opacity: 0; transition: opacity .3s;
 }
-.btn--outline:hover, .btn--outline:focus-visible { color: var(--white); border-color: var(--red-dark); }
+.btn--outline::after {
+    content: ""; position: absolute; inset: 0; padding: 2px; pointer-events: none;
+    background: conic-gradient(from var(--spin), transparent 0 55%, var(--red-dark) 78%, var(--red) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    animation: btn-spin 3.6s linear infinite;
+}
+@keyframes btn-spin { to { --spin: 360deg; } }
+.btn--outline:hover, .btn--outline:focus-visible { color: var(--white); }
 .btn--outline:hover::before, .btn--outline:focus-visible::before { opacity: 1; }
+.btn--outline:hover::after, .btn--outline:focus-visible::after { background: var(--red); animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .btn--outline::after { animation: none; background: var(--red); } }
 .btn:hover, .btn:focus-visible { transform: translateY(-2px); }
 .btn--primary:hover { box-shadow: 0 10px 28px rgba(35, 31, 32, .55); }
 
@@ -214,6 +229,8 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
     padding: calc(var(--nav-h) + 40px) var(--gutter) 22px;
     display: flex; flex-direction: column; gap: 18px;
 }
+/* headline + note: one block that keeps the content column's rhythm */
+.hero__copy { display: flex; flex-direction: column; gap: inherit; }
 .hero__title {
     font-family: var(--font-display); font-weight: 400;
     font-size: clamp(38px, 11.8vw, 56px); line-height: .96; letter-spacing: .01em;   /* 46px at 390 */
@@ -249,7 +266,8 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
    overflowing the nowrap labels */
 .hero__actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .hero__actions .btn--outline { flex: 1 1 140px; }
-.hero__actions .btn--primary { flex: 1.2 1 150px; }
+.hero__actions .btn:last-child { flex: 1.2 1 150px; }
+.hero__actions .btn--outline { background: rgba(35, 31, 32, .42); color: var(--white); }   /* a dark backing: the right-hand one sits over the bright countertop */
 
 /* THE TALL HERO (a trial: delete this one block to go back to the hero that
    ends at the bottom of the first screen). The headline and buttons fill
@@ -257,6 +275,11 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
    of a screen before the shield-point edge and the credentials strip. */
 .hero { grid-template-rows: minmax(100vh, auto) 30vh auto; grid-template-rows: minmax(100svh, auto) 30svh auto; }
 .hero > .trust { grid-row: 3; }
+/* the buttons ride down with the scroll (script.js, heroScroll, feeds --drop)
+   from the foot of the first screen to the foot of the photo, so they stay
+   in view through the extra stretch. On the buttons, not their row: GSAP's
+   intro moves the row and, once it has, pins the row's own translate to none. */
+.hero__actions .btn { translate: 0 var(--drop, 0px); }
 
 /* trust: text lines on phones, icon bar on desktop */
 .trust {
@@ -1275,7 +1298,7 @@ body.has-dialog { overflow: hidden; }
         margin-top: auto;                     /* pushes the buttons to the bottom edge */
         justify-content: space-between;
     }
-    .hero__actions .btn { flex: none; }
+    .hero__actions .btn, .hero__actions .btn:last-child { flex: none; }
     .btn { font-size: 16px; padding: 18px 40px; }
     .btn--primary { font-size: 18px; padding: 19px 42px; }
 

@@ -266,6 +266,31 @@ function rollingText(el) {
     el.addEventListener("blur",       () => rollDown.restart());
 }
 
+/* ---------- HERO ON SCROLL ----------
+   1. The headline and note fade out (and lift a little) BEFORE they reach
+      the nav: fully gone by the time their top would touch the logo's
+      bottom edge. Scrubbed, so scrolling back brings them in again. The
+      wrapper is faded, not the words, so the intro's own tweens are left alone.
+   2. The buttons ride down the photo as the page scrolls, from the foot of
+      the first screen to the foot of the hero (the tall hero's extra 30%),
+      at about half the page's speed. */
+function heroScroll() {
+    if (reduceMotion) return;
+    const copy = document.querySelector(".hero__copy"), actions = document.querySelector(".hero__actions");
+    const content = document.querySelector(".hero__content"), hero = document.querySelector(".hero"), trust = document.querySelector(".trust");
+    /* the lowest thing in the nav at the top of the page: the big logo on desktop, the bar elsewhere */
+    const navFoot = () => Math.max(header.querySelector(".nav__brand").getBoundingClientRect().bottom, header.getBoundingClientRect().bottom, 64);
+    gsap.fromTo(copy, { autoAlpha: 1, y: 0 }, {
+        autoAlpha: 0, y: -24, ease: "none", immediateRender: false,
+        scrollTrigger: { trigger: copy, start: () => "clamp(top " + Math.round(navFoot() + 110) + "px)", end: () => "top " + Math.round(navFoot() - 30) + "px", scrub: true, invalidateOnRefresh: true }
+    });
+    const room = () => Math.max(trust.getBoundingClientRect().top - content.getBoundingClientRect().bottom, 0);   /* the stretch of bare photo under the first screen */
+    gsap.fromTo(actions, { "--drop": "0px" }, {
+        "--drop": () => room() + "px", ease: "none", immediateRender: false,
+        scrollTrigger: { trigger: hero, start: "top top", end: () => "+=" + Math.round(room() * 2), scrub: true, invalidateOnRefresh: true }
+    });
+}
+
 /* ---------- HERO INTRO ----------
    The slogan fades in word by word over the BEFORE photo; then "a
    success" and the finished kitchen reveal together, left to right.
@@ -1681,7 +1706,7 @@ document.fonts.ready.then(() => {
     serviceMap();
     contactForm();
     shieldCard();
-    philMorph();
+    heroScroll(); philMorph();
     stackCycle();
     philStory();
     ctaArrow();

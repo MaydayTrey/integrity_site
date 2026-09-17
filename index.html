@@ -256,6 +256,9 @@
             </div>
 
             <div class="hero__content">
+                <!--.hero__copy: the headline and note as one block, so script.js
+                    (heroScroll) can fade them out together before they reach the nav-->
+                <div class="hero__copy">
                 <h1 class="hero__title" id="hero-title">
                     Working with you to make your project <span class="hl">a success</span>
                 </h1>
@@ -263,10 +266,11 @@
                 <!--PLACEHOLDER: personal note from Phil, 1 to 2 sentences.
                     Never ships as-is-->
                 <p class="hero__note" data-placeholder>[ Placeholder: a short welcome note from the team, one or two sentences. Copy due 9/13. ]</p>
+                </div>
 
                 <div class="hero__actions">
                     <a class="btn btn--outline" href="#our-work" data-roll>See Our Work</a>
-                    <a class="btn btn--primary" href="#contact" data-roll>Get a Free Estimate</a>
+                    <a class="btn btn--outline" href="#contact" data-roll>Get a Free Estimate</a>
                 </div>
             </div>
 
