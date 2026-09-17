@@ -5,6 +5,7 @@
    ===================================================================== */
 
 gsap.registerPlugin(ScrollTrigger, SplitText, Flip);
+ScrollTrigger.config({ ignoreMobileResize: true });      /* a phone keyboard or URL bar changing the height is not a reason to re-measure every pin */
 
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -817,7 +818,14 @@ function reviewCarousel() {
 
     /* card heights change with the viewport, so rebuild on resize */
     let timer;
+    /* ONLY when the WIDTH changes. A phone fires resize when its keyboard opens
+       or its URL bar hides (height only): rebuilding the pin then threw the page
+       back up into this carousel the moment someone tapped the address field.
+       The section is 100svh, which neither of those changes. */
+    let lastW = window.innerWidth;
     window.addEventListener("resize", () => {
+        if (window.innerWidth === lastW) return;
+        lastW = window.innerWidth;
         clearTimeout(timer);
         timer = setTimeout(() => { build(); ScrollTrigger.refresh(); }, 200);
     });
@@ -937,7 +945,8 @@ function serviceMap() {
     }).addTo(map);
 
     let timer;
-    window.addEventListener("resize", () => { clearTimeout(timer); timer = setTimeout(() => fit(), 200); });
+    let mapW = window.innerWidth;                          /* width only: the keyboard opening must not re-frame the map under the form */
+    window.addEventListener("resize", () => { if (window.innerWidth === mapW) return; mapW = window.innerWidth; clearTimeout(timer); timer = setTimeout(() => fit(), 200); });
     ScrollTrigger.addEventListener("refresh", () => map.invalidateSize());
 
     addressCheck(map, fit);
