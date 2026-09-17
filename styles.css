@@ -251,6 +251,13 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .hero__actions .btn--outline { flex: 1 1 140px; }
 .hero__actions .btn--primary { flex: 1.2 1 150px; }
 
+/* THE TALL HERO (a trial: delete this one block to go back to the hero that
+   ends at the bottom of the first screen). The headline and buttons fill
+   the first full screen; the kitchen photo then carries on for another 30%
+   of a screen before the shield-point edge and the credentials strip. */
+.hero { grid-template-rows: minmax(100vh, auto) 30vh auto; grid-template-rows: minmax(100svh, auto) 30svh auto; }
+.hero > .trust { grid-row: 3; }
+
 /* trust: text lines on phones, icon bar on desktop */
 .trust {
     display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 12px;

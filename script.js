@@ -147,14 +147,16 @@ function cross(on) {
     }
 }
 
+/* timed off the hero's CONTENT (the first screen), not the whole hero: the
+   photo may run on below the fold (the tall hero) and the bar should not wait for that */
 if (reduceMotion) {
     ScrollTrigger.create({
-        trigger: ".hero", start: "bottom 30%",
+        trigger: ".hero__content", start: "bottom 30%",
         onEnter: () => setScrolled(true), onLeaveBack: () => setScrolled(false)
     });
 } else {
     ScrollTrigger.create({
-        trigger: ".hero", start: "bottom 30%",
+        trigger: ".hero__content", start: "bottom 30%",
         onEnter: () => cross(true), onLeaveBack: () => cross(false)
     });
     /* the shrink: as the hero's bottom passes 45% of the viewport the
@@ -166,7 +168,7 @@ if (reduceMotion) {
             .to(shield,   { width: 48 },  0)
             .to(wordmark, { width: 132 }, 0);
         shrinkAt = ScrollTrigger.create({
-            trigger: ".hero", start: "bottom 60%",
+            trigger: ".hero__content", start: "bottom 60%",
             onEnter: () => shrink.play(), onLeaveBack: () => { if (!flipping) shrink.reverse(); }
         });
         return () => { shrinkAt.kill(); shrink.kill(); shrink = shrinkAt = null; gsap.set([shield, wordmark], { clearProps: "width" }); };
