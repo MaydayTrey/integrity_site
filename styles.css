@@ -111,6 +111,13 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
    first, the line lets go after. */
 .btn--outline:hover::before, .btn--outline:focus-visible::before { opacity: 1; transition: opacity .35s .7s; }
 .btn--outline:hover::after, .btn--outline:focus-visible::after { --gap: 0%; animation-play-state: paused; }
+/* .btn--still: the quiet version. A plain light outline, no travelling line;
+   hover or focus gives the red outline and the fill at once. One moving
+   button per screen is enough. */
+.btn--still { box-shadow: inset 0 0 0 2px rgba(209, 211, 212, .8); }
+.btn--still::after { animation: none; opacity: 0; transition: opacity .3s; --gap: 0%; }
+.btn--still:hover::after, .btn--still:focus-visible::after { opacity: 1; }
+.btn--still:hover::before, .btn--still:focus-visible::before { transition: opacity .3s; }
 @media (prefers-reduced-motion: reduce) { .btn--outline::after { animation: none; transition: none; --gap: 0%; } .btn--outline:hover::before, .btn--outline:focus-visible::before { transition: none; } }
 .btn:hover, .btn:focus-visible { transform: translateY(-2px); }
 .btn--primary:hover { box-shadow: 0 10px 28px rgba(35, 31, 32, .55); }
