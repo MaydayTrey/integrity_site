@@ -747,41 +747,44 @@
                 <header class="section__head">
                     <p class="section__eyebrow">Meet Phil</p>
                     <h2 class="section__title" id="phil-title">Raised on hard work</h2>
-                    <p class="section__lede" data-placeholder>Farm kid from Preble County, family man in Trenton, and the standard behind the name.</p>
+                    <p class="section__lede" data-placeholder>Country kid from Preble County, family man in Trenton, and the standard behind the name.</p>
                 </header>
 
-                <!--two beats: roots first, then the craft that grew out of them-->
+                <!--two beats, both in Phil's own words (sent 9/17, lightly tidied for
+                    punctuation only). First: him. The family photo beside his
+                    portrait, his text beneath. Then the work: three crew
+                    photos across, his text beneath. This section is the one
+                    place the site speaks about Phil; everywhere else is "we".-->
                 <ol class="story">
-                    <li class="beat">
-                        <figure class="beat__media">
-                            <img class="beat__photo"
-                                 src="assets/phil-family-960.webp"
-                                 srcset="assets/phil-family-640.webp 640w, assets/phil-family-960.webp 960w"
-                                 sizes="(min-width: 768px) 48vw, 100vw"
-                                 width="960" height="640" loading="lazy" decoding="async"
-                                 alt="Phil Betzner seated on a couch with his wife and their four kids, everyone in plaid and denim">
-                            <figcaption class="beat__caption">The Betzners, Trenton, Ohio</figcaption>
-                        </figure>
+                    <li class="beat beat--wide">
                         <div class="beat__body">
                             <p class="beat__step">01 &middot; Roots</p>
-                            <h3 class="beat__title">A farm kid from Preble County</h3>
-                            <p data-placeholder>Phil grew up on a farm in Preble County, where the day started before the sun and nothing got done unless you did it yourself. Fences, equipment, barns, whatever broke got fixed, and fixed right, because you'd be the one using it tomorrow. That is where he learned to work, and it never left him.</p>
-                            <p data-placeholder>He carried that into the family he and his wife are raising in Trenton. Four kids, a full house, and the same rule he grew up with: show up, do the work, take care of your people.</p>
+                            <h3 class="beat__title">A country kid from Preble County</h3>
+                        </div>
+                        <!--2:1 widths with 3:2 and 3:4 shapes give the two photos the same height-->
+                        <ul class="crew crew--duo" aria-label="Phil and his family">
+                            <li class="crew__item crew__item--family"><img class="beat__photo" src="assets/phil-family-960.webp" srcset="assets/phil-family-640.webp 640w, assets/phil-family-960.webp 960w" sizes="(min-width: 768px) 60vw, 92vw" width="960" height="640" loading="lazy" decoding="async" alt="Phil Betzner seated on a couch with his wife Dawn and their four kids, everyone in plaid and denim"></li>
+                            <li class="crew__item crew__item--self"><img class="beat__photo" src="assets/phil-self-480.webp" srcset="assets/phil-self-480.webp 480w, assets/phil-self-900.webp 900w" sizes="(min-width: 768px) 30vw, 50vw" width="900" height="1200" loading="lazy" decoding="async" alt="Phil Betzner in an Integrity polo and cap, smiling in front of his garage with an American flag beside him"></li>
+                        </ul>
+                        <p class="beat__caption">The Betzners, Trenton, Ohio</p>
+                        <div class="beat__body beat__body--cols">
+                            <p>Our family was raised to be honest, respectful, and hard-working. Raised in the country of West Alexandria, I started working on the farm and playing sports at a young age, and picked up wrestling from 4th through 12th grade.</p>
+                            <p>I met my wife, Dawn, in 2020, and we have four kids between us, one girl and three boys: Carter, Caleb, Emma, and Caiden. Work hard, don't be afraid to dream big, and put God first in everything!</p>
                         </div>
                     </li>
-                    <li class="beat">
-                        <figure class="beat__media">
-                            <img class="beat__photo"
-                                 src="assets/phil-working-640.webp"
-                                 width="501" height="640" loading="lazy" decoding="async"
-                                 alt="Phil Betzner in an Integrity shirt and cap, trowel in hand, giving a thumbs up inside a freshly tiled walk-in shower with a pebble floor and an inset niche">
-                            <figcaption class="beat__caption">Phil finishing a tiled shower, tools still in hand</figcaption>
-                        </figure>
+                    <li class="beat beat--wide">
                         <div class="beat__body">
-                            <p class="beat__step">02 &middot; Craft</p>
-                            <h3 class="beat__title">The same standard, in your home</h3>
-                            <p data-placeholder>That work ethic is what you see in the tile. From demo to the last bead of caulk, nothing gets called finished until it is the way Phil would want it in his own house. Straight lines, tight grout, no shortcuts where nobody will look.</p>
-                            <p data-placeholder>He also knows what it means to let a stranger into your home, because he is a husband and a dad first. Your family's routine keeps going, the job site stays clean, and you always know what happens next. That is the integrity in the name.</p>
+                            <p class="beat__step">02 &middot; The work</p>
+                            <h3 class="beat__title">We take the details to heart</h3>
+                        </div>
+                        <ul class="crew" aria-label="The crew at work">
+                            <li class="crew__item"><img class="beat__photo" src="assets/work-ceiling-480.webp" srcset="assets/work-ceiling-480.webp 480w, assets/work-ceiling-900.webp 900w" sizes="(min-width: 768px) 30vw, 64vw" width="900" height="1200" loading="lazy" decoding="async" alt="A crew member in an Integrity shirt fastening insulation into an open ceiling bay"></li>
+                            <li class="crew__item"><img class="beat__photo" src="assets/work-kitchen-480.webp" srcset="assets/work-kitchen-480.webp 480w, assets/work-kitchen-900.webp 900w" sizes="(min-width: 768px) 30vw, 64vw" width="900" height="1200" loading="lazy" decoding="async" alt="Two crew members at work in a kitchen with navy cabinets, one wearing an Integrity shirt"></li>
+                            <li class="crew__item"><img class="beat__photo" src="assets/work-tile-480.webp" srcset="assets/work-tile-480.webp 480w, assets/work-tile-900.webp 900w" sizes="(min-width: 768px) 30vw, 64vw" width="900" height="1200" loading="lazy" decoding="async" alt="Phil kneeling in an Integrity shirt, setting patterned floor tile"></li>
+                        </ul>
+                        <div class="beat__body beat__body--cols">
+                            <p>We are thankful for our customers and the business they provide for us. It's essential that all of our customers' wants and needs are met. We take the details to heart and strive to give our customers a great experience from estimate to completion.</p>
+                            <p>We have over 20 years of commercial and residential maintenance experience. Have a need for apartment or rental maintenance? We would be happy to provide quick and seamless repairs and upgrades to your commercial properties: plumbing, drywall, painting, cabinets, lighting, and more. You can know that your properties, your employees, and your tenants will always be met with respect and integrity.</p>
                         </div>
                     </li>
                 </ol>
