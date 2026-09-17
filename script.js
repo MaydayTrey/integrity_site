@@ -232,48 +232,6 @@ function sectionFades() {
     });
 }
 
-/* ---------- SERVICES: the ripple that follows the cursor ----------
-   Each service icon has an invisible frame around it (the icon's box plus
-   a margin). When the pointer crosses into that frame, one slow ring opens
-   out from the cursor; while it grows, its centre is kept on the cursor,
-   so it travels with the hand. One wave per entry: leave the frame and
-   come back for another. Mouse and pen only (touch has no hover). The
-   ring itself is CSS (.service::before); this only feeds it --rx / --ry
-   and starts it. Reduced motion: nothing. */
-function serviceRipples() {
-    if (reduceMotion) return;
-    const ZONE = 34;                                                    /* px of frame around the icon */
-    document.querySelectorAll(".service").forEach((service) => {
-        const icon = service.querySelector(".service__icon");
-        let inside = false, frame = 0, px = 0, py = 0;
-        const place = () => {
-            frame = 0;
-            const r = service.getBoundingClientRect();
-            service.style.setProperty("--rx", (px - r.left).toFixed(1) + "px");
-            service.style.setProperty("--ry", (py - r.top).toFixed(1) + "px");
-        };
-        service.addEventListener("pointermove", (e) => {
-            if (e.pointerType === "touch") return;
-            const i = icon.getBoundingClientRect();
-            const now = e.clientX >= i.left - ZONE && e.clientX <= i.right + ZONE && e.clientY >= i.top - ZONE && e.clientY <= i.bottom + ZONE;
-            px = e.clientX; py = e.clientY;
-            if (now && !inside) {                                       /* crossed into the frame: start the wave here */
-                place();
-                service.classList.remove("is-rippling"); void service.offsetWidth;   /* restart the CSS animation */
-                service.classList.add("is-rippling");
-            }
-            inside = now;
-            if (service.classList.contains("is-rippling") && !frame) frame = requestAnimationFrame(place);   /* the ring follows the cursor */
-        });
-        service.addEventListener("pointerleave", () => { inside = false; });
-        service.addEventListener("animationend", (e) => {
-            if (e.animationName !== "service-ripple") return;
-            service.classList.remove("is-rippling");
-            service.style.removeProperty("--rx"); service.style.removeProperty("--ry");               /* back to the icon's centre, for keyboard focus */
-        });
-    });
-}
-
 /* ---------- ROLLING TEXT (Trey's hover roll) ----------
    Each character becomes a 1lh window with a 2-copy track inside.
    Hover rolls the track up by half its height, left-first; leaving
@@ -1707,5 +1665,4 @@ document.fonts.ready.then(() => {
     qualsIntro();
     sectionReveals();
     sectionFades();
-    serviceRipples();
 });

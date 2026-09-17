@@ -326,33 +326,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 /* THE WHOLE BLOCK IS THE LINK: the title's link stretches over the block,
    so the icon is clickable too. The cue line and a small lift on the icon
    say so. */
-.service { position: relative; isolation: isolate; --ico: 64px; }      /* --ico: the icon's size, so the ripple can find its centre */
-/* THE RIPPLE. One slow, soft ring that opens out from the CURSOR and
-   travels with it. script.js (serviceRipples) watches a frame around the
-   icon: when the pointer enters that zone it starts the wave (.is-rippling)
-   and keeps --rx / --ry on the pointer, so the ring follows as it grows.
-   The ring is a radial gradient, transparent in the middle and at the rim
-   with a band of brand red between: hollow, fuzzy-edged. One wave per
-   entry into the zone. It lives on the block's ::before (the icon is a
-   mask and would clip it), behind the icon. Keyboard focus gets the same
-   wave from the icon's centre, which is where --rx / --ry rest. */
-.service::before {
-    content: ""; position: absolute; z-index: -1; pointer-events: none;
-    left: var(--rx, calc(var(--ico) / 2)); top: var(--ry, calc(var(--ico) / 2));
-    width: calc(var(--ico) * 3.2); aspect-ratio: 1; translate: -50% -50%;
-    border-radius: 50%; opacity: 0; scale: .12;
-    background: radial-gradient(circle closest-side, transparent 44%, rgba(237, 28, 36, .28) 60%, rgba(186, 30, 35, .15) 76%, transparent 97%);
-}
-.service.is-rippling::before, .service:has(.service__link:focus-visible)::before { animation: service-ripple 2.6s cubic-bezier(.3, .55, .45, 1) both; }
-/* the ring stays readable for most of its travel and only lets go near the end: a slow wave, not a flash */
-@keyframes service-ripple {
-    0%   { opacity: 0;  scale: .12; }
-    14%  { opacity: 1; }
-    62%  { opacity: .72; }
-    100% { opacity: 0;  scale: 1; }
-}
-@media (prefers-reduced-motion: reduce) {
-    .service.is-rippling::before, .service:has(.service__link:focus-visible)::before { animation: none; }
+.service { position: relative; }
 }
 }
 .service__link { color: inherit; text-decoration: none; }
@@ -1241,14 +1215,14 @@ body.has-dialog { overflow: hidden; }
     .section__head { margin-bottom: 56px; }
     .section__lede { font-size: 18px; }
     .services { gap: 44px; max-width: 640px; margin-inline: auto; }
-    .service { grid-template-columns: 80px 1fr; gap: 28px; --ico: 80px; }
+    .service { grid-template-columns: 80px 1fr; gap: 28px; }
     .service__icon { width: 80px; }
     .service__title { font-size: 18px; }
     .service__text { font-size: 17px; max-width: none; }
 }
 @media (min-width: 1024px) {
     .services { grid-template-columns: 1fr 1fr; gap: 56px 64px; max-width: none; }
-    .service { grid-template-columns: 96px 1fr; --ico: 96px; }
+    .service { grid-template-columns: 96px 1fr; }
     .service__icon { width: 96px; }
 }
 
