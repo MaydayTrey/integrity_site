@@ -1245,7 +1245,7 @@ function shieldCard() {
    way), so the pair reads as two planes. Reduced motion: static. */
 /* where the three stacked prints rest, bottom to top (mirrored in the CSS
    nth-child transforms for the static page) */
-const STACK_REST = [{ x: -14, y: 10, rotation: -3.5 }, { x: 12, y: -8, rotation: 2.5 }, { x: 0, y: 0, rotation: 0 }];
+const STACK_REST = [{ x: -20, y: 14, rotation: -5 }, { x: 16, y: -12, rotation: 3.5 }, { x: 0, y: 0, rotation: 0 }];
 
 /* ---------- MEET PHIL: cycling the stack ----------
    A round button in the stack's bottom right. Each press slides the top
@@ -1335,10 +1335,9 @@ function philStory() {
             }
 
             const tl = gsap.timeline({
-                scrollTrigger: { trigger: beat, start: "top 70%", once: true },
+                scrollTrigger: { trigger: beat, start: "top 92%", once: true },   /* as soon as it enters: nothing should sit empty on screen */
                 onComplete() {
                     titleSplit.revert(); paraSplits.forEach((s) => s.revert());   /* back to plain markup: the word rests bold and red via CSS */
-                    document.dispatchEvent(new CustomEvent("work-typed"));       /* the marker arrow waits for this */
                 }
             });
             photos.forEach((ph, k) => {
@@ -1396,20 +1395,53 @@ function philStory() {
           .to(titleSplit.chars, { autoAlpha: 1, duration: 0.01, stagger: 0.035 }, 0.45);
         paraSplits.forEach((s) => tl.to(s.words, { autoAlpha: 1, duration: 0.01, stagger: 0.022 }, "+=0.15"));
     });
+    /* THE COLUMNS SETTLE INTO PLACE (from 768px, where they sit side by side).
+       As a beat rises into view its text starts high and its photo low; they
+       slide to their resting places as you scroll and are home by the time
+       the beat's top reaches 40% of the screen, then hold still. The text
+       rides up inside the spare height of its own row (it is centred beside
+       a taller photo), so it fills the quiet stretch between the beats
+       without touching the beat above. Holding still afterwards matters:
+       the marker arrow is anchored to the settled text. */
     gsap.matchMedia().add("(min-width: 768px)", () => {
+        /* CLOSING THE GAP, measured. The work beat is pulled up under the first
+           beat, and its text also rides up while it glides in; both spend the
+           same free space, so both come from one measurement: the smaller of
+           (work text top - the first beat's photo caption) and (the stack's
+           top - the first beat's text), taken now, while the tall portrait is
+           showing (the worst case), less a 40px margin. 60% of it is the
+           pull-up, the rest is the most the text may lift. On a short window
+           that room is small and both shrink with it; fixed numbers clashed. */
+        const work  = beats.find((bt) => bt.classList.contains("beat--work"));
+        const first = work && work.previousElementSibling;
+        let workLift = 0;
+        if (work && first) {
+            work.style.marginTop = "";
+            const capB = first.querySelector(".beat__caption").getBoundingClientRect().bottom;
+            const txtB = first.querySelector(".beat__body").getBoundingClientRect().bottom;
+            const wTxt = work.querySelector(".beat__body").getBoundingClientRect().top;
+            const wPic = work.querySelector(".beat__media").getBoundingClientRect().top;
+            const room = Math.max(0, Math.min(wTxt - capB, wPic - txtB) - 40);
+            const tuck = Math.min(180, room * 0.6);
+            work.style.marginTop = (-tuck).toFixed(0) + "px";
+            workLift = Math.min(100, room - tuck);
+        }
         beats.forEach((beat) => {
-            const st = { trigger: beat, start: "top bottom", end: "bottom top", scrub: true };
-            gsap.fromTo(beat.querySelector(".beat__media"), { y: 56 }, { y: -56, ease: "none", scrollTrigger: st });
-            /* the work beat's TEXT holds still: the marker arrow runs from its last word to the
-               estimate button, and a drifting paragraph would slide under the arrow */
-            if (!beat.classList.contains("beat--work")) gsap.fromTo(beat.querySelector(".beat__body"), { y: -36 }, { y: 36, ease: "none", scrollTrigger: st });
+            const media = beat.querySelector(".beat__media"), body = beat.querySelector(".beat__body");
+            const spare = Math.max(0, (beat.offsetHeight - body.offsetHeight) / 2);        /* room above the centred text, inside its own row */
+            /* the first beat's text is top-aligned (nothing above it but the section head), so it only lifts a little */
+            const lift = beat.querySelector("[data-morph]") ? 50 : Math.max(0, Math.min(workLift, spare * 0.9));
+            const st = { trigger: beat, start: "top bottom", end: "top 40%", scrub: 0.4 };
+            gsap.fromTo(body,  { y: -lift }, { y: 0, ease: "power1.out", scrollTrigger: st });
+            gsap.fromTo(media, { y: 70 },    { y: 0, ease: "power1.out", scrollTrigger: st });
         });
+        return () => { if (work) work.style.marginTop = ""; };
     });
 }
 
 /* ---------- MEET PHIL: the frame that reshapes ----------
    TIMED, not tied to scrolling. When the stage comes into view the
-   frame is portrait-shaped (75% of the stage wide, 3:4) showing Phil
+   frame is portrait-shaped (66% of the stage wide, 3:4) showing Phil
    whole. It holds on him for a few seconds, then on its own widens to
    the full stage and flattens to 3:2 while Phil crossfades to the
    family photo. Once; it stays on the family. The stage's own size
@@ -1428,7 +1460,7 @@ function philMorph() {
     const fade = gsap.utils.clamp(0, 1);
     function render() {
         const p = m.p;
-        frame.style.width = (75 + 25 * p).toFixed(3) + "%";
+        frame.style.width = (66 + 34 * p).toFixed(3) + "%";
         frame.style.aspectRatio = (0.75 + 0.75 * p).toFixed(4);              /* 3:4 (0.75) to 3:2 (1.5) */
         const x = fade((p - 0.3) / 0.45);                                   /* the crossfade sits in the middle of the reshape */
         self.style.opacity = (1 - x).toFixed(3);
@@ -1441,16 +1473,17 @@ function philMorph() {
         scrollTrigger: { trigger: stage, start: "top 72%", once: true } });
 }
 
-/* ---------- MEET PHIL: the marker arrow ----------
-   A hand-drawn black marker arrow from under "integrity" to the estimate button:
-   a short hook to the right, a turn down, a swoop along the bottom, then
-   up into the tip, the way someone would draw it with a fat marker. It
-   is built from where the word and the button ACTUALLY are, in the pixel
-   space of the section's inner box, and rebuilt on resize. It draws
-   itself left to right (the shaft, then the head) once two things are
-   true: the text has finished typing, and the button has scrolled into
-   view. Hidden where there is no room (phones). Reduced motion: drawn
-   at once, no animation. The rough edge is an SVG turbulence filter. */
+/* ---------- MEET PHIL: the arrow to the estimate button ----------
+   A thin black line from under the work text: a small rise, a smooth S
+   down to the right, then a level run into a symmetrical head aimed at
+   the button. It is built from where the text and the button ACTUALLY
+   sit, in the pixel space of the section's inner box, and rebuilt on
+   resize. The text's resting place is used (its parallax offset is
+   subtracted), so the arrow never anchors to a paragraph that is still
+   gliding into position. Tied to SCROLL POSITION: it draws itself (the
+   line, then the head) when the button reaches the middle of the
+   screen. Hidden where there is no room (phones). Reduced motion: shown
+   at once, no animation. */
 function ctaArrow() {
     const box = document.querySelector("#meet-phil .section__inner");
     const btn = document.querySelector(".about__cta");
@@ -1458,67 +1491,65 @@ function ctaArrow() {
     const NS = "http://www.w3.org/2000/svg";
     const el = (name, attrs) => { const n = document.createElementNS(NS, name); Object.entries(attrs || {}).forEach(([k, v]) => n.setAttribute(k, v)); return n; };
     const svg = el("svg", { class: "cta-arrow", "aria-hidden": "true", focusable: "false" });
-    const defs = el("defs");
-    const filter = el("filter", { id: "marker-rough", x: "-10%", y: "-10%", width: "120%", height: "120%" });
-    filter.appendChild(el("feTurbulence", { type: "fractalNoise", baseFrequency: "0.035 0.06", numOctaves: "2", seed: "7", result: "noise" }));
-    filter.appendChild(el("feDisplacementMap", { in: "SourceGraphic", in2: "noise", scale: "7", xChannelSelector: "R", yChannelSelector: "G" }));
-    defs.appendChild(filter); svg.appendChild(defs);
-    const g = el("g", { filter: "url(#marker-rough)" });
     const shaft = el("path", { class: "cta-arrow__shaft" });
     const head  = el("path", { class: "cta-arrow__head" });
-    g.appendChild(shaft); g.appendChild(head); svg.appendChild(g); box.appendChild(svg);
-
-    let drawn = false, typed = reduceMotion, seen = false;
+    svg.appendChild(shaft); svg.appendChild(head); box.appendChild(svg);
+    const strokes = [shaft, head];
+    let drawn = false;
 
     function build() {
         const word = document.querySelector("[data-retype]");
+        const body = word.closest(".beat__body");
+        const drift = Number(gsap.getProperty(body, "y")) || 0;                       /* the text's current parallax offset */
         const c = box.getBoundingClientRect(), w = word.getBoundingClientRect(), b = btn.getBoundingClientRect();
         const para = word.closest("p").getBoundingClientRect();
-        const tx = b.left - c.left - 50, ty = b.top + b.height / 2 - c.top;          /* the vertex: the mitred point runs ~26px past it, leaving a clear gap to the button */
+        const tx = b.left - c.left - 22, ty = b.top + b.height / 2 - c.top;          /* the point, a short gap before the button */
         const left = para.left - c.left;                                             /* the text column's left edge */
-        /* start under the word when it begins a line (or sits near the left);
-           otherwise under the left end of that same last line */
-        const sx = (w.left - c.left - left < 200 ? w.left - c.left : left) + 2;
-        const sy = w.bottom - c.top + 22;                                            /* clear of the last line, stroke and rough edge included */
-        const fits = tx - sx >= 220 && ty - sy > 70 && window.innerWidth >= 768;
+        /* start a little in from the word when it begins a line (or sits near
+           the left); otherwise from the left end of that same last line. The
+           word may still be mid-typing (empty), so the paragraph's own bottom
+           gives the height */
+        const wordAt = w.width > 0 ? w.left - c.left : left;
+        const sx = (wordAt - left < 200 ? wordAt : left) + 24;
+        const sy = para.bottom - drift - c.top + 30;                                 /* under the last line, at the text's RESTING position */
+        const dx = tx - sx, dy = ty - sy;
+        const fits = dx >= 220 && dy > 50 && window.innerWidth >= 768;
         svg.style.display = fits ? "" : "none";
         if (!fits) return false;
-        const dx = tx - sx, dy = ty - sy, by = ty + Math.min(86, dy * 0.45);        /* by: the low point of the swoop */
+
+        const P = (fx, fy, base) => `${(sx + fx * dx).toFixed(1)} ${((base === "t" ? ty : sy) + fy * dy).toFixed(1)}`;
         shaft.setAttribute("d",
-            `M ${sx} ${sy} L ${sx + 56} ${sy + 5} ` +
-            `C ${sx + 108} ${sy + 10} ${sx + 102} ${sy + dy * 0.3} ${sx + 80} ${sy + dy * 0.55} ` +
-            `C ${sx + 50} ${sy + dy * 0.86} ${sx + 52} ${by - 12} ${sx + 150} ${by} ` +
-            `C ${sx + dx * 0.45} ${by + 14} ${sx + dx * 0.76} ${ty + 26} ${tx} ${ty}`);
-        /* THE HEAD is symmetrical about the direction the shaft arrives in: the
-           two barbs are the same length, the same angle either side of it */
-        const ux = dx * 0.24, uy = -26, ul = Math.hypot(ux, uy), ax = ux / ul, ay = uy / ul;   /* unit tangent at the tip */
-        const LEN = 78, PHI = 36 * Math.PI / 180;
-        const barb = (s) => {                                        /* the reversed tangent, turned by +/- PHI */
-            const bx = -ax * Math.cos(PHI) - s * (-ay) * Math.sin(PHI), byy = -ay * Math.cos(PHI) + s * (-ax) * Math.sin(PHI);
-            return `${(tx + bx * LEN).toFixed(1)} ${(ty + byy * LEN).toFixed(1)}`;
-        };
-        head.setAttribute("d", `M ${barb(1)} L ${(tx + ax * 9).toFixed(1)} ${(ty + ay * 9).toFixed(1)} L ${barb(-1)}`);
-        [shaft, head].forEach((pth) => {
-            const L = pth.getTotalLength();
-            pth.style.strokeDasharray = L; pth.style.strokeDashoffset = drawn ? 0 : L;
+            `M ${P(0, 0)} C ${P(0.14, -0.10)} ${P(0.28, 0.05)} ${P(0.36, 0.55)} ` +
+            `C ${P(0.42, 0.95)} ${P(0.52, 0.08, "t")} ${P(0.66, 0.06, "t")} ` +
+            `C ${P(0.78, 0.045, "t")} ${P(0.88, 0, "t")} ${tx.toFixed(1)} ${ty.toFixed(1)}`);      /* the last control point is level with the tip: it arrives dead horizontal */
+        /* the head: one chevron, mirror-symmetrical about the level shaft */
+        const LEN = 15, RISE = 10;
+        head.setAttribute("d", `M ${(tx - LEN).toFixed(1)} ${(ty - RISE).toFixed(1)} L ${tx.toFixed(1)} ${ty.toFixed(1)} L ${(tx - LEN).toFixed(1)} ${(ty + RISE).toFixed(1)}`);
+
+        strokes.forEach((pth) => {
+            const L = pth.getTotalLength() + 4;                                      /* +4: keeps the round cap hidden until its stroke starts */
+            pth.style.strokeDasharray = L;
+            pth.style.strokeDashoffset = drawn ? 0 : L;
+            pth.style.visibility = drawn ? "visible" : "hidden";
         });
         return true;
     }
 
     function draw() {
-        if (drawn || !typed || !seen) return;
+        if (drawn) return;
         if (!build()) return;
         drawn = true;
-        if (reduceMotion) { shaft.style.strokeDashoffset = 0; head.style.strokeDashoffset = 0; return; }
+        shaft.style.visibility = "visible";
+        if (reduceMotion) { head.style.visibility = "visible"; strokes.forEach((pth) => { pth.style.strokeDashoffset = 0; }); return; }
         gsap.timeline()
-            /* a hand's pace: the long stroke takes its time, a beat, then the head in one motion */
-            .to(shaft, { strokeDashoffset: 0, duration: 2.6, ease: "power1.inOut" })
-            .to(head,  { strokeDashoffset: 0, duration: 0.85, ease: "power1.inOut" }, "+=0.25");
+            .to(shaft, { strokeDashoffset: 0, duration: 1.7, ease: "power2.inOut" })
+            .set(head, { visibility: "visible" })
+            .to(head, { strokeDashoffset: 0, duration: 0.45, ease: "power2.out" });
     }
 
     build();
-    document.addEventListener("work-typed", () => { typed = true; draw(); });
-    ScrollTrigger.create({ trigger: btn, start: "top 88%", once: true, onEnter: () => { seen = true; draw(); } });
+    if (reduceMotion) { draw(); }
+    else ScrollTrigger.create({ trigger: btn, start: "center center", once: true, onEnter: draw });   /* the button reaches mid-screen */
     let timer;
     window.addEventListener("resize", () => { clearTimeout(timer); timer = setTimeout(build, 200); });
 }

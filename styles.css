@@ -170,6 +170,11 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
     color: var(--white);
 }
 .hero__media { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
+/* THE SHIELD'S POINT. The hero's base is a shallow V, like the bottom of
+   the shield, not a flat edge. --vee is its depth. On phones the hero
+   itself is clipped (white page shows in the corners); from 768px the V
+   sits where the photo meets the white credentials strip instead. */
+.hero { --vee: clamp(22px, 3.4vw, 62px); clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--vee)), 50% 100%, 0 calc(100% - var(--vee))); }
 /* THE REVEAL. --rv runs 0 (before photo, no "a success") to 1 (finished
    kitchen, "a success" in full). Both the after photo and the red words
    wear the same soft-edged mask, so they arrive left to right in step.
@@ -249,7 +254,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 /* trust: text lines on phones, icon bar on desktop */
 .trust {
     display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 12px;
-    padding: 0 var(--gutter) 22px;
+    padding: 0 var(--gutter) calc(var(--vee) + 14px);   /* clear of the V */
     font-family: var(--font-body); font-size: 12.5px; letter-spacing: .04em;
     color: var(--grey-300);
 }
@@ -615,7 +620,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .beat:nth-child(even) .beat__photo { border-radius: 56px 0 56px 0; }
 /* THE MORPH (beat 1): one frame, two photos. Static (no JS, reduced
    motion): a 3:2 frame showing the family. Live (.is-live, script.js): the
-   stage reserves a fixed block (10:11, caption included) and the frame
+   stage reserves a fixed block (16:15, caption included) and the frame
    inside it starts portrait-shaped on Phil, then reshapes to landscape as
    the page scrolls, the photos crossfading. Centred in the stage, so the
    frame grows sideways and shrinks vertically without moving the page. */
@@ -626,19 +631,19 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
    (less the header bar and some air), so the whole photo is visible at
    once and never needs scrolling; the width follows from the shape. */
 .morph.is-live {
-    aspect-ratio: 10 / 11; display: flex; flex-direction: column; justify-content: center; align-items: center;
-    width: min(100%, calc((100svh - 170px) * 10 / 11)); margin-inline: auto;
+    aspect-ratio: 16 / 15; display: flex; flex-direction: column; justify-content: flex-start; align-items: center;   /* the frame hangs from the top: when it flattens, the spare room collects below it */
+    width: min(100%, calc((100svh - 170px) * 16 / 15)); margin-inline: auto;
 }
-.morph.is-live .morph__frame { flex: none; width: 75%; aspect-ratio: 3 / 4; }     /* script.js drives both from here */
+.morph.is-live .morph__frame { flex: none; width: 66%; aspect-ratio: 3 / 4; }     /* script.js drives both from here */
 .morph.is-live .beat__caption { align-self: flex-start; }
 /* THE STACK (beat 2): three prints on one spot, the last on top and
    square to the frame, the two under it turned a few degrees so their
    corners show. script.js flies them in from the left to these resting
    transforms (kept in step with STACK_REST there). */
 .stack { position: relative; aspect-ratio: 4 / 5; width: min(100%, calc((100svh - 200px) * 4 / 5)); margin-inline: auto; }
-.beat .stack__photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; box-shadow: 0 16px 34px rgba(35, 31, 32, .24); }
-.stack__photo:nth-child(1) { transform: translate(-14px, 10px) rotate(-3.5deg); }
-.stack__photo:nth-child(2) { transform: translate(12px, -8px) rotate(2.5deg); }
+.beat .stack__photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; box-shadow: 0 2px 5px rgba(35, 31, 32, .38), 0 14px 30px rgba(35, 31, 32, .34); }   /* a tight contact shadow plus a cast one: each print visibly sits ON the one below */
+.stack__photo:nth-child(1) { transform: translate(-20px, 14px) rotate(-5deg); }
+.stack__photo:nth-child(2) { transform: translate(16px, -12px) rotate(3.5deg); }
 .beat__media .beat__caption { margin-top: 12px; }
 /* under the stack: clear of the tilted prints' corners, and lined up with the stack, not the column */
 .beat--work .beat__caption { width: min(100%, calc((100svh - 200px) * 4 / 5)); margin: 46px auto 0; }
@@ -677,14 +682,14 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 }
 .beat__body p:not(.beat__step) { font-size: 16px; line-height: 1.65; margin-bottom: 14px; }
 .about__cta-row { text-align: center; margin-top: 48px; }
-/* THE MARKER ARROW (script.js, ctaArrow): an SVG laid over the section's
-   inner box, drawn in its pixel space. A fat black stroke, its edges
-   roughened by an SVG filter so it reads as marker, from under
-   "integrity" down and across to the estimate button. */
+/* THE ARROW (script.js, ctaArrow): an SVG laid over the section's inner
+   box, drawn in its pixel space. A thin black line from under the work
+   text, curving down and across to the estimate button, with a small
+   symmetrical head. Clean and flat like the rest of the site (a fat
+   textured "marker" version was tried and dropped: it fought the design). */
 .section--phil .section__inner { position: relative; }
 .cta-arrow { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; z-index: 1; }
-.cta-arrow path { fill: none; stroke: var(--ink); stroke-width: 20; stroke-linejoin: round; stroke-linecap: butt; }   /* black marker */
-.cta-arrow .cta-arrow__head { stroke-linejoin: miter; stroke-miterlimit: 6; }
+.cta-arrow path { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
 /* ---------- AREAS SERVED (screen 1: copy + list) ---------- */
 .section--areas { min-height: 100svh; display: grid; align-content: center; }
@@ -1149,18 +1154,38 @@ body.has-dialog { overflow: hidden; }
     .btn { font-size: 16px; padding: 18px 40px; }
     .btn--primary { font-size: 18px; padding: 19px 42px; }
 
+    /* the V moves to the top of the white strip: its top edge dips to a point
+       in the middle, the photo behind fills the dip, and the red rule follows it */
+    .hero { clip-path: none; }
     .trust {
-        background: var(--white); color: var(--ink);
-        border-top: 4px solid; border-image: var(--grad-brand-smooth) 1;
-        padding: 16px var(--gutter);
+        position: relative; isolation: isolate;
+        color: var(--ink);
+        padding: calc(var(--vee) + 18px) var(--gutter) 16px;
         font-size: 14px; font-weight: 500; gap: 8px 14px;
     }
-    .trust__icon { display: block; }
-    .trust__item:nth-child(3) { flex-basis: auto; }
-    .trust__item + .trust__item::before {
-        content: ""; width: 5px; height: 5px; border-radius: 50%;
-        background: var(--grad-brand); margin: 0;
+    /* the white is its own layer and starts 2px BELOW the red rule's top edge,
+       tucked under it. When the white and the red were cut along the very same
+       diagonal, anti-aliasing let a hairline of white show above the red. */
+    .trust::after {
+        content: ""; position: absolute; inset: 0; z-index: -1; background: var(--white);
+        clip-path: polygon(0 2px, 50% calc(var(--vee) + 2px), 100% 2px, 100% 100%, 0 100%);
     }
+    .trust::before {
+        content: ""; position: absolute; left: 0; right: 0; top: 0; height: calc(var(--vee) + 5px);
+        background: var(--grad-brand-smooth);
+        clip-path: polygon(0 0, 50% var(--vee), 100% 0, 100% 5px, 50% calc(var(--vee) + 5px), 0 5px);
+    }
+    .trust__icon { display: block; }
+    /* THREE PLACES on one line: the first flush left and the third flush right
+       (the same gutters as the two buttons above), the middle one centred
+       exactly on the page's centre line, which is the shield's axis and the
+       point of the V. Equal 1fr side columns are what pin the middle to the
+       centre whatever the side items' widths. No dots: the space separates them. */
+    .trust { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; column-gap: 16px; }
+    .trust__item:nth-child(1) { justify-self: start; }
+    .trust__item:nth-child(2) { justify-self: center; }
+    .trust__item:nth-child(3) { justify-self: end; flex-basis: auto; }
+    .trust__item:nth-child(2)::before { content: none; }
 }
 
 /* services: one wider column on tablets (two columns at 768 leave only
@@ -1217,6 +1242,15 @@ body.has-dialog { overflow: hidden; }
     .beat:nth-child(odd)  .beat__photo { border-radius: 0 88px 0 88px; }
     .beat:nth-child(even) .beat__photo { border-radius: 88px 0 88px 0; }
     .morph__frame { border-radius: 0 88px 0 88px; }
+    /* CLOSING THE GAP between the two beats. Once the top frame has flattened
+       to the family photo, its stage has about 220px of spare room at the
+       bottom. The first beat's text lines up with the top of the photo, and
+       the work beat tucks up into that spare room. HOW FAR is measured by
+       script.js (philStory), because it depends on the window: on a short
+       screen both photo blocks scale down and there is far less room. Only
+       when the stage is live (:has); the static page has nothing to tuck into. */
+    .beat:has(.morph.is-live) { align-items: start; }
+    .beat:has(.morph.is-live) .beat__body { padding-top: 30px; }
     .beat__body p:not(.beat__step) { font-size: 17px; }
 
     /* split shield: wider caps, roomier panel */
@@ -1292,6 +1326,11 @@ body.has-dialog { overflow: hidden; }
 @media (min-width: 768px) and (max-height: 640px) {
     .hero__content { padding-top: calc(var(--nav-h) + 24px); gap: 16px; }
     .hero__title { font-size: clamp(44px, 7vh, 72px); }
+}
+/* ...but from 1024px the logo is centred and hangs about 150px down (shield
+   plus wordmark), and a wide headline ran underneath it. Start below it. */
+@media (min-width: 1024px) and (max-height: 640px) {
+    .hero__content { padding-top: 168px; gap: 14px; }
 }
 
 /* ---------- DESKTOP: full nav ---------- */
