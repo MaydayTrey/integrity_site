@@ -384,9 +384,14 @@ function heroIntro() {
     hero.style.animation = "none";                       /* script is here: the CSS fallback is not needed */
     hero.style.setProperty("--rv", reduceMotion ? "1" : "0");
     const title = document.querySelector(".hero__title");
-    const rest  = [".hero__note", ".hero__actions", ".trust", ".nav__list", ".nav__brand"];
+    const rest  = [".hero__note", ".hero__actions", ".trust__item", ".nav__list", ".nav__brand"];      /* the credentials, not the strip: hiding .trust hid the white V and its red rule too, so the hero's bottom edge jumped in late */
 
+    /* the stylesheet starts these hidden (no flash before this script runs);
+       from here GSAP owns them, so the CSS fallback animation is cancelled */
+    gsap.set([title, ...rest], { animation: "none" });
+    gsap.set(title, { opacity: 1 });                     /* its words are what fade, below */
     if (!reduceMotion) gsap.set(rest, { autoAlpha: 0 });
+    else gsap.set(rest, { opacity: 1 });
 
     SplitText.create(title, {
         type: "lines,words",
@@ -663,6 +668,17 @@ function reviewCarousel() {
     }
     section.classList.add("is-carousel");
 
+    /* THE PHOTOS ARE FETCHED EARLY. Lazy loading waits until an image is near
+       the screen, but these ride a transformed column inside a pinned section:
+       they arrived late, and a card showed its dark ground first. Two screens
+       before the section, all of them are switched to eager and decoded. */
+    const photos = [...section.querySelectorAll(".review img")];
+    const fetchAll = () => photos.forEach((img) => { img.loading = "eager"; if (img.decode) img.decode().catch(() => {}); });
+    if ("IntersectionObserver" in window) {
+        const io = new IntersectionObserver((hits) => { if (hits.some((h) => h.isIntersecting)) { fetchAll(); io.disconnect(); } }, { rootMargin: "200% 0px" });
+        io.observe(section);
+    } else fetchAll();
+
     /* a red rule between every pair of cards (decorative, carousel only). They
        are plain flow items in the column, so they travel with the cards but are
        not scaled by the depth effect, and the card centres below still come
@@ -702,16 +718,20 @@ function reviewCarousel() {
        away from the centre line, and the next card grows into place as
        it travels in. Reads from the timeline's onUpdate (not the
        ScrollTrigger's) so it tracks the smoothed scrub, not raw scroll. */
+    /* No layout is read here: it runs every tick, and on a phone eight
+       getBoundingClientRect calls a frame (each forcing a style pass on a
+       transformed column) was the lag. The cards' middles are measured once
+       in build(); the column's y is the only thing that moves. */
+    let mids = [], winH = 1;
     function depth() {
-        const box = win.getBoundingClientRect();
-        const mid = box.top + box.height / 2;
-        cards.forEach((card) => {
-            const r = card.getBoundingClientRect();
+        const y = Number(gsap.getProperty(column, "y")) || 0;
+        const push = wide.matches ? 56 : 22;
+        cards.forEach((card, i) => {
             /* 0 when centred, 1 a full window-height away: the neighbours
                sit around 0.6, so they read as a step back rather than
                already at the floor, and the gradient shows during travel */
-            const d = Math.min(Math.abs(r.top + r.height / 2 - mid) / box.height, 1);
-            gsap.set(card, { scale: 1 - d * 0.22, x: d * (wide.matches ? 56 : 22), transformOrigin: "50% 50%" });
+            const d = Math.min(Math.abs(mids[i] + y - winH / 2) / winH, 1);
+            gsap.set(card, { scale: 1 - d * 0.22, x: d * push, transformOrigin: "50% 50%" });
         });
     }
 
@@ -768,8 +788,12 @@ function reviewCarousel() {
 
         /* the window's top fade (photos and rails together) stops short of the centred card */
         const tallest = Math.max(...cards.map((c) => c.offsetHeight));
-        win.style.setProperty("--fade", Math.round(Math.min(Math.max((H - tallest) / 2 - 14, 10), 80)) + "px");
+        const fade = Math.round(Math.min(Math.max((H - tallest) / 2 - 14, 10), 80)) + "px";
+        win.style.setProperty("--fade", fade);
+        section.style.setProperty("--fade", fade);                       /* phones fade with an overlay on the section instead of a mask */
+        section.style.setProperty("--win-top", Math.round(win.getBoundingClientRect().top - section.getBoundingClientRect().top) + "px");
 
+        mids = cards.map((c) => c.offsetTop + c.offsetHeight / 2); winH = H;      /* for depth() */
         const centres = cards.map((c) => c.offsetTop + c.offsetHeight / 2 - H / 2);   /* column y = -centre puts card i in the middle */
         tl = gsap.timeline({ defaults: { ease: "none" }, onUpdate: depth });
         const arrive = [];                             /* timeline time at which card i is centred */
