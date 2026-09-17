@@ -35,7 +35,7 @@ document.addEventListener("click", (e) => {
    slowly than the page: the section passes over it. The extra height
    is set here, not in CSS, so reduced motion keeps a plain photo. */
 if (!reduceMotion) {
-    const photo = document.querySelector(".hero__photo");
+    const photo = document.querySelectorAll(".hero__photo");   /* the before and the after move as one */
     gsap.set(photo, { height: "130%", yPercent: -11.5 });
     gsap.to(photo, { yPercent: 0, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
     /* the divider bands' photos drift the same way, harder: each is
@@ -238,9 +238,14 @@ function rollingText(el) {
 }
 
 /* ---------- HERO INTRO ----------
-   The slogan types itself in word by word; "a success" lands last with
-   a stamp. Runs after fonts load so SplitText measures the real glyphs. */
+   The slogan fades in word by word over the BEFORE photo; then "a
+   success" and the finished kitchen reveal together, left to right.
+   Runs after fonts load so SplitText measures the real glyphs. */
 function heroIntro() {
+    const hero  = document.querySelector(".hero");
+    const after = hero.querySelector(".hero__after .hero__photo");
+    hero.style.animation = "none";                       /* script is here: the CSS fallback is not needed */
+    hero.style.setProperty("--rv", reduceMotion ? "1" : "0");
     const title = document.querySelector(".hero__title");
     const rest  = [".hero__note", ".hero__actions", ".trust", ".nav__list", ".nav__brand"];
 
@@ -275,17 +280,26 @@ function heroIntro() {
 
             /* 1. the line fades in, word by word, no rising
                2. the shield (the nav brand) appears
-               3. "a success" stamps in
+               3. "a success" and the after photo reveal left to right, in step
                4. everything else follows */
+            hero.style.setProperty("--rv", "0");        /* a re-split replays the intro: start the reveal over */
             const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
             tl.from(words, { autoAlpha: 0, duration: 0.9, stagger: 0.05, force3D: false })   /* 2D: the gradient clip holds */
               .to(".nav__brand", { autoAlpha: 1, y: 0, duration: 0.6 }, "-=0.2")
-              .from(stamp, {
-                    scale: 1.7, autoAlpha: 0, transformOrigin: "50% 60%",
-                    duration: 0.55, ease: "back.out(2.2)", stagger: 0.08,
-                    force3D: false
+              /* THE REVEAL: "a success" arrives left to right, and the
+                 finished kitchen arrives over the before photo at exactly
+                 the same pace, because one number (--rv on the hero)
+                 drives both masks. It waits for the after photo if the
+                 network has not delivered it yet. */
+              .add(() => {
+                    if (after.complete && after.naturalWidth) return;
+                    tl.pause();
+                    const go = () => tl.resume();
+                    after.addEventListener("load", go, { once: true });
+                    after.addEventListener("error", go, { once: true });
                 }, "+=0.1")
-              .to(others, { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.08 }, "-=0.2");
+              .to(hero, { "--rv": 1, duration: 1.6, ease: "power2.inOut" })
+              .to(others, { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.08 }, "-=0.5");
             return tl;              /* returned so autoSplit can revert + replay it cleanly */
         }
     });

@@ -150,12 +150,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@300;500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
     <link rel="stylesheet" href="styles.css">
-        <!--HERO PRELOAD: the kitchen photo is the LCP element on every
-            viewport. imagesrcset lets the preload pick the same candidate
-            the <img> will, so we never download the photo twice-->
+        <!--HERO PRELOAD: the hero opens on the BEFORE photo (the same room,
+            stripped to the studs), so that is the LCP element. imagesrcset
+            lets the preload pick the same candidate the <img> will. These
+            are the second photo band's files, so that band is cached too.-->
     <link rel="preload" as="image"
-          href="assets/hero-kitchen-1600.webp"
-          imagesrcset="assets/hero-kitchen-800.webp 800w, assets/hero-kitchen-1200.webp 1200w, assets/hero-kitchen-1600.webp 1600w, assets/hero-kitchen-2048.webp 2048w"
+          href="assets/divider-site-1600.webp"
+          imagesrcset="assets/divider-site-800.webp 800w, assets/divider-site-1200.webp 1200w, assets/divider-site-1600.webp 1600w, assets/divider-site-2048.webp 2048w"
           imagesizes="100vw">
         <!--SCRIPTS: defer keeps parsing unblocked; deferred scripts run in
             order, so GSAP and its plugins are ready before script.js-->
@@ -227,15 +228,29 @@
     <main id="main">
         <!--1. HERO-->
         <section class="hero" aria-labelledby="hero-title">
+            <!--BEFORE then AFTER: the same kitchen, shot from the same spot.
+                The page opens on the before photo; as "a success" reveals
+                left to right in the headline, the finished kitchen reveals
+                over it at the same pace (one shared progress value, --rv,
+                drives both; see heroIntro in script.js).-->
             <div class="hero__media">
+                <img class="hero__photo hero__photo--before"
+                     src="assets/divider-site-1600.webp"
+                     srcset="assets/divider-site-800.webp 800w, assets/divider-site-1200.webp 1200w, assets/divider-site-1600.webp 1600w, assets/divider-site-2048.webp 2048w"
+                     sizes="100vw"
+                     width="2048" height="1536"
+                     fetchpriority="high"
+                     decoding="async"
+                     alt="">
+                <div class="hero__after">
                 <img class="hero__photo"
                      src="assets/hero-kitchen-1600.webp"
                      srcset="assets/hero-kitchen-800.webp 800w, assets/hero-kitchen-1200.webp 1200w, assets/hero-kitchen-1600.webp 1600w, assets/hero-kitchen-2048.webp 2048w"
                      sizes="100vw"
                      width="2048" height="1536"
-                     fetchpriority="high"
                      decoding="async"
                      alt="Finished kitchen remodel with white shaker cabinets, granite countertops, subway tile backsplash, and a dark island by Integrity Restorations and Remodeling">
+                </div>
                 <!--ink gradient overlay lives in CSS (.hero__media::after)
                     so the strength is one custom property away-->
             </div>

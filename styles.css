@@ -170,6 +170,21 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
     color: var(--white);
 }
 .hero__media { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
+/* THE REVEAL. --rv runs 0 (before photo, no "a success") to 1 (finished
+   kitchen, "a success" in full). Both the after photo and the red words
+   wear the same soft-edged mask, so they arrive left to right in step.
+   Default 0 so the page opens on the before photo with no flash; if
+   script.js never takes over, the fallback animation flips it to 1
+   after a few seconds, and reduced motion starts at 1. */
+.hero { --rv: 0; animation: hero-rv-fallback 0s 6s forwards; }
+@keyframes hero-rv-fallback { to { --rv: 1; } }
+@media (prefers-reduced-motion: reduce) { .hero { --rv: 1; animation: none; } }
+.hero__after, .hero__title .hl {
+    -webkit-mask-image: linear-gradient(90deg, #000 calc(var(--rv) * 125% - 25%), transparent calc(var(--rv) * 125%));
+            mask-image: linear-gradient(90deg, #000 calc(var(--rv) * 125% - 25%), transparent calc(var(--rv) * 125%));
+}
+.hero__after { position: absolute; inset: 0; overflow: hidden; }
+.hero__title .hl { display: inline-block; }   /* one box, so one mask runs across both words */
 .hero__photo {
     width: 100%; height: 100%; object-fit: cover;
     /* portrait crop of a landscape photo: bias left so the hood, the
