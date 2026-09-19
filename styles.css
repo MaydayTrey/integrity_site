@@ -309,6 +309,20 @@ body.has-dialog .home-btn { visibility: hidden; }
     color: transparent;
 }
 .hero__title .hl .word, .hero__title .em .word { background-image: var(--grad-brand); }
+/* THE DRAWING STATE (script.js adds .is-drawing for the drywall stage): each
+   word is an outline, and a fill rises through it bottom to top as --fill
+   goes 0 to 1. White for the line, red for "you". "a success" is never
+   outlined: it arrives whole with the finished kitchen. Without the class
+   (no JS, reduced motion, or once the fill is done) the words are solid. */
+.hero__title { --fill: 0; }
+.hero__title.is-drawing .word {
+    -webkit-text-stroke: 1.5px var(--white);
+    background-image: linear-gradient(to top, var(--white) calc(var(--fill) * 100%), transparent calc(var(--fill) * 100%));
+}
+.hero__title.is-drawing .em .word {
+    -webkit-text-stroke-color: var(--red);
+    background-image: linear-gradient(to top, var(--red) calc(var(--fill) * 100%), transparent calc(var(--fill) * 100%));
+}
 
 .hero__note {
     font-family: var(--font-ui); font-weight: 300; font-size: 15px; line-height: 1.5;

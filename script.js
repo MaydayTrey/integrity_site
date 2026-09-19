@@ -488,10 +488,12 @@ function heroIntro() {
             const words = self.words.filter((w) => !stamp.includes(w));
             const others = rest.filter((s) => s !== ".nav__brand");
 
-            /* 1. the line fades in, word by word, no rising
-               2. the drywall stage wipes over the insulation, left to right
+            /* 1. half a second on the insulation, then the drywall wipes over it
+               2. on the drywall the line appears as OUTLINES, word by word,
+                  and a fill rises through the letters bottom to top
                3. the shield (the nav brand) appears
-               4. "a success" and the finished kitchen reveal left to right, in step
+               4. the letters full, "a success" and the finished kitchen reveal
+                  left to right, in step
                5. everything else follows */
             hero.style.setProperty("--rv", "0");        /* a re-split replays the intro: start the reveals over */
             hero.style.setProperty("--rm", "0");
@@ -504,10 +506,14 @@ function heroIntro() {
                 img.addEventListener("error", go, { once: true });
             };
             const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
-            tl.from(words, { autoAlpha: 0, duration: 0.9, stagger: 0.05, force3D: false })   /* 2D: the gradient clip holds */
-              .add(waitFor(mid), "-=0.3")
-              .to(hero, { "--rm": 1, duration: 1.3, ease: "power2.inOut" })                  /* insulation to drywall */
-              .to(".nav__brand", { autoAlpha: 1, y: 0, duration: 0.6 }, "-=0.4")
+            title.classList.add("is-drawing");
+            gsap.set(title, { "--fill": 0 });
+            tl.add(waitFor(mid), 0.45)
+              .to(hero, { "--rm": 1, duration: 0.7, ease: "power2.inOut" }, 0.5)             /* insulation to drywall */
+              .from(words, { autoAlpha: 0, duration: 0.3, stagger: 0.035, force3D: false }, "-=0.3")   /* the outlines (2D: the clip holds) */
+              .to(title, { "--fill": 1, duration: 1.0, ease: "power2.inOut" }, "-=0.1")      /* the fill rises */
+              .add(() => title.classList.remove("is-drawing"))                               /* solid from here */
+              .to(".nav__brand", { autoAlpha: 1, y: 0, duration: 0.6 }, "-=0.25")
               /* THE REVEAL: "a success" arrives left to right, and the
                  finished kitchen arrives over the drywall at exactly the
                  same pace, because one number (--rv on the hero) drives
