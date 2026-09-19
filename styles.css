@@ -311,7 +311,7 @@ body.has-dialog .home-btn { visibility: hidden; }
 .hero__title .hl .word, .hero__title .em .word { background-image: var(--grad-brand); }
 /* THE DRAWING STATE (script.js adds .is-drawing for the drywall stage): each
    word is an outline, and a fill rises through it bottom to top as --fill
-   goes 0 to 1. White for the line, red for "you". "a success" is never
+   goes 0 to 1. "you" is red and full throughout. "a success" is never
    outlined: it arrives whole with the finished kitchen. Without the class
    (no JS, reduced motion, or once the fill is done) the words are solid. */
 .hero__title { --fill: 0; }
@@ -319,14 +319,11 @@ body.has-dialog .home-btn { visibility: hidden; }
     -webkit-text-stroke: 1.5px var(--white);
     background-image: linear-gradient(to top, var(--white) calc(var(--fill) * 100%), transparent calc(var(--fill) * 100%));
 }
-.hero__title.is-drawing .em .word {
-    -webkit-text-stroke-color: var(--red);
-    background-image: linear-gradient(to top, var(--red) calc(var(--fill) * 100%), transparent calc(var(--fill) * 100%));
-}
+.hero__title.is-drawing .em .word { -webkit-text-stroke: 0; background-image: var(--grad-brand); }      /* "you" is full from the start: only the white words fill */
 
 .hero__note {
-    font-family: var(--font-ui); font-weight: 300; font-size: 15px; line-height: 1.5;
-    color: var(--grey-300);
+    font-family: var(--font-ui); font-weight: 400; font-size: 17px; line-height: 1.5; letter-spacing: .01em;
+    color: var(--white); text-shadow: 0 1px 4px rgba(35, 31, 32, .55);
     border-left: 4px solid var(--red); padding: 12px 0 12px 14px;      /* the vertical padding is what makes the red bar stand taller than the line of text */
     max-width: 60ch;
 }
@@ -1531,7 +1528,8 @@ body.has-dialog { overflow: hidden; }
         gap: 26px;
     }
     .hero__title { font-size: clamp(60px, 6.2vw, 96px); line-height: .94; max-width: 760px; }
-    .hero__note { font-size: clamp(17px, 1.5vw, 21px); padding: 16px 0 16px 18px; max-width: 760px; }
+    .hero__note { font-size: clamp(20px, 1.8vw, 26px); padding: 16px 0 16px 20px; max-width: 760px; }
+    .hero__copy { margin-top: auto; }         /* with the buttons' auto margin below: the words sit centred between the nav and the buttons, with room to ride down on scroll */
     .hero__actions {
         margin-top: auto;                     /* pushes the buttons to the bottom edge */
         justify-content: space-between;

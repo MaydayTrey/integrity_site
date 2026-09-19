@@ -416,10 +416,10 @@ function claimPlay() {
 }
 
 /* ---------- HERO ON SCROLL ----------
-   1. The headline and note fade out (and lift a little) BEFORE they reach
-      the nav: fully gone by the time their top would touch the logo's
-      bottom edge. Scrubbed, so scrolling back brings them in again. The
-      wrapper is faded, not the words, so the intro's own tweens are left alone.
+   1. The headline and note follow the scroll down lazily and fade out on
+      the way, gone before the nav could overlap them. Scrubbed, so scrolling
+      back brings them in again. The wrapper is moved and faded, not the
+      words, so the intro's own tweens are left alone.
    2. The buttons ride down the photo as the page scrolls, from the foot of
       the first screen to the foot of the hero (the tall hero's extra 30%),
       at about half the page's speed. */
@@ -428,11 +428,18 @@ function heroScroll() {
     const copy = document.querySelector(".hero__copy"), actions = document.querySelector(".hero__actions");
     const content = document.querySelector(".hero__content"), hero = document.querySelector(".hero"), trust = document.querySelector(".trust");
     /* the lowest thing in the nav at the top of the page: the big logo on desktop, the bar elsewhere */
+    /* A LAZY FOLLOW. The words ride down with the page at about half its
+       speed, a little behind the wheel (scrub 0.8), so they are still there
+       for anyone who scrolls during the intro. They fade over the second
+       part of that ride and are fully gone the moment their top would reach
+       the nav (the big logo's foot on desktop, the bar elsewhere), so the two
+       never overlap. Scrolling back brings them in again. */
+    const RIDE = 0.55;
     const navFoot = () => Math.max(header.querySelector(".nav__brand").getBoundingClientRect().bottom, header.getBoundingClientRect().bottom, 64);
-    gsap.fromTo(copy, { autoAlpha: 1, y: 0 }, {
-        autoAlpha: 0, y: -24, ease: "none", immediateRender: false,
-        scrollTrigger: { trigger: copy, start: () => "clamp(top " + Math.round(navFoot() + 110) + "px)", end: () => "top " + Math.round(navFoot() - 30) + "px", scrub: true, invalidateOnRefresh: true }
-    });
+    const travel = () => Math.max((copy.getBoundingClientRect().top - hero.getBoundingClientRect().top - navFoot()) / (1 - RIDE), 120);   /* px of scroll until the top meets the nav */
+    gsap.timeline({ scrollTrigger: { trigger: hero, start: "top top", end: () => "+=" + Math.round(travel()), scrub: 0.8, invalidateOnRefresh: true } })
+        .fromTo(copy, { y: 0 }, { y: () => Math.round(travel() * RIDE), ease: "none", duration: 1 }, 0)
+        .fromTo(copy, { autoAlpha: 1 }, { autoAlpha: 0, ease: "power1.in", duration: 0.6 }, 0.4);
     const room = () => Math.max(trust.getBoundingClientRect().top - content.getBoundingClientRect().bottom, 0);   /* the stretch of bare photo under the first screen */
     gsap.fromTo(actions, { "--drop": "0px" }, {
         "--drop": () => room() + "px", ease: "none", immediateRender: false,
