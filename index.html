@@ -155,8 +155,8 @@
             lets the preload pick the same candidate the <img> will. These
             are the second photo band's files, so that band is cached too.-->
     <link rel="preload" as="image"
-          href="assets/divider-site-1600.webp"
-          imagesrcset="assets/divider-site-800.webp 800w, assets/divider-site-1200.webp 1200w, assets/divider-site-1600.webp 1600w, assets/divider-site-2048.webp 2048w"
+          href="assets/hero-insulation-1600.webp"
+          imagesrcset="assets/hero-insulation-800.webp 800w, assets/hero-insulation-1200.webp 1200w, assets/hero-insulation-1600.webp 1600w, assets/hero-insulation-2048.webp 2048w"
           imagesizes="(max-width: 767px) 380vw, 140vw">
         <!--SCRIPTS: defer keeps parsing unblocked; deferred scripts run in
             order, so GSAP and its plugins are ready before script.js-->
@@ -235,20 +235,31 @@
     <main id="main">
         <!--1. HERO-->
         <section class="hero" aria-labelledby="hero-title">
-            <!--BEFORE then AFTER: the same kitchen, shot from the same spot.
-                The page opens on the before photo; as "a success" reveals
-                left to right in the headline, the finished kitchen reveals
-                over it at the same pace (one shared progress value, --rv,
-                drives both; see heroIntro in script.js).-->
+            <!--THREE STAGES of the same kitchen, shot from the same spot:
+                insulation, drywall, finished. The page opens on the insulation;
+                the drywall wipes over it left to right (--rm); then, as "a
+                success" reveals in the headline, the finished kitchen reveals
+                over that at the same pace (one shared value, --rv, drives both;
+                see heroIntro in script.js).-->
             <div class="hero__media">
                 <img class="hero__photo hero__photo--before"
-                     src="assets/divider-site-1600.webp"
-                     srcset="assets/divider-site-800.webp 800w, assets/divider-site-1200.webp 1200w, assets/divider-site-1600.webp 1600w, assets/divider-site-2048.webp 2048w"
+                     src="assets/hero-insulation-1600.webp"
+                     srcset="assets/hero-insulation-800.webp 800w, assets/hero-insulation-1200.webp 1200w, assets/hero-insulation-1600.webp 1600w, assets/hero-insulation-2048.webp 2048w"
                      sizes="(max-width: 767px) 380vw, 140vw"
                      width="2048" height="1536"
                      fetchpriority="high"
                      decoding="async"
                      alt="">
+                <!--the middle stage: drywall up, revealed over the insulation first (--rm)-->
+                <div class="hero__mid">
+                <img class="hero__photo"
+                     src="assets/hero-drywall-1600.webp"
+                     srcset="assets/hero-drywall-800.webp 800w, assets/hero-drywall-1200.webp 1200w, assets/hero-drywall-1600.webp 1600w, assets/hero-drywall-2048.webp 2048w"
+                     sizes="(max-width: 767px) 380vw, 140vw"
+                     width="2048" height="1536"
+                     decoding="async"
+                     alt="">
+                </div>
                 <div class="hero__after">
                 <img class="hero__photo"
                      src="assets/hero-kitchen-1600.webp"
@@ -267,12 +278,10 @@
                     (heroScroll) can fade them out together before they reach the nav-->
                 <div class="hero__copy">
                 <h1 class="hero__title" id="hero-title">
-                    Working with you to make your project <span class="hl">a success</span>
+                    Working with <span class="em">you</span> to make your project <span class="hl">a success</span>
                 </h1>
 
-                <!--PLACEHOLDER: personal note from Phil, 1 to 2 sentences.
-                    Never ships as-is-->
-                <p class="hero__note" data-placeholder>[ Placeholder: a short welcome note from the team, one or two sentences. Copy due 9/13. ]</p>
+                <p class="hero__note">From estimate, to completion, we look forward to working with you.</p>
                 </div>
 
                 <div class="hero__actions">
@@ -376,14 +385,25 @@
             read as the sections' edges; the photo is clipped to the
             parallelogram and drifts with the scroll like the hero.
             Decorative: alt="" and hidden from assistive tech.-->
-        <div class="divider" aria-hidden="true">
+        <div class="divider" data-step aria-hidden="true">
+            <!--data-step: a two-stage band. The bare steps show first; once the
+                band is in view the finished tile work wipes down over them, top
+                to bottom (script.js). Both photos share the parallax.-->
             <div class="divider__media">
                 <img class="divider__photo"
-                     src="assets/divider-drywall-1600.webp"
-                     srcset="assets/divider-drywall-800.webp 800w, assets/divider-drywall-1200.webp 1200w, assets/divider-drywall-1600.webp 1600w, assets/divider-drywall-2048.webp 2048w"
+                     src="assets/band-entry-before-1600.webp"
+                     srcset="assets/band-entry-before-800.webp 800w, assets/band-entry-before-1200.webp 1200w, assets/band-entry-before-1600.webp 1600w, assets/band-entry-before-2048.webp 2048w"
                      sizes="(max-width: 767px) 400vw, 200vw"
                      width="2048" height="1536"
                      loading="lazy" decoding="async" alt="">
+                <div class="divider__after">
+                    <img class="divider__photo"
+                         src="assets/band-entry-after-1600.webp"
+                         srcset="assets/band-entry-after-800.webp 800w, assets/band-entry-after-1200.webp 1200w, assets/band-entry-after-1600.webp 1600w, assets/band-entry-after-2048.webp 2048w"
+                         sizes="(max-width: 767px) 400vw, 200vw"
+                         width="2048" height="1236"
+                         loading="lazy" decoding="async" alt="">
+                </div>
             </div>
         </div>
 
@@ -604,14 +624,25 @@
             Reviews, cut the other way (high on the right, low on the
             left) and wiped in from the right, so the two bands are
             symmetrical. Grey above, white below.-->
-        <div class="divider divider--mirror" aria-hidden="true">
-            <div class="divider__media">
-                <img class="divider__photo"
-                     src="assets/divider-site-1600.webp"
-                     srcset="assets/divider-site-800.webp 800w, assets/divider-site-1200.webp 1200w, assets/divider-site-1600.webp 1600w, assets/divider-site-2048.webp 2048w"
-                     sizes="(max-width: 767px) 400vw, 200vw"
-                     width="2048" height="1536"
-                     loading="lazy" decoding="async" alt="">
+        <div class="divider divider--mirror" data-grow="150" aria-hidden="true">
+            <!--two photos, Phil on the left and Gabe on the right, a red seam between-->
+            <div class="divider__media divider__media--pair">
+                <div class="divider__half">
+                    <img class="divider__photo divider__photo--phil"
+                         src="assets/band-phil-1600.webp"
+                         srcset="assets/band-phil-800.webp 800w, assets/band-phil-1200.webp 1200w, assets/band-phil-1600.webp 1600w"
+                         sizes="(max-width: 767px) 200vw, 100vw"
+                         width="2048" height="1536"
+                         loading="lazy" decoding="async" alt="">
+                </div>
+                <div class="divider__half">
+                    <img class="divider__photo divider__photo--gabe"
+                         src="assets/band-gabe-1600.webp"
+                         srcset="assets/band-gabe-800.webp 800w, assets/band-gabe-1200.webp 1200w, assets/band-gabe-1600.webp 1600w"
+                         sizes="(max-width: 767px) 200vw, 100vw"
+                         width="2048" height="1979"
+                         loading="lazy" decoding="async" alt="">
+                </div>
             </div>
         </div>
 
@@ -755,14 +786,16 @@
         <!--4b. DIVIDER, the third: between Reviews and Meet Phil, cut and
             wiped like the first (high on the left, in from the left), so
             the three bands read first, mirror, first. White above, grey
-            below. Phil on the accent wall.-->
-        <div class="divider divider--phil" data-grow="125" aria-hidden="true">
+            below. The red barn and the flag.-->
+        <div class="divider divider--phil" data-grow="115" aria-hidden="true">
+            <!--the red barn with the flag. A modest parallax (data-grow) and a
+                crop biased low and left keep the barn and the flag in the band.-->
             <div class="divider__media">
                 <img class="divider__photo"
-                     src="assets/divider-phil-1600.webp"
-                     srcset="assets/divider-phil-800.webp 800w, assets/divider-phil-1200.webp 1200w, assets/divider-phil-1600.webp 1600w"
-                     sizes="(max-width: 767px) 400vw, 200vw"
-                     width="2000" height="1047"
+                     src="assets/band-barn-1074.webp"
+                     srcset="assets/band-barn-800.webp 800w, assets/band-barn-1074.webp 1074w"
+                     sizes="100vw"
+                     width="1074" height="805"
                      loading="lazy" decoding="async" alt="">
             </div>
         </div>

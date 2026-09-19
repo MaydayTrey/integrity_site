@@ -48,7 +48,7 @@ if (!reduceMotion) {
        Timed, not scrubbed, so it never runs back. GSAP would snap a
        polygon string, so a number drives it. */
     document.querySelectorAll(".divider").forEach((div) => {
-        const photo = div.querySelector(".divider__photo");
+        const photo = div.querySelectorAll(".divider__photo");          /* one, a pair, or a before and an after: all drift together */
         const media = div.querySelector(".divider__media");
         const mirror = div.classList.contains("divider--mirror");
         /* data-grow overrides the 230% for a band whose photo is too wide
@@ -79,6 +79,18 @@ if (!reduceMotion) {
             onComplete: () => { media.style.clipPath = ""; },   /* back to the stylesheet's polygon */
             scrollTrigger: { trigger: div, start: "top 78%", once: true }
         });
+
+        /* THE TWO-STAGE BAND (data-step): a beat after it is in view, the
+           finished work wipes DOWN over the bare job, top to bottom. Once. */
+        const after = div.querySelector(".divider__after");
+        if (after) {
+            const step = { p: 0 };
+            gsap.to(step, {
+                p: 1, duration: 1.7, ease: "power2.inOut", delay: 0.7,
+                onUpdate: () => { after.style.clipPath = `inset(0 0 ${((1 - step.p) * 100).toFixed(3)}% 0)`; },
+                scrollTrigger: { trigger: div, start: "top 60%", once: true }
+            });
+        }
     });
 }
 
@@ -435,8 +447,10 @@ function heroScroll() {
 function heroIntro() {
     const hero  = document.querySelector(".hero");
     const after = hero.querySelector(".hero__after .hero__photo");
+    const mid   = hero.querySelector(".hero__mid .hero__photo");
     hero.style.animation = "none";                       /* script is here: the CSS fallback is not needed */
     hero.style.setProperty("--rv", reduceMotion ? "1" : "0");
+    hero.style.setProperty("--rm", reduceMotion ? "1" : "0");
     const title = document.querySelector(".hero__title");
     const rest  = [".hero__note", ".hero__actions", ".trust__item", ".nav__list", ".nav__brand"];      /* the credentials, not the strip: hiding .trust hid the white V and its red rule too, so the hero's bottom edge jumped in late */
 
@@ -461,7 +475,7 @@ function heroIntro() {
                Measure BEFORE the tweens below apply any transform. */
             const titleBox = title.getBoundingClientRect();
             self.words.forEach((w) => {
-                const hl  = w.closest(".hl");
+                const hl  = w.closest(".hl, .em");                /* the two red words each get their own brand ramp */
                 const ref = hl ? hl.getBoundingClientRect() : titleBox;
                 const box = w.getBoundingClientRect();
                 w.style.backgroundSize = `${ref.width}px 100%`;
@@ -475,25 +489,30 @@ function heroIntro() {
             const others = rest.filter((s) => s !== ".nav__brand");
 
             /* 1. the line fades in, word by word, no rising
-               2. the shield (the nav brand) appears
-               3. "a success" and the after photo reveal left to right, in step
-               4. everything else follows */
-            hero.style.setProperty("--rv", "0");        /* a re-split replays the intro: start the reveal over */
+               2. the drywall stage wipes over the insulation, left to right
+               3. the shield (the nav brand) appears
+               4. "a success" and the finished kitchen reveal left to right, in step
+               5. everything else follows */
+            hero.style.setProperty("--rv", "0");        /* a re-split replays the intro: start the reveals over */
+            hero.style.setProperty("--rm", "0");
+            const ready = (img) => img.complete && img.naturalWidth;
+            const waitFor = (img) => () => {              /* pause until the photo is here, if the network is slow */
+                if (ready(img)) return;
+                tl.pause();
+                const go = () => tl.resume();
+                img.addEventListener("load", go, { once: true });
+                img.addEventListener("error", go, { once: true });
+            };
             const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
             tl.from(words, { autoAlpha: 0, duration: 0.9, stagger: 0.05, force3D: false })   /* 2D: the gradient clip holds */
-              .to(".nav__brand", { autoAlpha: 1, y: 0, duration: 0.6 }, "-=0.2")
+              .add(waitFor(mid), "-=0.3")
+              .to(hero, { "--rm": 1, duration: 1.3, ease: "power2.inOut" })                  /* insulation to drywall */
+              .to(".nav__brand", { autoAlpha: 1, y: 0, duration: 0.6 }, "-=0.4")
               /* THE REVEAL: "a success" arrives left to right, and the
-                 finished kitchen arrives over the before photo at exactly
-                 the same pace, because one number (--rv on the hero)
-                 drives both masks. It waits for the after photo if the
-                 network has not delivered it yet. */
-              .add(() => {
-                    if (after.complete && after.naturalWidth) return;
-                    tl.pause();
-                    const go = () => tl.resume();
-                    after.addEventListener("load", go, { once: true });
-                    after.addEventListener("error", go, { once: true });
-                }, "+=0.1")
+                 finished kitchen arrives over the drywall at exactly the
+                 same pace, because one number (--rv on the hero) drives
+                 both masks. */
+              .add(waitFor(after), "+=0.1")
               .to(hero, { "--rv": 1, duration: 1.6, ease: "power2.inOut" })
               .to(others, { autoAlpha: 1, y: 0, duration: 0.6, stagger: 0.08 }, "-=0.5");
             return tl;              /* returned so autoSplit can revert + replay it cleanly */
