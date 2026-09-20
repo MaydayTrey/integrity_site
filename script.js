@@ -386,6 +386,19 @@ function homeButton() {
     update();
 }
 
+/* ---------- QUALIFICATIONS UNDER THE FAQ ----------
+   Once Qualifications fills the screen it is pinned (no spacer) and the
+   FAQ, next in flow, scrolls up over it like a card; a grey veil fades
+   over the pinned section as it is covered. The pin lets go when the FAQ
+   has covered it. Reduced motion: plain flow. */
+function coverQuals() {
+    const quals = document.querySelector(".section--quals"), faq = document.querySelector(".section--faq");
+    if (!quals || !faq || reduceMotion) return;
+    ScrollTrigger.create({ trigger: quals, start: "top top", end: () => "+=" + quals.offsetHeight, pin: true, pinSpacing: false, invalidateOnRefresh: true });
+    gsap.fromTo(quals, { "--dim": 0 }, { "--dim": 0.62, ease: "none", immediateRender: false,
+        scrollTrigger: { trigger: quals, start: "top top", end: () => "+=" + quals.offsetHeight, scrub: true, invalidateOnRefresh: true } });
+}
+
 /* ---------- FAQ: the accordion ----------
    Native details/summary (works without JS, and the browser's find-in-page
    can open an item), with the open and close eased: the answer's height is
@@ -1987,7 +2000,7 @@ document.fonts.ready.then(() => {
     serviceMap();
     contactForm();
     shieldCard();
-    cookieNotice(); homeButton(); faqAccordion(); heroScroll(); philMorph();
+    cookieNotice(); homeButton(); coverQuals(); faqAccordion(); heroScroll(); philMorph();
     stackCycle();
     philStory();
     ctaArrow();

@@ -1168,6 +1168,7 @@ body.has-dialog .home-btn { visibility: hidden; }
 }
 .section--faq::before {                     /* the white stops 2px above the cut, tucked under the red rule (no hairline beneath) */
     content: ""; position: absolute; inset: 0; z-index: -1; background: var(--white);
+    border-radius: 28px 28px 0 0;                                       /* a card's top corners: it slides up over Qualifications */
     clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--vee) - 2px), 50% calc(100% - 2px), 0 calc(100% - var(--vee) - 2px));
 }
 .section--faq::after {
@@ -1421,7 +1422,10 @@ body.has-dialog { overflow: hidden; }
 }
 .section--phil      { background: var(--grey-100); overflow: clip; }   /* clip: the photo's red bar hangs 4px outside it */
 .section--areas     { background: var(--white); }
-.section--quals     { background: var(--white); min-height: 100svh; display: grid; align-content: center; }   /* a full screen: the badges converge as it centres */
+.section--quals     { background: var(--white); min-height: 100svh; display: grid; align-content: center; position: relative; isolation: isolate; }   /* a full screen: the badges converge as it centres */
+/* THE COVER. Qualifications is pinned while the FAQ scrolls up over it, and a
+   grey veil comes over it as it is covered (script.js, coverQuals sets --dim). */
+.section--quals::after { content: ""; position: absolute; inset: 0; z-index: 5; pointer-events: none; background: var(--ink); opacity: var(--dim, 0); }
 /* .section--contact: styled in the CONTACT block below */
 /* ---------- FOOTER ----------
    The Homicidal Fitness footer in Integrity's palette: white ground,
