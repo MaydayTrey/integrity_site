@@ -309,7 +309,7 @@ function rollingText(el) {
    Content-Security-Policy in netlify.toml, or the browser will block it.
    window.integrityConsent holds the current value, and an
    "integrity:consent" event fires on the document when it changes. */
-const GA_ID = "";      /* Google Analytics 4 measurement ID, "G-XXXXXXXXXX". Empty: nothing loads. */
+const GA_ID = "G-YMP5SY44LG";      /* Google Analytics 4 measurement ID. Empty: nothing loads. */
 function loadAnalytics() {
     if (loadAnalytics.done || !GA_ID) return;
     loadAnalytics.done = true;

@@ -1324,6 +1324,16 @@ body.has-dialog .home-btn { visibility: hidden; }
 .page-links { display: grid; gap: 8px; margin: 24px 0 32px; font-size: 16px; }
 .page-links a { color: var(--red-dark); text-decoration: underline; text-underline-offset: 3px; }
 .page-cta { margin-top: 32px; }
+/* a document page (privacy): readable measure, plain headings */
+.page-doc { align-items: start; padding-top: 48px; }
+.page-doc .section__inner { max-width: 720px; }
+.page-doc .section__title { font-size: clamp(36px, 5vw, 56px); }
+.doc__updated { font-size: 14px; color: var(--grey-700); margin: 8px 0 32px; }
+.doc__h { font-family: var(--font-ui); font-weight: 600; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; color: var(--red-dark); margin: 32px 0 10px; }
+.page-doc p { font-size: 16px; line-height: 1.65; }
+.page-doc p + p { margin-top: 12px; }
+.page-doc p a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--red); }
+.cookies__link { color: var(--red-dark); text-decoration: underline; text-underline-offset: 2px; margin-left: 4px; }
 
 /* ---------- JOB DIALOG ---------- */
 .job {
