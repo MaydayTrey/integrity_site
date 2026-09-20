@@ -593,7 +593,7 @@ body.has-dialog .home-btn { visibility: hidden; }
 .gallery-window.is-carousel::after  { bottom: 0; }
 .gallery.is-carousel { position: relative; }
 .gallery.is-carousel::before {
-    content: ""; position: absolute; top: 0; bottom: 0; left: 0; right: -600%; pointer-events: none; opacity: .6;
+    content: ""; position: absolute; top: -14px; bottom: -12px; left: 0; right: -600%; pointer-events: none; opacity: .6;      /* up and down through the window's padding: the bars meet the rails */
     background: repeating-linear-gradient(to right,
         transparent 0, transparent calc(var(--card-w, 560px) + var(--card-gap, 28px) / 2 - .5px),
         var(--red-dark) calc(var(--card-w, 560px) + var(--card-gap, 28px) / 2 - .5px), var(--red-dark) calc(var(--card-w, 560px) + var(--card-gap, 28px) / 2 + .5px),
@@ -621,7 +621,8 @@ body.has-dialog .home-btn { visibility: hidden; }
 @media (min-width: 768px) {
     .gallery-window.is-carousel { margin-inline: 0; padding-block: 12px; }
     .gallery.is-carousel { gap: 28px; }
-    .gallery.is-carousel .pair { flex-basis: min(56%, 560px); }
+    .gallery.is-carousel .pair { flex-basis: min(45%, 450px); }      /* about a fifth smaller than first cut: the whole card fits a laptop screen */
+    .gallery:not(.is-carousel) { max-width: 920px; margin-inline: auto; }
     .gal-arrow { width: 56px; height: 56px; }
     .gal-arrow--prev { left: 18px; } .gal-arrow--next { right: 18px; }
 }
