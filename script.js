@@ -386,33 +386,26 @@ function homeButton() {
     update();
 }
 
-/* ---------- INSURANCE: the damage turns into the repair ----------
-   One photo, no controls. While the block is on screen a loop plays: hold
-   on the damage, the repair wipes in left to right (one number drives the
-   clip, GSAP would snap an inset string), hold, the repair fades away,
-   again. Off screen it pauses. The panel, photo and card rise in once.
-   Reduced motion: the repair, still. */
-function claimPlay() {
-    const media = document.querySelector("[data-claim]");
-    if (!media) return;
-    const after = media.querySelector(".claim__img--after");
-    if (reduceMotion) { media.classList.add("is-after"); return; }
-    const w = { p: 0 };
-    const draw = () => { after.style.clipPath = `inset(0 ${((1 - w.p) * 100).toFixed(3)}% 0 0)`; };
-    draw();
-    const loop = gsap.timeline({ paused: true, repeat: -1 })
-        .to(w, { p: 1, duration: 1.5, ease: "power2.inOut", onUpdate: draw }, 1.8)
-        .add(() => media.classList.add("is-after"), 2.5)
-        .to(after, { autoAlpha: 0, duration: 0.9, ease: "power1.inOut" }, 7)
-        .add(() => media.classList.remove("is-after"), 7.4)
-        .add(() => { w.p = 0; draw(); }, 7.95)
-        .set(after, { autoAlpha: 1 }, 8);
-    ScrollTrigger.create({ trigger: media, start: "top 80%", end: "bottom 10%", onToggle: (self) => self.isActive ? loop.play() : loop.pause() });
-
-    const parts = [".claim__panel > *", ".claim__card"];
-    gsap.set(parts, { autoAlpha: 0, y: 28 });
-    ScrollTrigger.create({ trigger: ".claim", start: "top 72%", once: true,
-        onEnter: () => gsap.to(parts, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out", stagger: 0.1, clearProps: "transform" }) });
+/* ---------- FAQ: the accordion ----------
+   Native details/summary (works without JS, and the browser's find-in-page
+   can open an item), with the open and close eased: the answer's height is
+   tweened instead of snapping. One open at a time. */
+function faqAccordion() {
+    const items = [...document.querySelectorAll(".faq__item")];
+    if (!items.length || reduceMotion) return;
+    items.forEach((item) => {
+        const q = item.querySelector(".faq__q"), a = item.querySelector(".faq__a");
+        q.addEventListener("click", (e) => {
+            e.preventDefault();
+            if (item.open) {
+                gsap.to(a, { height: 0, duration: 0.35, ease: "power2.in", onComplete: () => { item.open = false; gsap.set(a, { clearProps: "height" }); } });
+            } else {
+                items.filter((o) => o !== item && o.open).forEach((o) => o.querySelector(".faq__q").click());
+                item.open = true;
+                gsap.from(a, { height: 0, duration: 0.5, ease: "power3.out", clearProps: "height" });
+            }
+        });
+    });
 }
 
 /* ---------- HERO ON SCROLL ----------
@@ -1973,7 +1966,7 @@ function sectionReveals() {
     /* the reviews section is excluded: its cards live inside the pinned,
        transformed column and its head must be visible the moment the
        pin engages */
-    const targets = ".section__head:not(.reviews-head):not(.quals-head), .placeholder .section__inner, .service, .segments, .panel:not([hidden]), .about__cta-row, .areas__body" + (window.matchMedia("(min-width: 768px)").matches ? ", .check__panel" : "");   /* phones: the panel is a CSS-driven sheet */   /* qualifications run their own entrance (qualsIntro) */   /* the contact card is excluded: the pour is its entrance, and a translated card would throw the tint projection off */
+    const targets = ".section__head:not(.reviews-head):not(.quals-head), .placeholder .section__inner, .service, .segments, .panel:not([hidden]), .about__cta-row, .areas__body, .faq__item" + (window.matchMedia("(min-width: 768px)").matches ? ", .check__panel" : "");   /* phones: the panel is a CSS-driven sheet */   /* qualifications run their own entrance (qualsIntro) */   /* the contact card is excluded: the pour is its entrance, and a translated card would throw the tint projection off */
     gsap.set(targets, { autoAlpha: 0, y: 24 });
     ScrollTrigger.batch(targets, {
         start: "top 85%",
@@ -1994,7 +1987,7 @@ document.fonts.ready.then(() => {
     serviceMap();
     contactForm();
     shieldCard();
-    cookieNotice(); homeButton(); claimPlay(); heroScroll(); philMorph();
+    cookieNotice(); homeButton(); faqAccordion(); heroScroll(); philMorph();
     stackCycle();
     philStory();
     ctaArrow();

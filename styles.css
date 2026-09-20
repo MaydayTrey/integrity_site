@@ -1147,89 +1147,58 @@ body.has-dialog .home-btn { visibility: hidden; }
 .badge__mark--ohio  { --icon: url("assets/icon-ohio.svg"); }
 .badge__mark--water { --icon: url("assets/icon-water.svg"); }
 .badge__mark--plank { --icon: url("assets/icon-plank.svg"); }
-.badge__mark--claim { --icon: url("assets/icon-insurance.svg"); }   /* shield with a house: outline shapes, painted with the gradient */
 /* the issuer logos are the point of the card: big, with the title and
    the description under them; the wide IICRC lockup is shorter so its
    width fits the card */
 .badge__logo { height: 96px; width: 100%; object-fit: contain; }   /* every logo gets the same slot, so the titles line up */
 .badge__logo--wide { object-fit: contain; max-width: 250px; }                          /* the wide IICRC lockup just letterboxes inside it */
-/* INSURANCE: a full-width split block after the qualifications. A white
-   information panel on the left, the claim job's photo on the right (it
-   plays damage to repair by itself), a red card straddling the two. THE FOOT
-   IS THE HERO'S SHIELD POINT: .claim__inner is clipped to a shallow V and a
-   red rule runs along the cut; the block rides down over the top of the
-   contact section by the depth of the V, so whatever that section's
-   background is doing (it changes on phones) shows in the two corners. */
-.claim { --vee: clamp(22px, 3.4vw, 62px); position: relative; z-index: 2; margin-bottom: calc(-1 * var(--vee) - 1px); overflow: clip; pointer-events: none; }
-.claim__inner { pointer-events: auto; }   /* clip: the drawing behind the words hangs past the panel, and clip-path alone does not stop that widening the page (on phones it shrank the whole site and pushed the hamburger off screen) */
-.claim__inner {
-    position: relative; isolation: isolate; display: grid;
-    padding-bottom: calc(var(--vee) + 28px);
+/* FAQ: an accordion of questions with red hairlines between them and a
+   plus that turns into a minus. THE FOOT IS THE HERO'S SHIELD POINT: the
+   section is clipped to a shallow V with the red rule along the cut, and it
+   rides down over the top of the contact section by the depth of the V. */
+.section--faq {
+    --vee: clamp(22px, 3.4vw, 62px);
+    position: relative; isolation: isolate; z-index: 2;
+    margin-bottom: calc(-1 * var(--vee) - 1px); padding-bottom: calc(var(--vee) + 72px);
     clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--vee)), 50% 100%, 0 calc(100% - var(--vee)));
 }
-/* the white is its own layer and stops 2px ABOVE the outer cut, tucked under
-   the red rule. Cut along the very same diagonal as the red, anti-aliasing let
-   a hairline of white show under it (the same fix as the hero's strip). */
-.claim__inner::before {
+.section--faq::before {                     /* the white stops 2px above the cut, tucked under the red rule (no hairline beneath) */
     content: ""; position: absolute; inset: 0; z-index: -1; background: var(--white);
     clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--vee) - 2px), 50% calc(100% - 2px), 0 calc(100% - var(--vee) - 2px));
 }
-.claim__inner::after {
-    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: calc(var(--vee) + 5px); pointer-events: none; z-index: 3;
+.section--faq::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: calc(var(--vee) + 5px); pointer-events: none;
     background: var(--grad-brand-smooth);
     clip-path: polygon(0 0, 50% var(--vee), 100% 0, 100% 5px, 50% 100%, 0 5px);
 }
-.claim__panel { position: relative; isolation: isolate; padding: 56px var(--gutter) 28px; }
-/* A TRIAL: an architect's drawing, faint, behind the words */
-.claim__panel::before {
-    content: ""; position: absolute; z-index: -1; pointer-events: none; inset: -70px -90px -70px -140px;
-    background: url("assets/blueprint.webp") center / 135% auto no-repeat; opacity: .2;      /* faint: a texture, not a picture */
-    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 18%, #000 78%, transparent 100%);      /* the drawing is cropped hard at its sides: fade them */
-            mask-image: linear-gradient(to right, transparent 0, #000 18%, #000 78%, transparent 100%);
+.faq { max-width: 820px; margin-inline: auto; border-top: 1px solid rgba(186, 30, 35, .45); }
+.faq__item { border-bottom: 1px solid rgba(186, 30, 35, .45); }
+.faq__q {
+    list-style: none; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 18px;
+    padding: 20px 4px; min-height: 64px;
+    font-family: var(--font-ui); font-weight: 600; font-size: 16px; letter-spacing: .02em; line-height: 1.35; color: var(--ink);
+    transition: color .2s;
 }
-.claim__mark { display: block; width: 64px; margin-bottom: 16px; }
-.claim__title { font-family: var(--font-display); font-weight: 400; font-size: clamp(36px, 4.4vw, 64px); line-height: .98; letter-spacing: .02em; text-transform: uppercase; margin: 6px 0 16px; }
-.claim__lede { font-size: 16px; line-height: 1.65; max-width: 48ch; }
-/* THE PHOTO'S SHAPE: the same clip as the Meet Phil photos, top left and
-   bottom right corners rounded, the other two square. No frame. */
-.claim__media { position: relative; margin: 0 16px; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 56px 0 56px 0; background: var(--ink); }
-.claim__frame { position: absolute; inset: 0; }
-.claim__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 64% 50%; }   /* the tall crop leans right: the column in the damage shot and the sign in the repair both sit right of centre */
-.claim__tag {
-    position: absolute; right: 0; top: 0; z-index: 1; display: grid; padding: 8px 14px;
-    font-family: var(--font-ui); font-weight: 600; font-size: 12px; letter-spacing: .16em; text-transform: uppercase;
-    color: var(--white); background: rgba(35, 31, 32, .78); transition: background-color .4s;
+.faq__q::-webkit-details-marker { display: none; }
+.faq__q:hover, .faq__q:focus-visible, .faq__item[open] .faq__q { color: var(--red-dark); }
+.faq__q:focus-visible { outline: 3px solid var(--red); outline-offset: 4px; }
+/* the plus: two bars painted in the brand gradient; the upright one turns away when open */
+.faq__mark { position: relative; flex: none; width: 22px; height: 22px; }
+.faq__mark::before, .faq__mark::after {
+    content: ""; position: absolute; left: 50%; top: 50%; translate: -50% -50%; background: var(--grad-brand);
+    width: 22px; height: 2.5px; border-radius: 2px; transition: rotate .35s var(--ease-out), opacity .3s;
 }
-.claim__tag-word { grid-area: 1 / 1; transition: opacity .4s; }
-.claim__tag-word--after { opacity: 0; }
-.claim__media.is-after .claim__tag { background: var(--red-dark); }
-.claim__media.is-after .claim__tag-word { opacity: 0; }
-.claim__media.is-after .claim__tag-word--after { opacity: 1; }
-.claim__card {
-    position: relative; z-index: 2; margin: -36px 16px 0; padding: 22px 22px;
-    background: var(--grad-brand); color: var(--white); border: 2px solid var(--white);
-    box-shadow: 0 18px 40px rgba(35, 31, 32, .3);
-    font-size: 16px; line-height: 1.6;
+.faq__mark::after { rotate: 90deg; }
+.faq__item[open] .faq__mark::after { rotate: 0deg; opacity: 0; }
+.faq__a { overflow: hidden; }
+.faq__a-inner { padding: 0 4px 24px; }
+.faq__a p { font-size: 16px; line-height: 1.65; max-width: 66ch; color: var(--ink); }
+@media (min-width: 768px) {
+    .faq__q { font-size: 18px; padding: 24px 6px; }
+    .faq__a-inner { padding: 2px 6px 30px; }
+    .faq__a p { font-size: 17px; }
 }
-/* from 1024px: a contained two-column row, not a full-bleed split. The words
-   on the left, a modest 4:3 photo on the right with the red card lapping its
-   lower left corner. The V foot still runs the full width. */
-@media (min-width: 1024px) {
-    .claim__inner {
-        grid-template-columns: minmax(0, 1fr) minmax(0, 460px); column-gap: 72px; align-items: center;
-        padding: 88px max(var(--gutter), calc((100% - 1080px) / 2)) calc(var(--vee) + 96px);
-    }
-    .claim__panel { padding: 0; align-self: center; }       /* the words (and the drawing behind them) share the photo's centre line */
-    /* the shield and its label stand centred at the head of the panel; the heading and the words stay flush left under them */
-    .claim__mark { margin-inline: auto; width: 84px; }
-    .claim__panel .section__eyebrow { text-align: center; margin-bottom: 28px; }
-    .claim__media { grid-column: 2; grid-row: 1; margin: 0; aspect-ratio: 4 / 5; border-radius: 88px 0 88px 0; }      /* a tall window */
-    .claim__card {
-        grid-column: 2; grid-row: 1; align-self: end; justify-self: start; width: 84%; margin: 0 0 28px -56px;   /* over the photo's lower left, hanging out to the left */
-        padding: 20px 24px; font-size: 15px;
-    }
-    .claim__lede { font-size: 17px; }
-}
+@media (prefers-reduced-motion: reduce) { .faq__mark::before, .faq__mark::after { transition: none; } }
 .badge__title { font-family: var(--font-ui); font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; line-height: 1.25; }
 .badge__text { font-size: 14px; line-height: 1.5; color: var(--ink); max-width: 30ch; }
 
