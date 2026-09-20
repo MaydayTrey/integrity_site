@@ -1546,7 +1546,7 @@ body.has-dialog { overflow: hidden; }
 [data-roll] { overflow: hidden; }
 [data-roll] .word { display: inline-flex; }       /* keeps the space between words */
 .letterWindow { display: inline-block; height: 1lh; overflow: hidden; }
-.letterTrack { display: flex; flex-direction: column; align-items: center; }
+.letterTrack { display: flex; flex-direction: column; align-items: center; will-change: transform; }      /* always on its own layer: the text does not switch rendering modes as the roll starts and ends */
 .trackContent { height: 1lh; display: flex; align-items: center; justify-content: center; }
 
 /* ---------- TABLET AND UP: hero layout ----------

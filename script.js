@@ -288,8 +288,12 @@ function rollingText(el) {
     if (reduceMotion) return;
 
     const tracks = el.querySelectorAll(".letterTrack");
-    const rollUp   = gsap.to(tracks, { yPercent: -50, stagger: 0.03, ease: "back.inOut", paused: true });
-    const rollDown = gsap.to(tracks, { yPercent: 0,   stagger: 0.03, ease: "back.inOut", paused: true });
+    /* the roll ends on a WHOLE pixel: half the track's height is often
+       fractional (13px type at 1.6 is 20.8px a line), and text parked off
+       the pixel grid on a composited layer picks up colour fringes */
+    const half = (i, t) => -Math.round(t.offsetHeight / 2);
+    const rollUp   = gsap.to(tracks, { y: half, stagger: 0.03, ease: "back.inOut", paused: true });
+    const rollDown = gsap.to(tracks, { y: 0,    stagger: 0.03, ease: "back.inOut", paused: true });
 
     el.addEventListener("mouseenter", () => rollUp.restart());
     el.addEventListener("mouseleave", () => rollDown.restart());
