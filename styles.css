@@ -887,6 +887,10 @@ body.has-dialog .home-btn { visibility: hidden; }
     color: var(--white); border-bottom: 2px solid var(--red);
 }
 .review__job::after { content: " \2197"; }
+.review__job { text-decoration: none; display: inline-block; }      /* the link form too (a review that points at a Facebook post) */
+/* a long review shows its first lines and trails off in "..."; the link under it opens the whole post */
+.reviews-current .review__quote--long p { display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+@media (max-width: 767px) { .reviews-current .review__quote--long p { -webkit-line-clamp: 4; } }
 
 /* ---------- MEET PHIL: a two-beat story ----------
    Each beat is a photo and a block of copy. Phones stack photo over
