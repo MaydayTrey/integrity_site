@@ -628,6 +628,8 @@ function galleryCarousel() {
         prev.disabled = index === 0;
         next.disabled = index === items.length - 1;
         const x = win.clientWidth / 2 - (it.offsetLeft + it.offsetWidth / 2);
+        gallery.style.setProperty("--card-w", it.offsetWidth + "px");                        /* for the bars between cards */
+        gallery.style.setProperty("--card-gap", getComputedStyle(gallery).columnGap);
         gsap.to(gallery, { x, duration: animate && !reduceMotion ? 0.55 : 0, ease: "power3.out", overwrite: true });
     }
     function build() {

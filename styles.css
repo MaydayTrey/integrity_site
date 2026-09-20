@@ -579,7 +579,29 @@ body.has-dialog .home-btn { visibility: hidden; }
    the window, full size, with its neighbours peeking in smaller and dimmed
    either side. Tapping a neighbour brings it to the middle. */
 .gallery-window { position: relative; }
-.gallery-window.is-carousel { overflow: hidden; padding: 8px 0 6px; margin-inline: calc(-1 * var(--gutter)); }   /* out to the screen's edges: the neighbours show at the sides */
+.gallery-window.is-carousel { overflow: hidden; padding: 14px 0 12px; margin-inline: calc(-1 * var(--gutter)); }   /* out to the screen's edges: the neighbours show at the sides */
+/* THE RED HAIRLINES, the reviews carousel's turned on its side: a rail along
+   the top and the bottom of the window, fading out towards the ends, and a
+   bar between every pair of cards that travels with them (drawn on the
+   track as a repeating gradient: script.js gives it the card width and gap,
+   so it is not scaled or dimmed with the neighbours). */
+.gallery-window.is-carousel::before, .gallery-window.is-carousel::after {
+    content: ""; position: absolute; left: 0; right: 0; height: 1px; z-index: 1; pointer-events: none; opacity: .6;
+    background: linear-gradient(to right, transparent 0%, var(--red-dark) 14%, var(--red-dark) 86%, transparent 100%);
+}
+.gallery-window.is-carousel::before { top: 0; }
+.gallery-window.is-carousel::after  { bottom: 0; }
+.gallery.is-carousel { position: relative; }
+.gallery.is-carousel::before {
+    content: ""; position: absolute; top: 0; bottom: 0; left: 0; right: -600%; pointer-events: none; opacity: .6;
+    background: repeating-linear-gradient(to right,
+        transparent 0, transparent calc(var(--card-w, 560px) + var(--card-gap, 28px) / 2 - .5px),
+        var(--red-dark) calc(var(--card-w, 560px) + var(--card-gap, 28px) / 2 - .5px), var(--red-dark) calc(var(--card-w, 560px) + var(--card-gap, 28px) / 2 + .5px),
+        transparent calc(var(--card-w, 560px) + var(--card-gap, 28px) / 2 + .5px), transparent calc(var(--card-w, 560px) + var(--card-gap, 28px)));
+}
+/* the card in the middle lifts on the same soft shadow as the centred review */
+.gallery.is-carousel .pair__figure { transition: box-shadow .4s var(--ease-out); }
+.gallery.is-carousel .pair.is-focus .pair__figure { box-shadow: 0 22px 44px rgba(35, 31, 32, .34); }
 .gallery.is-carousel { display: flex; gap: 20px; align-items: start; will-change: transform; }
 .gallery.is-carousel .pair { flex: 0 0 min(78vw, 560px); transform: scale(.88); opacity: .5; transition: transform .5s var(--ease-out), opacity .5s; }
 .gallery.is-carousel .pair.is-focus { transform: none; opacity: 1; }
