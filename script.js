@@ -309,10 +309,23 @@ function rollingText(el) {
    Content-Security-Policy in netlify.toml, or the browser will block it.
    window.integrityConsent holds the current value, and an
    "integrity:consent" event fires on the document when it changes. */
+const GA_ID = "";      /* Google Analytics 4 measurement ID, "G-XXXXXXXXXX". Empty: nothing loads. */
 function loadAnalytics() {
-    if (loadAnalytics.done) return;
+    if (loadAnalytics.done || !GA_ID) return;
     loadAnalytics.done = true;
-    /* the analytics snippet goes here */
+    /* Google Analytics 4 (gtag), loaded only after consent. IP anonymisation
+       is on by default in GA4. The hosts are allowed in netlify.toml's CSP. */
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    window.gtag("js", new Date());
+    window.gtag("config", GA_ID, { anonymize_ip: true });
+    const s = document.createElement("script");
+    s.async = true; s.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(GA_ID);
+    document.head.appendChild(s);
+    /* a few events worth having: estimate requests, address checks, review taps */
+    document.querySelector(".form")?.addEventListener("submit", () => window.gtag("event", "generate_lead", { form: "estimate" }));
+    document.querySelector(".check__panel")?.addEventListener("submit", () => window.gtag("event", "address_check"));
+    document.querySelectorAll('a[href^="tel:"]').forEach((a) => a.addEventListener("click", () => window.gtag("event", "phone_click")));
 }
 function cookieNotice() {
     const KEY = "integrity-consent";
@@ -394,9 +407,14 @@ function homeButton() {
 function coverQuals() {
     const quals = document.querySelector(".section--quals"), faq = document.querySelector(".section--faq");
     if (!quals || !faq || reduceMotion) return;
-    ScrollTrigger.create({ trigger: quals, start: "top top", end: () => "+=" + quals.offsetHeight, pin: true, pinSpacing: false, invalidateOnRefresh: true });
+    /* the pin starts when the section's BOTTOM edge reaches the bottom of the
+       screen. On a desktop the section is one screen tall, so that is its top at
+       the top; on a phone it is taller, and pinning any sooner hid the last badge
+       under the FAQ before it had been seen. */
+    const start = "bottom bottom";
+    ScrollTrigger.create({ trigger: quals, start, end: () => "+=" + window.innerHeight, pin: true, pinSpacing: false, invalidateOnRefresh: true });
     gsap.fromTo(quals, { "--dim": 0 }, { "--dim": 0.62, ease: "none", immediateRender: false,
-        scrollTrigger: { trigger: quals, start: "top top", end: () => "+=" + quals.offsetHeight, scrub: true, invalidateOnRefresh: true } });
+        scrollTrigger: { trigger: quals, start, end: () => "+=" + window.innerHeight, scrub: true, invalidateOnRefresh: true } });
 }
 
 /* ---------- FAQ: the accordion ----------
@@ -646,6 +664,7 @@ function galleryCarousel() {
             items = [];
             gallery.querySelectorAll(".is-focus").forEach((p) => p.classList.remove("is-focus"));
             gsap.set(gallery, { clearProps: "transform" });
+            gallery.style.removeProperty("--card-w"); gallery.style.removeProperty("--card-gap");
         } else {
             items = visible(); index = 0; paint(false);
         }
@@ -672,7 +691,10 @@ function galleryCarousel() {
         const dx = e.clientX - sx; sx = null;
         if (Math.abs(dx) > 40) go(index + (dx < 0 ? 1 : -1));
     });
-    document.querySelectorAll(".filter").forEach((b) => b.addEventListener("click", () => requestAnimationFrame(build)));
+    /* the swap happens BEFORE the new cards fade in (ourWork's fadeIn runs on the
+       same click): the row is rebuilt at once, in the same frame, so the cards
+       never show mid-way between their carousel and grid sizes */
+    document.querySelectorAll(".filter").forEach((b) => b.addEventListener("click", build));
     let timer;
     window.addEventListener("resize", () => { clearTimeout(timer); timer = setTimeout(() => { if (on()) paint(false); }, 150); });
     build();

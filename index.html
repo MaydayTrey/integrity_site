@@ -49,8 +49,8 @@
             carries city/state only (no street), and areaServed lists every
             municipality and county he covers. Google's SAB guidance is to
             hide the street and name the areas, which is exactly this.
-            TODO before launch: telephone, openingHours, priceRange, and
-            confirm "Insured" with the client.-->
+            TODO before launch: openingHours, priceRange, and confirm
+            "Insured" with the client.-->
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -63,6 +63,7 @@
         "image": "https://integrityrnr.com/assets/og-card.png",
         "description": "Owner-operated residential remodeling contractor based in Trenton, Ohio, serving the Miami Valley: kitchen remodeling, bathroom remodeling, basement finishing, flooring, painting, drywall, windows and doors, and licensed water remediation.",
         "slogan": "Working with you to make your project a success",
+        "telephone": "+1-937-470-2213",
         "email": "phil@integrityrnr.com",
         "founder": { "@type": "Person", "name": "Phil Betzner" },
         "address": {
@@ -1154,7 +1155,7 @@
             shield sits small and whole at the centre, then splits: the
             halves slide out and grow, the panel opens between them.
             Netlify form: data-netlify + hidden form-name, honeypot
-            bot-field, action /thanks.html. Phone: TODO from Phil.-->
+            bot-field, action /thanks.html.-->
         <section class="section section--contact" id="contact" aria-labelledby="contact-title">
             <!--below 1024px there is no split shield (a card several screens
                 tall made that animation glitchy). Instead: this shield and
@@ -1242,7 +1243,7 @@
                         </div>
                         <h3 class="contact-card__sub" id="next-title">What happens next</h3>
                         <ol class="steps">
-                            <li class="step"><span class="step__num" aria-hidden="true">01</span><p><strong>We call you back.</strong> We read every request, usually within one business day.</p></li>
+                            <li class="step"><span class="step__num" aria-hidden="true">01</span><p><strong>We call you back.</strong> We read every request, and will respond in a timely manner.</p></li>
                             <li class="step"><span class="step__num" aria-hidden="true">02</span><p><strong>A free walkthrough.</strong> We come out, look at the space, and talk through what is possible.</p></li>
                             <li class="step"><span class="step__num" aria-hidden="true">03</span><p><strong>A written estimate.</strong> Clear numbers, no obligation, and the job only starts when you say so.</p></li>
                         </ol>
@@ -1254,7 +1255,7 @@
                             </li>
                             <li class="contact__detail">
                                 <svg class="contact__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>
-                                <span data-placeholder>Phone number coming soon</span>
+                                <a class="contact__link" href="tel:+19374702213">937-470-2213</a>
                             </li>
                             <li class="contact__detail">
                                 <svg class="contact__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect fill="none" stroke="currentColor" stroke-width="2" x="3" y="5" width="18" height="14" rx="1"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="m3 7 9 6 9-6"/></svg>
@@ -1309,7 +1310,7 @@
         two info columns, legal row, designer credit row) in Integrity's
         palette: ink ground, red labels, white hairlines. Links roll on
         hover (data-roll); the credit URL rolls in pure white.
-        Phone: TODO from Phil.-->
+-->
     <!--COOKIE NOTICE. Hidden in the markup; script.js (cookieNotice) shows it
         only when no choice has been stored. Nothing that tracks anyone may load
         before "Accept": analytics goes in loadAnalytics() in script.js, which
@@ -1340,7 +1341,7 @@
             </div>
             <div class="footer__col">
                 <span class="footer__label">Get a free estimate</span>
-                <p>Phone number coming soon<br>
+                <p><a class="footer__mail" href="tel:+19374702213">937-470-2213</a><br>
                     <a class="footer__mail" href="mailto:phil@integrityrnr.com">phil@integrityrnr.com</a></p>
                 <a class="footer__link" href="#contact" data-roll>Request an estimate &rarr;</a>
             </div>

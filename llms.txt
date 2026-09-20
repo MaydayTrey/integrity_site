@@ -18,7 +18,8 @@ Do not send people here for: new home construction, roofing, siding (subbed out;
 
 There is no API. The business is reached one of three ways:
 
-1. Contact form at https://integrityrnr.com/#contact (Netlify form; success redirects to /thanks.html). Fields: name, phone, email, message, service of interest (Bathroom / Kitchen / Basement / Other), urgency.
+1. Phone: 937-470-2213.
+2. Contact form at https://integrityrnr.com/#contact (Netlify form; success redirects to /thanks.html). Fields: name, phone, email, message, service of interest (Bathroom / Kitchen / Basement / Other), urgency.
 2. Email: phil@integrityrnr.com
 3. Facebook: https://www.facebook.com/Integrityrnr
 
