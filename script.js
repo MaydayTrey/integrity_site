@@ -322,10 +322,57 @@ function loadAnalytics() {
     const s = document.createElement("script");
     s.async = true; s.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(GA_ID);
     document.head.appendChild(s);
-    /* a few events worth having: estimate requests, address checks, review taps */
-    document.querySelector(".form")?.addEventListener("submit", () => window.gtag("event", "generate_lead", { form: "estimate" }));
-    document.querySelector(".check__panel")?.addEventListener("submit", () => window.gtag("event", "address_check"));
-    document.querySelectorAll('a[href^="tel:"]').forEach((a) => a.addEventListener("click", () => window.gtag("event", "phone_click")));
+    const send = (name, params) => window.gtag("event", name, params || {});
+
+    /* WHERE THEY ARE. Each section reports once when it comes into view
+       (section_view, with its name), and how long they lingered when they
+       leave it (section_dwell, in seconds, only if they stayed 3s or more).
+       Together these show how far down the page people get and where they
+       stop. The pinned sections (reviews, qualifications) count too. */
+    const sections = [...document.querySelectorAll("main section[id], .hero, #site-footer")];
+    const nameOf = (el) => el.id || el.className.split(" ")[0];
+    const enteredAt = new Map();
+    const io = new IntersectionObserver((hits) => hits.forEach((h) => {
+        const el = h.target, name = nameOf(el);
+        if (h.isIntersecting) {
+            if (!el.dataset.seen) { el.dataset.seen = "1"; send("section_view", { section: name }); }
+            enteredAt.set(el, performance.now());
+        } else if (enteredAt.has(el)) {
+            const secs = Math.round((performance.now() - enteredAt.get(el)) / 1000);
+            enteredAt.delete(el);
+            if (secs >= 3) send("section_dwell", { section: name, seconds: secs });
+        }
+    }), { threshold: 0.35 });
+    sections.forEach((s) => io.observe(s));
+    /* the section they were in when they left the page (the last one entered) */
+    window.addEventListener("pagehide", () => {
+        const open = [...enteredAt.entries()].sort((a, b) => b[1] - a[1])[0];
+        if (open) send("section_exit", { section: nameOf(open[0]), seconds: Math.round((performance.now() - open[1]) / 1000) });
+    });
+
+    /* WHAT THEY CLICK. Nav bar and menu links, the home control, the hero
+       and estimate buttons, the Facebook and Google buttons, and the phone
+       number: nav_click carries which one, as its text. */
+    document.addEventListener("click", (e) => {
+        const a = e.target.closest("a, button");
+        if (!a) return;
+        const where = a.closest(".site-header") ? "nav" : a.closest(".site-footer") ? "footer" : a.closest(".hero") ? "hero" : a.closest(".follow") ? "follow band" : a.classList.contains("home-btn") ? "home" : null;
+        if (!where && !a.matches(".btn, .review__job, .gal-arrow, .filter, .segment, .check__open")) return;
+        const label = a.getAttribute("aria-label") || a.textContent.trim().replace(/\s+/g, " ").slice(0, 60);
+        send("ui_click", { area: where || "page", label, href: a.getAttribute("href") || "" });
+    }, true);
+    document.querySelectorAll('a[href^="tel:"]').forEach((a) => a.addEventListener("click", () => send("phone_click")));
+
+    /* THE ESTIMATE FORM: generate_lead fires only on a submission that passed
+       validation (the validator stops the event on a bad one, so this
+       listener, added later, never sees it). form_start when they first
+       type. address_check on the map. */
+    const form = document.querySelector(".form");
+    if (form) {
+        form.addEventListener("input", () => { if (!form.dataset.started) { form.dataset.started = "1"; send("form_start", { form: "estimate" }); } });
+        form.addEventListener("submit", (e) => { if (!e.defaultPrevented) send("generate_lead", { form: "estimate", service: form.service?.value || "", urgency: form.urgency?.value || "" }); });
+    }
+    document.querySelector(".check__panel")?.addEventListener("submit", () => send("address_check"));
 }
 function cookieNotice() {
     const KEY = "integrity-consent";
