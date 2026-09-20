@@ -415,6 +415,19 @@ function claimPlay() {
         onEnter: () => gsap.to(parts, { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out", stagger: 0.1, clearProps: "transform" }) });
 }
 
+/* ---------- THE FACADE under the hero ----------
+   The white INTEGRITY panel is pinned (no spacer) once it has risen a
+   little past the middle of the screen, for its own height plus the V:
+   the credentials strip and the Facebook band, next in flow, slide up
+   over it and it is left behind them, covered. Reduced motion: a plain
+   panel in the flow. */
+function facade() {
+    const panel = document.querySelector(".facade");
+    if (!panel || reduceMotion) return;
+    const vee = () => parseFloat(getComputedStyle(document.querySelector(".hero")).getPropertyValue("--vee")) || 40;
+    ScrollTrigger.create({ trigger: panel, start: "top 56%", end: () => "+=" + Math.round(panel.offsetHeight + vee()), pin: true, pinSpacing: false, invalidateOnRefresh: true });
+}
+
 /* ---------- HERO ON SCROLL ----------
    1. The headline and note follow the scroll down lazily and fade out on
       the way, gone before the nav could overlap them. Scrubbed, so scrolling
@@ -1992,7 +2005,7 @@ document.fonts.ready.then(() => {
     serviceMap();
     contactForm();
     shieldCard();
-    cookieNotice(); homeButton(); claimPlay(); heroScroll(); philMorph();
+    cookieNotice(); facade(); homeButton(); claimPlay(); heroScroll(); philMorph();
     stackCycle();
     philStory();
     ctaArrow();
