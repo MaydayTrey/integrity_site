@@ -74,11 +74,17 @@ if (!reduceMotion) {
             }
         };
         draw();
-        gsap.to(wipe, {
-            p: 1, duration: 1.3, ease: "power3.inOut", onUpdate: draw,
-            onComplete: () => { media.style.clipPath = ""; },   /* back to the stylesheet's polygon */
-            scrollTrigger: { trigger: div, start: "top 78%", once: true }
+        const reveal = gsap.to(wipe, {
+            p: 1, duration: 1.3, ease: "power3.inOut", onUpdate: draw, paused: true,
+            onComplete: () => { media.style.clipPath = ""; }    /* back to the stylesheet's polygon */
         });
+        /* the wipe waits for the photo: on a first visit it used to reveal an
+           empty dark box that the photo then popped into */
+        const first = photo[0];
+        ScrollTrigger.create({ trigger: div, start: "top 78%", once: true, onEnter: () => {
+            if (first.complete && first.naturalWidth) reveal.play();
+            else { first.addEventListener("load", () => reveal.play(), { once: true }); first.addEventListener("error", () => reveal.play(), { once: true }); }
+        } });
 
         /* THE TWO-STAGE BAND (data-step): a beat after it is in view, the
            finished work wipes DOWN over the bare job, top to bottom. Once. */
@@ -443,7 +449,10 @@ function homeButton() {
         const r = btn.getBoundingClientRect();
         btn.classList.toggle("on-light", bgIsLight(r.left + r.width / 2, r.top + r.height / 2));
     }
-    const ask = () => { if (!queued) { queued = true; requestAnimationFrame(update); } };
+    /* the probe forces a layout pass, so it runs a few times a second, not
+       on every scrolled frame */
+    let last = 0;
+    const ask = () => { if (queued) return; const now = performance.now(); if (now - last < 150) return; last = now; queued = true; requestAnimationFrame(update); };
     window.addEventListener("scroll", ask, { passive: true });
     window.addEventListener("resize", ask);
     setInterval(ask, 500);                  /* things change under it without a scroll too (a band's photo wiping in, a card fading) */
@@ -520,6 +529,24 @@ function heroScroll() {
         "--drop": () => room() + "px", ease: "none", immediateRender: false,
         scrollTrigger: { trigger: hero, start: "top top", end: () => "+=" + Math.round(room() * 2), scrub: true, invalidateOnRefresh: true }
     });
+}
+
+/* ---------- PHOTOS AHEAD OF THE SCROLL ----------
+   The browser's own lazy loading starts a photo about a screen before it
+   is needed and decodes it on the main thread as it lands, which on a
+   first visit showed as a stutter and photos popping in late. Instead:
+   two screens ahead, each photo is switched to eager and decoded off the
+   main thread, so it is sitting ready when it scrolls into view. */
+function photosAhead() {
+    if (!("IntersectionObserver" in window)) return;
+    const imgs = [...document.querySelectorAll('img[loading="lazy"]')];
+    const io = new IntersectionObserver((hits) => hits.forEach((h) => {
+        if (!h.isIntersecting) return;
+        const img = h.target; io.unobserve(img);
+        img.loading = "eager";
+        if (img.decode) img.decode().catch(() => {});
+    }), { rootMargin: "200% 0px" });
+    imgs.forEach((img) => io.observe(img));
 }
 
 /* ---------- HERO INTRO ----------
@@ -1115,6 +1142,14 @@ const EDIT_AREA = new URLSearchParams(location.search).has("edit-area");
 function serviceMap() {
     const el = document.getElementById("service-map");
     if (!el || typeof L === "undefined") return;         /* Leaflet did not load: the SVG stays */
+    /* NOT AT PAGE LOAD. Building the map fetches fifty-odd tiles, which on a
+       first visit fought the hero and the first sections for the connection.
+       It starts when the section comes within a screen and a half. */
+    if ("IntersectionObserver" in window && !el.dataset.now) {
+        const io = new IntersectionObserver((hits) => { if (hits.some((h) => h.isIntersecting)) { io.disconnect(); el.dataset.now = "1"; serviceMap(); } }, { rootMargin: "150% 0px" });
+        io.observe(el);
+        return;
+    }
     const check = el.parentElement;                      /* .check: the map plus the checker panel */
 
     const map = L.map(el, {
@@ -2068,6 +2103,7 @@ function sectionReveals() {
 document.fonts.ready.then(() => {
     document.querySelectorAll("[data-roll]").forEach(rollingText);
     heroIntro();
+    photosAhead();
     ourWork();
     galleryCarousel();
     pairHint();
