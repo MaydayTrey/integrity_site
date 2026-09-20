@@ -449,15 +449,16 @@
                         <button class="filter" type="button" aria-pressed="false" data-filter="more">More</button>
                     </div>
 
+                    <!--the window clips the carousel categories (bathrooms, more); script.js
+                        adds the arrows inside it-->
+                    <div class="gallery-window">
                     <ul class="gallery" data-filter="kitchens">
                         <!--KITCHENS-->
-                        <li class="pair" id="job-kitchen-1" data-category="kitchens"><!--(reference)-->
+                        <li class="pair" id="job-kitchen-1" data-category="kitchens">
                             <figure class="pair__figure">
                                 <div class="pair__media">
-                                    <img class="pair__before" src="assets/work/kitchen-1-before.webp" width="900" height="675" loading="lazy" decoding="async" alt="Kitchen before remodel: dated cabinets and worn countertops">
-                                    <img class="pair__after" src="assets/work/kitchen-1-after.webp" width="900" height="675" loading="lazy" decoding="async" alt="Same kitchen after remodel: white shaker cabinets, quartz countertops, grey subway tile, and vinyl plank flooring">
-                                    <!--the carousel's rail, laid along the top: the fill runs left
-                                        to right as the after photo wipes in; the two words are the controls-->
+                                    <img class="pair__before" src="assets/work/kitchen-1-before.webp" width="725" height="960" loading="lazy" decoding="async" alt="Galley kitchen before remodel: oak cabinets, teal walls and a small window over the sink">
+                                    <img class="pair__after" src="assets/work/kitchen-1-after.webp" width="1200" height="900" loading="lazy" decoding="async" alt="Same kitchen after remodel: navy cabinets, white countertops, white subway tile and new wood-look flooring">
                                     <div class="pair__rail" aria-hidden="true"><div class="pair__rail-fill"></div></div>
                                     <div class="pair__switch" role="group" aria-label="Before or after">
                                         <button class="pair__opt pair__opt--before is-on" type="button" aria-pressed="true">Before</button>
@@ -465,17 +466,15 @@
                                     </div>
                                 </div>
                                 <figcaption class="pair__caption">
-                                    <h3 class="pair__title" data-placeholder>Full kitchen remodel</h3>
+                                    <h3 class="pair__title">Full kitchen remodel</h3>
                                 </figcaption>
                             </figure>
                         </li>
-                        <li class="pair" id="job-kitchen-2" data-category="kitchens"><!--(reference)-->
+                        <li class="pair" id="job-kitchen-2" data-category="kitchens">
                             <figure class="pair__figure">
                                 <div class="pair__media">
-                                    <img class="pair__before" src="assets/work/kitchen-2-before.webp" width="900" height="675" loading="lazy" decoding="async" alt="Kitchen before new flooring and cabinets">
-                                    <img class="pair__after" src="assets/work/kitchen-2-after.webp" width="675" height="900" loading="lazy" decoding="async" alt="Same kitchen after new cabinets and flooring were installed">
-                                    <!--the carousel's rail, laid along the top: the fill runs left
-                                        to right as the after photo wipes in; the two words are the controls-->
+                                    <img class="pair__before" src="assets/work/kitchen-2-before.webp" width="1200" height="900" loading="lazy" decoding="async" alt="Kitchen gutted to bare drywall before the remodel">
+                                    <img class="pair__after" src="assets/work/kitchen-2-after.webp" width="1200" height="900" loading="lazy" decoding="async" alt="Same kitchen finished: white shaker cabinets, new countertops, backsplash and vinyl plank flooring">
                                     <div class="pair__rail" aria-hidden="true"><div class="pair__rail-fill"></div></div>
                                     <div class="pair__switch" role="group" aria-label="Before or after">
                                         <button class="pair__opt pair__opt--before is-on" type="button" aria-pressed="true">Before</button>
@@ -483,18 +482,16 @@
                                     </div>
                                 </div>
                                 <figcaption class="pair__caption">
-                                    <h3 class="pair__title" data-placeholder>Cabinets and flooring</h3>
+                                    <h3 class="pair__title">Cabinets, countertops and flooring</h3>
                                 </figcaption>
                             </figure>
                         </li>
-                        <!--BATHROOMS-->
-                        <li class="pair" id="job-bathroom-1" data-category="bathrooms"><!--(reference)-->
+                        <!--BATHROOMS (a carousel: script.js, galleryCarousel)-->
+                        <li class="pair" id="job-bathroom-1" data-category="bathrooms">
                             <figure class="pair__figure">
                                 <div class="pair__media">
-                                    <img class="pair__before" src="assets/work/bathroom-1-before.webp" width="675" height="900" loading="lazy" decoding="async" alt="Shower before: water-damaged walls and mold stripped back to the studs">
-                                    <img class="pair__after" src="assets/work/bathroom-1-after.webp" width="675" height="900" loading="lazy" decoding="async" alt="Same shower after: new tile surround, niche, and glass door">
-                                    <!--the carousel's rail, laid along the top: the fill runs left
-                                        to right as the after photo wipes in; the two words are the controls-->
+                                    <img class="pair__before" src="assets/work/bathroom-1-before.webp" width="1200" height="900" loading="lazy" decoding="async" alt="Bathroom mid-demolition: the shower walls stripped to the studs and cement board">
+                                    <img class="pair__after" src="assets/work/bathroom-1-after.webp" width="900" height="1200" loading="lazy" decoding="async" alt="Same bathroom finished: a walk-in shower with grey subway tile, patterned floor tile and a new vanity">
                                     <div class="pair__rail" aria-hidden="true"><div class="pair__rail-fill"></div></div>
                                     <div class="pair__switch" role="group" aria-label="Before or after">
                                         <button class="pair__opt pair__opt--before is-on" type="button" aria-pressed="true">Before</button>
@@ -502,17 +499,15 @@
                                     </div>
                                 </div>
                                 <figcaption class="pair__caption">
-                                    <h3 class="pair__title" data-placeholder>Shower rebuild after water damage</h3>
+                                    <h3 class="pair__title">Tile shower rebuild</h3>
                                 </figcaption>
                             </figure>
                         </li>
-                        <li class="pair" id="job-bathroom-2" data-category="bathrooms"><!--(reference)-->
+                        <li class="pair" id="job-bathroom-2" data-category="bathrooms">
                             <figure class="pair__figure">
                                 <div class="pair__media">
-                                    <img class="pair__before" src="assets/work/bathroom-2-before.webp" width="675" height="900" loading="lazy" decoding="async" alt="Bathroom before remodel: crowded layout and old fixtures">
-                                    <img class="pair__after" src="assets/work/bathroom-2-after.webp" width="675" height="900" loading="lazy" decoding="async" alt="Same bathroom after remodel: new vanity, tile, and fixtures">
-                                    <!--the carousel's rail, laid along the top: the fill runs left
-                                        to right as the after photo wipes in; the two words are the controls-->
+                                    <img class="pair__before" src="assets/work/bathroom-2-before.webp" width="900" height="1200" loading="lazy" decoding="async" alt="Dated tub and shower with a green tub, patterned tile and a shower curtain">
+                                    <img class="pair__after" src="assets/work/bathroom-2-after.webp" width="900" height="1200" loading="lazy" decoding="async" alt="Same bathroom after: a tiled walk-in shower with a glass door and a grab bar">
                                     <div class="pair__rail" aria-hidden="true"><div class="pair__rail-fill"></div></div>
                                     <div class="pair__switch" role="group" aria-label="Before or after">
                                         <button class="pair__opt pair__opt--before is-on" type="button" aria-pressed="true">Before</button>
@@ -520,7 +515,71 @@
                                     </div>
                                 </div>
                                 <figcaption class="pair__caption">
-                                    <h3 class="pair__title" data-placeholder>Full bathroom remodel</h3>
+                                    <h3 class="pair__title">Full bathroom remodel</h3>
+                                </figcaption>
+                            </figure>
+                        </li>
+                        <li class="pair" id="job-bathroom-3" data-category="bathrooms">
+                            <figure class="pair__figure">
+                                <div class="pair__media">
+                                    <img class="pair__before" src="assets/work/bathroom-3-before.webp" width="900" height="1200" loading="lazy" decoding="async" alt="Small bathroom before the remodel">
+                                    <img class="pair__after" src="assets/work/bathroom-3-after.webp" width="900" height="1200" loading="lazy" decoding="async" alt="Same bathroom after: a white tile walk-in shower with a glass door and a new vanity">
+                                    <div class="pair__rail" aria-hidden="true"><div class="pair__rail-fill"></div></div>
+                                    <div class="pair__switch" role="group" aria-label="Before or after">
+                                        <button class="pair__opt pair__opt--before is-on" type="button" aria-pressed="true">Before</button>
+                                        <button class="pair__opt pair__opt--after" type="button" aria-pressed="false">After</button>
+                                    </div>
+                                </div>
+                                <figcaption class="pair__caption">
+                                    <h3 class="pair__title">Walk-in shower</h3>
+                                </figcaption>
+                            </figure>
+                        </li>
+                        <li class="pair" id="job-bathroom-4" data-category="bathrooms">
+                            <figure class="pair__figure">
+                                <div class="pair__media">
+                                    <img class="pair__before" src="assets/work/bathroom-4-before.webp" width="443" height="590" loading="lazy" decoding="async" alt="Shower torn out to the framing after water damage">
+                                    <img class="pair__after" src="assets/work/bathroom-4-after.webp" width="1200" height="1200" loading="lazy" decoding="async" alt="Same shower rebuilt: large-format tile, a niche, a pebble floor and a black-framed glass door">
+                                    <div class="pair__rail" aria-hidden="true"><div class="pair__rail-fill"></div></div>
+                                    <div class="pair__switch" role="group" aria-label="Before or after">
+                                        <button class="pair__opt pair__opt--before is-on" type="button" aria-pressed="true">Before</button>
+                                        <button class="pair__opt pair__opt--after" type="button" aria-pressed="false">After</button>
+                                    </div>
+                                </div>
+                                <figcaption class="pair__caption">
+                                    <h3 class="pair__title">Shower rebuild after water damage</h3>
+                                </figcaption>
+                            </figure>
+                        </li>
+                        <li class="pair" id="job-bathroom-5" data-category="bathrooms">
+                            <figure class="pair__figure">
+                                <div class="pair__media">
+                                    <img class="pair__before" src="assets/work/bathroom-5-before.webp" width="923" height="988" loading="lazy" decoding="async" alt="Bathroom with an oak vanity and cultured marble top before the refresh">
+                                    <img class="pair__after" src="assets/work/bathroom-5-after.webp" width="736" height="1000" loading="lazy" decoding="async" alt="Same bathroom after: a vessel sink on a new vanity, a black mirror and lighting, and new flooring">
+                                    <div class="pair__rail" aria-hidden="true"><div class="pair__rail-fill"></div></div>
+                                    <div class="pair__switch" role="group" aria-label="Before or after">
+                                        <button class="pair__opt pair__opt--before is-on" type="button" aria-pressed="true">Before</button>
+                                        <button class="pair__opt pair__opt--after" type="button" aria-pressed="false">After</button>
+                                    </div>
+                                </div>
+                                <figcaption class="pair__caption">
+                                    <h3 class="pair__title">Vanity and bathroom refresh</h3>
+                                </figcaption>
+                            </figure>
+                        </li>
+                        <li class="pair" id="job-bathroom-6" data-category="bathrooms">
+                            <figure class="pair__figure">
+                                <div class="pair__media">
+                                    <img class="pair__before" src="assets/work/bathroom-6-before.webp" width="957" height="1200" loading="lazy" decoding="async" alt="Bathtub with a plain surround before the work">
+                                    <img class="pair__after" src="assets/work/bathroom-6-after.webp" width="861" height="1200" loading="lazy" decoding="async" alt="Same tub after: a new surround with a sliding glass door and grab bar">
+                                    <div class="pair__rail" aria-hidden="true"><div class="pair__rail-fill"></div></div>
+                                    <div class="pair__switch" role="group" aria-label="Before or after">
+                                        <button class="pair__opt pair__opt--before is-on" type="button" aria-pressed="true">Before</button>
+                                        <button class="pair__opt pair__opt--after" type="button" aria-pressed="false">After</button>
+                                    </div>
+                                </div>
+                                <figcaption class="pair__caption">
+                                    <h3 class="pair__title">Tub surround and glass door</h3>
                                 </figcaption>
                             </figure>
                         </li>
@@ -543,13 +602,11 @@
                                 </figcaption>
                             </figure>
                         </li>
-                        <li class="pair" id="job-basement-2" data-category="basements"><!--(placeholder)-->
+                        <li class="pair" id="job-basement-2" data-category="basements">
                             <figure class="pair__figure">
                                 <div class="pair__media">
-                                    <img class="pair__before" src="assets/work/basement-2-before.webp" width="900" height="900" loading="lazy" decoding="async" alt="Placeholder: basement before photo">
-                                    <img class="pair__after" src="assets/work/basement-2-after.webp" width="900" height="900" loading="lazy" decoding="async" alt="Placeholder: basement after photo">
-                                    <!--the carousel's rail, laid along the top: the fill runs left
-                                        to right as the after photo wipes in; the two words are the controls-->
+                                    <img class="pair__before" src="assets/work/basement-2-before.webp" width="1200" height="900" loading="lazy" decoding="async" alt="Basement walls opened up after a flood, with a dehumidifier running">
+                                    <img class="pair__after" src="assets/work/basement-2-after.webp" width="1200" height="900" loading="lazy" decoding="async" alt="Same basement after: new framing and drywall along the walls">
                                     <div class="pair__rail" aria-hidden="true"><div class="pair__rail-fill"></div></div>
                                     <div class="pair__switch" role="group" aria-label="Before or after">
                                         <button class="pair__opt pair__opt--before is-on" type="button" aria-pressed="true">Before</button>
@@ -557,18 +614,16 @@
                                     </div>
                                 </div>
                                 <figcaption class="pair__caption">
-                                    <h3 class="pair__title" data-placeholder>Basement living space</h3>
+                                    <h3 class="pair__title">Basement framing after a flood</h3>
                                 </figcaption>
                             </figure>
                         </li>
-                        <!--MORE-->
-                        <li class="pair" id="job-more-1" data-category="more"><!--(placeholder)-->
+                        <!--MORE (a carousel)-->
+                        <li class="pair" id="job-more-1" data-category="more">
                             <figure class="pair__figure">
                                 <div class="pair__media">
-                                    <img class="pair__before" src="assets/work/more-1-before.webp" width="900" height="900" loading="lazy" decoding="async" alt="Placeholder: entry before photo">
-                                    <img class="pair__after" src="assets/work/more-1-after.webp" width="900" height="900" loading="lazy" decoding="async" alt="Placeholder: entry after photo">
-                                    <!--the carousel's rail, laid along the top: the fill runs left
-                                        to right as the after photo wipes in; the two words are the controls-->
+                                    <img class="pair__before" src="assets/work/more-1-before.webp" width="900" height="1200" loading="lazy" decoding="async" alt="The fireplace wall being framed before the stonework">
+                                    <img class="pair__after" src="assets/work/more-1-after.webp" width="1200" height="900" loading="lazy" decoding="async" alt="The finished fireplace faced in natural stone">
                                     <div class="pair__rail" aria-hidden="true"><div class="pair__rail-fill"></div></div>
                                     <div class="pair__switch" role="group" aria-label="Before or after">
                                         <button class="pair__opt pair__opt--before is-on" type="button" aria-pressed="true">Before</button>
@@ -576,17 +631,15 @@
                                     </div>
                                 </div>
                                 <figcaption class="pair__caption">
-                                    <h3 class="pair__title" data-placeholder>Slate tile entry</h3>
+                                    <h3 class="pair__title">Stone fireplace</h3>
                                 </figcaption>
                             </figure>
                         </li>
-                        <li class="pair" id="job-more-2" data-category="more"><!--(placeholder)-->
+                        <li class="pair" id="job-more-2" data-category="more">
                             <figure class="pair__figure">
                                 <div class="pair__media">
-                                    <img class="pair__before" src="assets/work/more-2-before.webp" width="900" height="900" loading="lazy" decoding="async" alt="Placeholder: flooring before photo">
-                                    <img class="pair__after" src="assets/work/more-2-after.webp" width="900" height="900" loading="lazy" decoding="async" alt="Placeholder: flooring after photo">
-                                    <!--the carousel's rail, laid along the top: the fill runs left
-                                        to right as the after photo wipes in; the two words are the controls-->
+                                    <img class="pair__before" src="assets/work/more-2-before.webp" width="900" height="1200" loading="lazy" decoding="async" alt="Back entry steps with no cover before the work">
+                                    <img class="pair__after" src="assets/work/more-2-after.webp" width="900" height="1200" loading="lazy" decoding="async" alt="Same entry after: a new timber-framed overhang over the steps">
                                     <div class="pair__rail" aria-hidden="true"><div class="pair__rail-fill"></div></div>
                                     <div class="pair__switch" role="group" aria-label="Before or after">
                                         <button class="pair__opt pair__opt--before is-on" type="button" aria-pressed="true">Before</button>
@@ -594,11 +647,54 @@
                                     </div>
                                 </div>
                                 <figcaption class="pair__caption">
-                                    <h3 class="pair__title" data-placeholder>Vinyl plank flooring</h3>
+                                    <h3 class="pair__title">Patio overhang</h3>
+                                </figcaption>
+                            </figure>
+                        </li>
+                        <li class="pair" id="job-more-3" data-category="more">
+                            <figure class="pair__figure">
+                                <div class="pair__media">
+                                    <img class="pair__before" src="assets/work/more-3-before.webp" width="900" height="1200" loading="lazy" decoding="async" alt="Old flagstone path dug up before the new walk">
+                                    <img class="pair__after" src="assets/work/more-3-after.webp" width="900" height="1200" loading="lazy" decoding="async" alt="Same walk after: a new poured concrete path with a gravel edge">
+                                    <div class="pair__rail" aria-hidden="true"><div class="pair__rail-fill"></div></div>
+                                    <div class="pair__switch" role="group" aria-label="Before or after">
+                                        <button class="pair__opt pair__opt--before is-on" type="button" aria-pressed="true">Before</button>
+                                        <button class="pair__opt pair__opt--after" type="button" aria-pressed="false">After</button>
+                                    </div>
+                                </div>
+                                <figcaption class="pair__caption">
+                                    <h3 class="pair__title">Concrete path</h3>
+                                </figcaption>
+                            </figure>
+                        </li>
+                        <li class="pair pair--single" id="job-more-4" data-category="more">
+                            <figure class="pair__figure">
+                                <div class="pair__media">
+                                    <img class="pair__before" src="assets/work/more-4-before.webp" width="1200" height="900" loading="lazy" decoding="async" alt="A new white vinyl privacy fence along a back yard">
+                                </div>
+                                <figcaption class="pair__caption">
+                                    <h3 class="pair__title">White vinyl fence</h3>
+                                </figcaption>
+                            </figure>
+                        </li>
+                        <li class="pair" id="job-more-5" data-category="more">
+                            <figure class="pair__figure">
+                                <div class="pair__media">
+                                    <img class="pair__before" src="assets/work/more-5-before.webp" width="1200" height="900" loading="lazy" decoding="async" alt="A new wood fence with a gate along a back yard, a shed behind it">
+                                    <img class="pair__after" src="assets/work/more-5-after.webp" width="900" height="1200" loading="lazy" decoding="async" alt="The side run of the same fence">
+                                    <div class="pair__rail" aria-hidden="true"><div class="pair__rail-fill"></div></div>
+                                    <div class="pair__switch" role="group" aria-label="Fence or side fence">
+                                        <button class="pair__opt pair__opt--before is-on" type="button" aria-pressed="true">Fence</button>
+                                        <button class="pair__opt pair__opt--after" type="button" aria-pressed="false">Side fence</button>
+                                    </div>
+                                </div>
+                                <figcaption class="pair__caption">
+                                    <h3 class="pair__title">Fence and shed</h3>
                                 </figcaption>
                             </figure>
                         </li>
                     </ul>
+                    </div>
                 </div>
 
                 <!--COMMERCIAL PANEL: informational, no gallery-->
@@ -688,19 +784,19 @@
                 <div class="reviews-window">
                 <ul class="reviews">
                     <li class="review review--featured has-before"><!--CONFIRM-->
-                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/bathroom-1-before.webp" loading="lazy" decoding="async" alt=""><div class="review__after-layer"><img class="review__after" src="assets/work/bathroom-1-after.webp" loading="lazy" decoding="async" alt=""></div></div><div class="review__rail" aria-hidden="true"><div class="review__rail-fill"></div></div><span class="review__tag" aria-hidden="true"><span class="review__tag-word review__tag-word--before">Before</span><span class="review__tag-word review__tag-word--after">After</span></span>
+                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/reviews/bathroom-1-before.webp" loading="lazy" decoding="async" alt=""><div class="review__after-layer"><img class="review__after" src="assets/reviews/bathroom-1-after.webp" loading="lazy" decoding="async" alt=""></div></div><div class="review__rail" aria-hidden="true"><div class="review__rail-fill"></div></div><span class="review__tag" aria-hidden="true"><span class="review__tag-word review__tag-word--before">Before</span><span class="review__tag-word review__tag-word--after">After</span></span>
                         <div class="review__glass">
                             <span class="review__stars" role="img" aria-label="Rated 5 out of 5 stars"><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg></span>
                             <blockquote class="review__quote"><p>Phil and his brother did a great job on our shower. It started out a mess, demo revealed a wet moldy ant filled mess, they cleaned it all, replaced wood and turned it into what you see in the picture. Really happy with it and would highly recommend Integrity Restoration!</p></blockquote>
                             <footer class="review__meta">
                                 <cite class="review__name">Larry H.</cite>
                                 <span class="review__source">Facebook</span>
-                            <button class="review__job" type="button" data-job="job-bathroom-1">See the job</button>
+                            <button class="review__job" type="button" data-job="job-bathroom-4">See the job</button>
                             </footer>
                         </div>
                     </li>
                     <li class="review has-before"><!--CONFIRM-->
-                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/bathroom-2-before.webp" loading="lazy" decoding="async" alt=""><div class="review__after-layer"><img class="review__after" src="assets/work/bathroom-2-after.webp" loading="lazy" decoding="async" alt=""></div></div><div class="review__rail" aria-hidden="true"><div class="review__rail-fill"></div></div><span class="review__tag" aria-hidden="true"><span class="review__tag-word review__tag-word--before">Before</span><span class="review__tag-word review__tag-word--after">After</span></span>
+                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/reviews/bathroom-2-before.webp" loading="lazy" decoding="async" alt=""><div class="review__after-layer"><img class="review__after" src="assets/reviews/bathroom-2-after.webp" loading="lazy" decoding="async" alt=""></div></div><div class="review__rail" aria-hidden="true"><div class="review__rail-fill"></div></div><span class="review__tag" aria-hidden="true"><span class="review__tag-word review__tag-word--before">Before</span><span class="review__tag-word review__tag-word--after">After</span></span>
                         <div class="review__glass">
                             <span class="review__stars" role="img" aria-label="Rated 5 out of 5 stars"><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg></span>
                             <blockquote class="review__quote"><p>Very impressive work!!</p></blockquote>
@@ -712,7 +808,7 @@
                         </div>
                     </li>
                     <li class="review has-before"><!--CONFIRM photos; TODO job link when this pair joins the gallery-->
-                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/bathroom-3-before.webp" loading="lazy" decoding="async" alt=""><div class="review__after-layer"><img class="review__after" src="assets/work/bathroom-3-after.webp" loading="lazy" decoding="async" alt=""></div></div><div class="review__rail" aria-hidden="true"><div class="review__rail-fill"></div></div><span class="review__tag" aria-hidden="true"><span class="review__tag-word review__tag-word--before">Before</span><span class="review__tag-word review__tag-word--after">After</span></span>
+                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/reviews/bathroom-3-before.webp" loading="lazy" decoding="async" alt=""><div class="review__after-layer"><img class="review__after" src="assets/reviews/bathroom-3-after.webp" loading="lazy" decoding="async" alt=""></div></div><div class="review__rail" aria-hidden="true"><div class="review__rail-fill"></div></div><span class="review__tag" aria-hidden="true"><span class="review__tag-word review__tag-word--before">Before</span><span class="review__tag-word review__tag-word--after">After</span></span>
                         <div class="review__glass">
                             <span class="review__stars" role="img" aria-label="Rated 5 out of 5 stars"><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg></span>
                             <blockquote class="review__quote"><p>Awesome job! Would highly recommend if anyone is looking for a contractor.</p></blockquote>
@@ -723,19 +819,19 @@
                         </div>
                     </li>
                     <li class="review"><!--stand-in tile photo; job link opens placeholder pair-->
-                        <div class="review__bg" aria-hidden="true"><div class="review__after-layer"><img class="review__after" src="assets/work/tile-1-after.webp" loading="lazy" decoding="async" alt=""></div></div><div class="review__rail" aria-hidden="true"><div class="review__rail-fill"></div></div><span class="review__tag is-after" aria-hidden="true"><span class="review__tag-word review__tag-word--after">Finished</span></span>
+                        <div class="review__bg" aria-hidden="true"><div class="review__after-layer"><img class="review__after" src="assets/reviews/tile-1-after.webp" loading="lazy" decoding="async" alt=""></div></div><div class="review__rail" aria-hidden="true"><div class="review__rail-fill"></div></div><span class="review__tag is-after" aria-hidden="true"><span class="review__tag-word review__tag-word--after">Finished</span></span>
                         <div class="review__glass">
                             <span class="review__stars" role="img" aria-label="Rated 5 out of 5 stars"><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg></span>
                             <blockquote class="review__quote"><p>Thanks to Integrity Restorations and Remodeling for the fantastic installation of the slate tile on the entry of our Wayne Avenue location.</p></blockquote>
                             <footer class="review__meta">
                                 <cite class="review__name">Westbrock &amp; Daniel Funeral Home</cite>
                                 <span class="review__source">Facebook</span>
-                            <button class="review__job" type="button" data-job="job-more-1">See the job</button>
+                            <button class="review__job" type="button" data-job="job-more-1" hidden>See the job</button>
                             </footer>
                         </div>
                     </li>
                     <li class="review has-before"><!--fence job, no photos: kitchen pair as stand-in background-->
-                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/kitchen-1-before.webp" loading="lazy" decoding="async" alt=""><div class="review__after-layer"><img class="review__after" src="assets/work/kitchen-1-after.webp" loading="lazy" decoding="async" alt=""></div></div><div class="review__rail" aria-hidden="true"><div class="review__rail-fill"></div></div><span class="review__tag" aria-hidden="true"><span class="review__tag-word review__tag-word--before">Before</span><span class="review__tag-word review__tag-word--after">After</span></span>
+                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/reviews/kitchen-1-before.webp" loading="lazy" decoding="async" alt=""><div class="review__after-layer"><img class="review__after" src="assets/reviews/kitchen-1-after.webp" loading="lazy" decoding="async" alt=""></div></div><div class="review__rail" aria-hidden="true"><div class="review__rail-fill"></div></div><span class="review__tag" aria-hidden="true"><span class="review__tag-word review__tag-word--before">Before</span><span class="review__tag-word review__tag-word--after">After</span></span>
                         <div class="review__glass">
                             <span class="review__stars" role="img" aria-label="Rated 5 out of 5 stars"><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg></span>
                             <blockquote class="review__quote"><p>Phil just finished our fence and the work was excellent. Timely finish even with the bad weather we've had. Couldn't be happier.</p></blockquote>
@@ -746,7 +842,7 @@
                         </div>
                     </li>
                     <li class="review has-before"><!--CONFIRM photos-->
-                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/bathroom-4-before.webp" loading="lazy" decoding="async" alt=""><div class="review__after-layer"><img class="review__after" src="assets/work/bathroom-4-after.webp" loading="lazy" decoding="async" alt=""></div></div><div class="review__rail" aria-hidden="true"><div class="review__rail-fill"></div></div><span class="review__tag" aria-hidden="true"><span class="review__tag-word review__tag-word--before">Before</span><span class="review__tag-word review__tag-word--after">After</span></span>
+                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/reviews/bathroom-4-before.webp" loading="lazy" decoding="async" alt=""><div class="review__after-layer"><img class="review__after" src="assets/reviews/bathroom-4-after.webp" loading="lazy" decoding="async" alt=""></div></div><div class="review__rail" aria-hidden="true"><div class="review__rail-fill"></div></div><span class="review__tag" aria-hidden="true"><span class="review__tag-word review__tag-word--before">Before</span><span class="review__tag-word review__tag-word--after">After</span></span>
                         <div class="review__glass">
                             <span class="review__stars" role="img" aria-label="Rated 5 out of 5 stars"><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg></span>
                             <blockquote class="review__quote"><p>They were here late last night and all day today to get it finished! They have done a phenomenal job!</p></blockquote>
@@ -757,7 +853,7 @@
                         </div>
                     </li>
                     <li class="review has-before"><!--CONFIRM photos; TODO job link-->
-                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/bathroom-5-before.webp" loading="lazy" decoding="async" alt=""><div class="review__after-layer"><img class="review__after" src="assets/work/bathroom-5-after.webp" loading="lazy" decoding="async" alt=""></div></div><div class="review__rail" aria-hidden="true"><div class="review__rail-fill"></div></div><span class="review__tag" aria-hidden="true"><span class="review__tag-word review__tag-word--before">Before</span><span class="review__tag-word review__tag-word--after">After</span></span>
+                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/reviews/bathroom-5-before.webp" loading="lazy" decoding="async" alt=""><div class="review__after-layer"><img class="review__after" src="assets/reviews/bathroom-5-after.webp" loading="lazy" decoding="async" alt=""></div></div><div class="review__rail" aria-hidden="true"><div class="review__rail-fill"></div></div><span class="review__tag" aria-hidden="true"><span class="review__tag-word review__tag-word--before">Before</span><span class="review__tag-word review__tag-word--after">After</span></span>
                         <div class="review__glass">
                             <span class="review__stars" role="img" aria-label="Rated 5 out of 5 stars"><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg></span>
                             <blockquote class="review__quote"><p>You do fantastic work.</p></blockquote>
@@ -768,7 +864,7 @@
                         </div>
                     </li>
                     <li class="review has-before"><!--stand-in background-->
-                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/work/basement-1-before.webp" loading="lazy" decoding="async" alt=""><div class="review__after-layer"><img class="review__after" src="assets/work/basement-1-after.webp" loading="lazy" decoding="async" alt=""></div></div><div class="review__rail" aria-hidden="true"><div class="review__rail-fill"></div></div><span class="review__tag" aria-hidden="true"><span class="review__tag-word review__tag-word--before">Before</span><span class="review__tag-word review__tag-word--after">After</span></span>
+                        <div class="review__bg" aria-hidden="true"><img class="review__before" src="assets/reviews/basement-1-before.webp" loading="lazy" decoding="async" alt=""><div class="review__after-layer"><img class="review__after" src="assets/reviews/basement-1-after.webp" loading="lazy" decoding="async" alt=""></div></div><div class="review__rail" aria-hidden="true"><div class="review__rail-fill"></div></div><span class="review__tag" aria-hidden="true"><span class="review__tag-word review__tag-word--before">Before</span><span class="review__tag-word review__tag-word--after">After</span></span>
                         <div class="review__glass">
                             <span class="review__stars" role="img" aria-label="Rated 5 out of 5 stars"><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg><svg class="review__star" aria-hidden="true" focusable="false"><use href="#icon-star"/></svg></span>
                             <blockquote class="review__quote"><p>Amazing work from an amazing company!!!</p></blockquote>

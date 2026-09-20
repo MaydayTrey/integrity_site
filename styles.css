@@ -573,6 +573,38 @@ body.has-dialog .home-btn { visibility: hidden; }
 .gallery[data-filter="basements"] .pair:not([data-category="basements"]),
 .gallery[data-filter="more"]      .pair:not([data-category="more"]) { display: none; }
 
+/* THE HORIZONTAL CAROUSEL (bathrooms, more: script.js galleryCarousel adds
+   .is-carousel to the window and the list, and the two arrows). The list
+   becomes a row; GSAP slides it so the chosen card sits in the middle of
+   the window, full size, with its neighbours peeking in smaller and dimmed
+   either side. Tapping a neighbour brings it to the middle. */
+.gallery-window { position: relative; }
+.gallery-window.is-carousel { overflow: hidden; padding: 8px 0 6px; margin-inline: calc(-1 * var(--gutter)); }   /* out to the screen's edges: the neighbours show at the sides */
+.gallery.is-carousel { display: flex; gap: 20px; align-items: start; will-change: transform; }
+.gallery.is-carousel .pair { flex: 0 0 min(78vw, 560px); transform: scale(.88); opacity: .5; transition: transform .5s var(--ease-out), opacity .5s; }
+.gallery.is-carousel .pair.is-focus { transform: none; opacity: 1; }
+.gallery.is-carousel .pair:not(.is-focus) .pair__media { cursor: default; }
+.gal-arrow {
+    position: absolute; top: 50%; translate: 0 -50%; z-index: 3;
+    width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--white); color: var(--ink); border: 2px solid var(--grey-300);
+    box-shadow: 0 6px 18px rgba(35, 31, 32, .22);
+    transition: border-color .2s, color .2s, opacity .3s, transform .25s var(--ease-out);
+}
+.gal-arrow svg { width: 22px; height: 22px; }
+.gal-arrow--prev { left: 10px; } .gal-arrow--next { right: 10px; }
+.gal-arrow:hover, .gal-arrow:focus-visible { border-color: var(--red); color: var(--red); transform: scale(1.06); }
+.gal-arrow[disabled] { opacity: .3; pointer-events: none; }
+.gallery-window:not(.is-carousel) .gal-arrow { display: none; }
+@media (min-width: 768px) {
+    .gallery-window.is-carousel { margin-inline: 0; padding-block: 12px; }
+    .gallery.is-carousel { gap: 28px; }
+    .gallery.is-carousel .pair { flex-basis: min(56%, 560px); }
+    .gal-arrow { width: 56px; height: 56px; }
+    .gal-arrow--prev { left: 18px; } .gal-arrow--next { right: 18px; }
+}
+@media (prefers-reduced-motion: reduce) { .gallery.is-carousel .pair { transition: none; } }
+
 /* BEFORE/AFTER CARD: both photos stacked in a square; the after photo
    is clipped to a zero-width strip on the left and wipes across on
    hover, or on tap via the .is-after class the flip button toggles */

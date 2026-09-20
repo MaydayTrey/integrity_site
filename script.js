@@ -545,7 +545,7 @@ function ourWork() {
 
     function fadeIn(el) {
         if (reduceMotion) return;
-        gsap.fromTo(el, { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out", clearProps: "transform" });
+        gsap.fromTo(el, { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 0.5, ease: "power2.out", clearProps: "transform,opacity,visibility" });   /* cleared: the carousel dims its neighbours with CSS opacity */
     }
 
     function selectTab(index, focus = false) {
@@ -600,10 +600,81 @@ function ourWork() {
     });
 }
 
+/* ---------- OUR WORK: the horizontal carousel (bathrooms, more) ----------
+   The same list of cards, shown one at a time in the middle of the window
+   with its neighbours peeking in either side. Arrows, a tap on a
+   neighbour, the keyboard's arrow keys and a swipe all move it. The
+   other categories (two cards each) stay a plain grid. */
+function galleryCarousel() {
+    const win = document.querySelector(".gallery-window");
+    const gallery = win && win.querySelector(".gallery");
+    if (!gallery) return;
+    const CAROUSEL = new Set(["bathrooms", "more"]);
+    const arrow = (dir, label, d) => {
+        const b = document.createElement("button");
+        b.type = "button"; b.className = `gal-arrow gal-arrow--${dir}`; b.setAttribute("aria-label", label);
+        b.innerHTML = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="${d}" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+        win.appendChild(b); return b;
+    };
+    const prev = arrow("prev", "Previous project", "M15 5l-7 7 7 7");
+    const next = arrow("next", "Next project", "M9 5l7 7-7 7");
+    let items = [], index = 0;
+    const on = () => win.classList.contains("is-carousel");
+    const visible = () => [...gallery.querySelectorAll(".pair")].filter((p) => p.dataset.category === gallery.dataset.filter);
+    function paint(animate) {
+        const it = items[index];
+        if (!it) return;
+        items.forEach((p, i) => p.classList.toggle("is-focus", i === index));
+        prev.disabled = index === 0;
+        next.disabled = index === items.length - 1;
+        const x = win.clientWidth / 2 - (it.offsetLeft + it.offsetWidth / 2);
+        gsap.to(gallery, { x, duration: animate && !reduceMotion ? 0.55 : 0, ease: "power3.out", overwrite: true });
+    }
+    function build() {
+        const carousel = CAROUSEL.has(gallery.dataset.filter);
+        win.classList.toggle("is-carousel", carousel);
+        gallery.classList.toggle("is-carousel", carousel);
+        if (!carousel) {
+            items = [];
+            gallery.querySelectorAll(".is-focus").forEach((p) => p.classList.remove("is-focus"));
+            gsap.set(gallery, { clearProps: "transform" });
+        } else {
+            items = visible(); index = 0; paint(false);
+        }
+        ScrollTrigger.refresh();
+    }
+    const go = (i, animate = true) => { index = Math.max(0, Math.min(items.length - 1, i)); paint(animate); };
+    prev.addEventListener("click", () => go(index - 1));
+    next.addEventListener("click", () => go(index + 1));
+    /* a tap on a neighbour brings it to the middle instead of flipping its photo */
+    gallery.addEventListener("click", (e) => {
+        if (!on()) return;
+        const p = e.target.closest(".pair");
+        if (p && !p.classList.contains("is-focus")) { e.stopPropagation(); e.preventDefault(); go(items.indexOf(p)); }
+    }, true);
+    win.addEventListener("keydown", (e) => {
+        if (!on()) return;
+        if (e.key === "ArrowRight") { e.preventDefault(); go(index + 1); }
+        if (e.key === "ArrowLeft")  { e.preventDefault(); go(index - 1); }
+    });
+    let sx = null;
+    gallery.addEventListener("pointerdown", (e) => { if (on() && e.pointerType === "touch") sx = e.clientX; });
+    gallery.addEventListener("pointerup", (e) => {
+        if (sx === null) return;
+        const dx = e.clientX - sx; sx = null;
+        if (Math.abs(dx) > 40) go(index + (dx < 0 ? 1 : -1));
+    });
+    document.querySelectorAll(".filter").forEach((b) => b.addEventListener("click", () => requestAnimationFrame(build)));
+    let timer;
+    window.addEventListener("resize", () => { clearTimeout(timer); timer = setTimeout(() => { if (on()) paint(false); }, 150); });
+    build();
+}
+
 /* tap / keyboard flip for one before/after card; hover is pure CSS.
    Shared with the job dialog, which wires the clone it shows. */
 function wirePair(pair) {
     const after  = pair.querySelector(".pair__after");
+    if (!after) return;                                   /* a single-photo card (.pair--single): nothing to flip */
     const fill   = pair.querySelector(".pair__rail-fill");
     const before = pair.querySelector(".pair__opt--before");
     const toggle = pair.querySelector(".pair__opt--after");
@@ -1914,6 +1985,7 @@ document.fonts.ready.then(() => {
     document.querySelectorAll("[data-roll]").forEach(rollingText);
     heroIntro();
     ourWork();
+    galleryCarousel();
     pairHint();
     jobDialog();
     reviewCarousel();
