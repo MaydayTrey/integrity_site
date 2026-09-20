@@ -707,7 +707,8 @@ function galleryCarousel() {
         gallery.style.setProperty("--card-gap", getComputedStyle(gallery).columnGap);
         gsap.to(gallery, { x, duration: animate && !reduceMotion ? 0.55 : 0, ease: "power3.out", overwrite: true });
     }
-    function build() {
+    function build(filter) {
+        if (filter) gallery.dataset.filter = filter;                  /* set here too: this runs before ourWork's own handler does */
         const carousel = CAROUSEL.has(gallery.dataset.filter);
         win.classList.toggle("is-carousel", carousel);
         gallery.classList.toggle("is-carousel", carousel);
@@ -742,10 +743,12 @@ function galleryCarousel() {
         const dx = e.clientX - sx; sx = null;
         if (Math.abs(dx) > 40) go(index + (dx < 0 ? 1 : -1));
     });
-    /* the swap happens BEFORE the new cards fade in (ourWork's fadeIn runs on the
-       same click): the row is rebuilt at once, in the same frame, so the cards
-       never show mid-way between their carousel and grid sizes */
-    document.querySelectorAll(".filter").forEach((b) => b.addEventListener("click", build));
+    /* the swap happens BEFORE the new cards fade in. ourWork's fadeIn runs on
+       the same click, and GSAP reads a card's transform as the fade starts:
+       if the card is still a carousel neighbour then (scale .88), that scale
+       is baked into the fade and the card only pops to full size when the
+       fade ends. Capture phase: this listener runs before ourWork's. */
+    document.querySelectorAll(".filter").forEach((b) => b.addEventListener("click", () => build(b.dataset.filter), true));
     let timer;
     window.addEventListener("resize", () => { clearTimeout(timer); timer = setTimeout(() => { if (on()) paint(false); }, 150); });
     build();
