@@ -307,6 +307,18 @@ function rollingText(el) {
     el.addEventListener("blur",       () => rollDown.restart());
 }
 
+/* Meta Pixel, loaded only after consent: a PageView, then Lead when the
+   estimate form is sent (so ads can be measured against real requests).
+   Its hosts are allowed in netlify.toml's CSP. */
+function loadMetaPixel() {
+    const f = window.fbq = function () { f.callMethod ? f.callMethod.apply(f, arguments) : f.queue.push(arguments); };
+    f.push = f; f.loaded = true; f.version = "2.0"; f.queue = [];
+    const s = document.createElement("script"); s.async = true; s.src = "https://connect.facebook.net/en_US/fbevents.js"; document.head.appendChild(s);
+    f("init", META_PIXEL_ID); f("track", "PageView");
+    const form = document.querySelector(".form");
+    if (form) form.addEventListener("submit", (e) => { if (!e.defaultPrevented) f("track", "Lead", { content_name: "estimate" }); });
+}
+
 /* ---------- COOKIE NOTICE AND CONSENT ----------
    The choice lives in localStorage ("integrity-consent": granted | denied,
    with the date). No choice yet: the notice rises in shortly after load.
@@ -320,9 +332,12 @@ function rollingText(el) {
    window.integrityConsent holds the current value, and an
    "integrity:consent" event fires on the document when it changes. */
 const GA_ID = "G-YMP5SY44LG";      /* Google Analytics 4 measurement ID. Empty: nothing loads. */
+const META_PIXEL_ID = "";           /* Meta (Facebook) Pixel ID, digits only. Empty: nothing loads. Set when Phil's pixel exists. */
 function loadAnalytics() {
-    if (loadAnalytics.done || !GA_ID) return;
+    if (loadAnalytics.done || (!GA_ID && !META_PIXEL_ID)) return;
     loadAnalytics.done = true;
+    if (META_PIXEL_ID) loadMetaPixel();
+    if (!GA_ID) return;
     /* Google Analytics 4 (gtag), loaded only after consent. IP anonymisation
        is on by default in GA4. The hosts are allowed in netlify.toml's CSP. */
     window.dataLayer = window.dataLayer || [];
